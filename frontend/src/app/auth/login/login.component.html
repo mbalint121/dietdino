@@ -1,0 +1,20 @@
+<app-auth-shared-style>
+    <h1>Bejelentkezés</h1>
+    <div class="mx-auto" id="form">
+        <div>
+            <p><label for="loginNameOrEmail">Felhasználónév vagy Email</label></p>
+            <p><input class="rounded-md" type="text" name="loginNameOrEmail"/></p>
+        </div>
+        <div class="mt-5">
+            <p><label for="loginPassword">Jelszó</label></p>
+            <p><input class="rounded-md" type="password" name="loginPassword"/></p>
+        </div>
+        <div class="text-end mb-10">
+            <p><a routerLink="/forgot-password">Elfelejtetted a jelszavad?</a></p>
+        </div>
+        <div class="text-center">
+            <button class="rounded-xl">Bejelentkezés</button>
+            <p><a routerLink="/registration">Nincs még fiókod? Regisztrálj!</a></p>
+        </div>
+    </div>
+</app-auth-shared-style>

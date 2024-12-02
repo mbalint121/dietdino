@@ -1,0 +1,80 @@
+#navbar{
+    max-width: 90%;
+    height: 50px;
+    background-color: #EAEAEA;
+    border: 1px solid #7F7F7F;
+}
+
+#navbar img {
+    max-height: 80%;
+    max-width: 80%;
+    height: auto;
+    width: auto;
+}
+
+#background{
+    max-width: 90%;
+    background-color: rgba(69, 169, 42, 0.1);
+    border: 1px solid #378722;
+}
+
+::ng-deep h1{
+    color: #378722;
+    font-weight: 600;
+    margin-bottom: 40px;
+    font-size: 32px;
+    text-align: center;
+}
+
+::ng-deep label{
+    color: #378722;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+::ng-deep input{
+    width: 100%;
+    height: 26px;
+    text-indent: 10px;
+    border: 1px solid #378722;
+}
+
+::ng-deep button{
+    font-weight: 500;
+    font-size: 22px;
+    width: 200px;
+    height: 64px;
+    color: #fff;
+    background-color: #378722;
+    vertical-align: middle;
+}
+
+::ng-deep #form{
+    width: 95%;
+}
+
+::ng-deep p{
+    color: #378722;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+@media (min-width: 750px){
+    ::ng-deep input{
+        height: 32px;
+    }  
+    ::ng-deep #form{
+        width: 500px;
+    }
+    ::ng-deep label{
+        font-size: 20px;
+    } 
+    ::ng-deep h1{
+        font-size: 48px;
+    }  
+    ::ng-deep button{
+        width: 340px;
+        height: 68px;
+        font-size: 28px;
+    }
+}

@@ -1,0 +1,14 @@
+#navbar{
+    max-width: 90%;
+    height: 50px;
+    background-color: #EAEAEA;
+    border: 1px solid #7F7F7F;
+    font-weight: 600;
+}
+
+#navbar img {
+    max-height: 70%;
+    max-width: 70%;
+    height: auto;
+    width: auto;
+}

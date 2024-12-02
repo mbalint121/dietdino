@@ -1,0 +1,23 @@
+#logo{
+    width: 90%;
+    height: 180px;
+}
+
+#logo img{
+    max-width: 70%;
+    max-height: 70%;
+    width: auto;
+    height: auto;
+}
+
+@media (min-width: 750px){
+    #logo{
+        height: 300px;
+    }
+    #logo img{
+        max-width: 80%;
+        max-height: 80%;
+        width: auto;
+        height: auto;
+    }
+}
