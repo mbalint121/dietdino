@@ -1,5 +1,5 @@
 <div class="mx-auto mt-2 rounded-xl text-center flex justify-between" id="navbar">
-    <a class="flex flex-1 justify-start" routerLink="/home">
+    <a class="flex flex-1 justify-start" routerLink="/">
         <img class="my-auto ms-6" src="../../assets/auth_navbar_logo.svg" alt="Dino Diet">
     </a>
     <div class="flex flex-1 justify-center">
@@ -18,6 +18,6 @@
     </div>
     <div class="flex flex-1 justify-end">
         <a class="my-auto"><img class="me-5" src="../../assets/profile_icon.svg" alt="Profile icon"></a>
-        <a class="my-auto" routerLink="/login"><img class="me-6" src="../../assets/exit_icon.svg" alt="Exit icon"></a>
+        <a class="my-auto" (click)="LogOut()" routerLink="/login"><img class="me-6" src="../../assets/exit_icon.svg" alt="Exit icon"></a>
     </div>
 </div>

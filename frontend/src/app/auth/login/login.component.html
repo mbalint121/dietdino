@@ -3,17 +3,20 @@
     <div class="mx-auto" id="form">
         <div>
             <p><label for="loginNameOrEmail">Felhasználónév vagy Email</label></p>
-            <p><input class="rounded-md" type="text" name="loginNameOrEmail"/></p>
+            <p><input class="rounded-md" type="text" name="loginNameOrEmail" [(ngModel)]="loginNameOrEmail"/></p>
         </div>
         <div class="mt-5">
             <p><label for="loginPassword">Jelszó</label></p>
-            <p><input class="rounded-md" type="password" name="loginPassword"/></p>
+            <p class="relative">
+                <input class="rounded-md" [type]="passwordInputType" name="loginPassword" [(ngModel)]="loginPassword" maxlength="75"/>
+                <img (click)="ChangePasswordVisibility()" src="../../../assets/${}" [src]="'../../../assets/' + imageName" alt="Password Visibility" class="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer" >
+            </p>
         </div>
         <div class="text-end mb-10">
             <p><a routerLink="/forgot-password">Elfelejtetted a jelszavad?</a></p>
         </div>
         <div class="text-center">
-            <button class="rounded-xl">Bejelentkezés</button>
+            <button class="rounded-xl" (click)="LogIn()">Bejelentkezés</button>
             <p><a routerLink="/registration">Nincs még fiókod? Regisztrálj!</a></p>
         </div>
     </div>

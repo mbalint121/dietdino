@@ -9,5 +9,5 @@ import { PageNavbarComponent } from "../page-navbar/page-navbar.component";
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-
+  
 }

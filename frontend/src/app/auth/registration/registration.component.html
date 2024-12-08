@@ -3,22 +3,22 @@
     <div class="mx-auto" id="form">
         <div>
             <p><label for="registrationName">Felhasználónév</label></p>
-            <p><input class="rounded-md" type="text" name="registrationName"/></p>
+            <p><input class="rounded-md" type="text" name="registrationName" [(ngModel)]="registrationName"/></p>
         </div>
         <div class="mt-5">
             <p><label for="registrationEmail">Email</label></p>
-            <p><input class="rounded-md" type="text" name="registrationEmail"/></p>
+            <p><input class="rounded-md" type="text" name="registrationEmail" [(ngModel)]="registrationEmail"/></p>
         </div>
         <div class="mt-5">
             <p><label for="registrationPassword">Jelszó</label></p>
-            <p><input class="rounded-md" type="text" name="registrationPassword"/></p>
+            <p><input class="rounded-md" type="text" name="registrationPassword" [(ngModel)]="registrationPassword"/></p>
         </div>
         <div class="mt-5 mb-10">
             <p><label for="registrationConfirmPassword">Jelszó megerősítése</label></p>
-            <p><input class="rounded-md" type="text" name="registrationConfirmPassword"/></p>
+            <p><input class="rounded-md" type="text" name="registrationConfirmPassword" [(ngModel)]="registrationConfirmPassword"/></p>
         </div>
         <div class="text-center">
-            <button class="rounded-xl">Regisztráció</button>
+            <button class="rounded-xl" (click)="Registration()">Regisztráció</button>
             <p><a routerLink="/login">Van már fiókod? Jelentkezz be!</a></p>
         </div>
     </div>
