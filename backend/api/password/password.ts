@@ -50,8 +50,6 @@ export async function SendResetPasswordEmail(req: Request, res: Response){
 }
 
 export async function ResetPassword(req: any, res: Response){
-    const token = req.decodedToken;
-
     const user: User = new User();
     user.ID = req.decodedToken.userID;
     user.password = req.body.password;
