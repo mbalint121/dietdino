@@ -27,6 +27,7 @@ export async function LogIn(req: Request, res: Response){
     
         const payload = {userID: resultUser.ID};
         const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
+        resultUser.ID = undefined;
         res.status(200).send({token: token, user: resultUser});
         return;
     })
