@@ -22,7 +22,7 @@ export class PasswordService{
             from: MAIL_USER,
             to: user.email,
             subject: "Diet Dino Jelszó Visszaállítás",
-            text: `Tisztelt Felhasználó!\n\nEzt emailt azért kapja, mert kérte jelszava visszaállítását.\nA jelsz visszaállításához látogasson el az alábbi linkre: http://localhost:4200/password/reset/${token}\n\nAmennyiben nem Ön kérte jelszava visszaállítását, hagyja figyelmen kívül ezt az emailt.\n\nÜdvölettel,\nA Diet Dino Csapata`
+            text: `Tisztelt Felhasználó!\n\nEzt emailt azért kapja, mert kérte jelszava visszaállítását.\nA jelszó visszaállításához látogasson el az alábbi linkre: http://localhost:4200/password/reset/${token}\n\nAmennyiben nem Ön kérte jelszava visszaállítását, hagyja figyelmen kívül ezt az emailt.\n\nÜdvölettel,\nA Diet Dino Csapata`
         };
 
         await transporter.sendMail(mailOptions);
