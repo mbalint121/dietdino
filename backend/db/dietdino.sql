@@ -98,14 +98,31 @@ BEGIN
     INSERT INTO users VALUES(null, username, email, password, roleID);
 END $$
 
-CREATE PROCEDURE RegisterUser(username VARCHAR(16), email VARCHAR(256), password VARCHAR(256))
+CREATE PROCEDURE RegisterUser(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256))
 BEGIN
     INSERT INTO users VALUES(null, username, email, password, 3);
+END$$
+
+CREATE PROCEDURE ResetPassword(IN userID INT, IN newPassword VARCHAR(256))
+BEGIN
+    UPDATE users SET password = SaltAndHashPassword(newPassword) WHERE users.ID = userID;
 END$$
 
 CREATE PROCEDURE GetUserByUsernameOrEmailAndPassword(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256))
 BEGIN
     SELECT users.ID AS ID, users.username AS username, users.email AS email FROM users WHERE users.username = username OR users.email = email AND users.password = SaltAndHashPassword(password);
+END$$
+
+CREATE FUNCTION UserExistsWithId(userID INT)
+RETURNS INT
+BEGIN
+    RETURN(SELECT COUNT(*) FROM users WHERE users.ID = userID);
+END$$
+
+CREATE FUNCTION GetUserIdByEmail(email VARCHAR(256))
+RETURNS INT
+BEGIN
+    RETURN(SELECT users.ID FROM users WHERE users.email = email);
 END$$
 
 CREATE FUNCTION SaltAndHashPassword(password VARCHAR(256))
