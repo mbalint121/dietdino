@@ -3,17 +3,16 @@ import { AuthSharedStyleComponent } from "../auth-shared-style/auth-shared-style
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { FormsModule } from '@angular/forms';
+import { PopupComponent } from "../../popups/popup/popup.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [AuthSharedStyleComponent, RouterLink, FormsModule],
+  imports: [AuthSharedStyleComponent, RouterLink, FormsModule, PopupComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  imageName : string = "password_icon_eye_closed.svg";
-  passwordInputType : string = "password";
   authService : AuthService = inject(AuthService);
   loginNameOrEmail! : string;
   loginPassword! : string;
@@ -28,17 +27,13 @@ export class LoginComponent {
   }
 
   ChangePasswordVisibility(){
-    if(this.imageName == "password_icon_eye_closed.svg"){
-      this.imageName = "password_icon_eye_opened.svg";
-      this.passwordInputType = "text";
-    } else {
-      this.imageName = "password_icon_eye_closed.svg";
-      this.passwordInputType = "password";
-    }
+    this.authService.ChangePasswordVisibility();
   }
 
   ngOnInit() {
-    alert("Ki vagy jelenetkezve!");
+    if(localStorage.getItem("token")){
+      this.authService.LogOut();
+    }
   }
 
 }

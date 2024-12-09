@@ -1,10 +1,15 @@
 import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
+import { PopupService } from "../popups/popup.service";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
   
+  popupService : PopupService = inject(PopupService);
   router : Router = inject(Router);
+
+  imageName : string = "password_icon_eye_opened.svg";
+  passwordInputType : string = "password";
 
   LogIn(userNameOrEmail: string, password: string) {
       let body: string;
@@ -19,6 +24,7 @@ export class AuthService {
           "password": password
         });
       }
+
       fetch("http://localhost:3000/api/login", {
         method: "POST",
         headers: {
@@ -26,23 +32,25 @@ export class AuthService {
         },
         body: body
       })
-      .then(result => {
-        if(result.status == 200){
-          this.router.navigate(["/"]);
-        }
-        return result.json();
-      })
+      .then(result => 
+        result.json()
+      )
       .then(data => {
-        localStorage.clear();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        const user = localStorage.getItem("user");
-        if (user) {
-          alert(`Sikeres bejelentkezés! Üdvözöllek az oldalon ${JSON.parse(user).username}!`);
+        if(data.error){
+          this.popupService.message = data.error;
+          this.popupService.type = "error";
+          this.popupService.isVisible = true;
         }
-        console.log(localStorage.getItem("token"));
-        console.log(localStorage.getItem("user"));
+        else{
+          this.router.navigate(["/"]);
+          localStorage.clear();
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+
+          this.popupService.message = `Sikeres bejelentkezés! Üdvözöllek az oldalon ${JSON.parse(localStorage.getItem("user") || '{}').username}!`;
+          this.popupService.type = "success";
+          this.popupService.isVisible = true;
+        }
       })
       .catch(error => console.error("Error:", error));
   }
@@ -59,21 +67,112 @@ export class AuthService {
           "password": password
       })
       })
-      .then(result => {
-        if(result.status == 201){
-          this.router.navigate(["/login"]);
-        }
-        return result.json();
-      })
+      .then(result =>
+        result.json()
+      )
       .then(data => {
-        alert("Sikeres regisztráció!");
-        console.log(data);
+        if(data.error){
+          this.popupService.message = data.error;
+          this.popupService.type = "error";
+          this.popupService.isVisible = true;
+        }
+        else{
+          this.router.navigate(["/login"]);
+          this.popupService.message = `Sikeres regisztráció, jelentkezz be!`;
+          this.popupService.type = "success";
+          this.popupService.isVisible = true;
+        }
       })
       .catch(error => console.error("Error:", error))
   }
 
+  SendResetPasswordEmail(email: string) {
+    fetch("http://localhost:3000/api/password/sendemail", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "email": email
+      })
+    })
+    .then(result =>
+      result.json()
+    )
+    .then(data => {
+      if(data.error){
+        this.popupService.message = data.error;
+        this.popupService.type = "error";
+        this.popupService.isVisible = true;
+      }
+      else{
+        this.router.navigate(["/login"]);
+        this.popupService.message = `Az email elküldve!`;
+        this.popupService.type = "success";
+        this.popupService.isVisible = true;
+      }
+    })
+    .catch(error => console.error("Error:", error))
+  }
+
   LogOut() {
+    this.popupService.isVisible = true;
+    this.popupService.message = "Ki lettél jelentkeztetve!";
+    this.popupService.type = "information";
     localStorage.clear();
+  }
+
+  ChangePasswordVisibility(){
+    if(this.imageName == "password_icon_eye_opened.svg"){
+      this.imageName = "password_icon_eye_closed.svg";
+      this.passwordInputType = "text";
+    } else {
+      this.imageName = "password_icon_eye_opened.svg";
+      this.passwordInputType = "password";
+    }
+  }
+
+  ResetPassword(password: string) {
+    fetch("http://localhost:3000/api/password/reset", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "token": localStorage.getItem("token") || ""
+      },
+      body: JSON.stringify({
+        "password": password
+      })
+    })
+    .then(result => result.json())
+    .then(data => {
+      if(data.error){
+        this.popupService.message = data.error;
+        this.popupService.type = "error";
+        this.popupService.isVisible = true;
+      }
+      else{
+        this.router.navigate(["/login"]);
+        this.popupService.message = `Sikeres jelszóváltoztatás!`;
+        this.popupService.type = "success";
+        this.popupService.isVisible = true;
+      }
+    })
+    .catch(error => console.error("Error:", error))
+  }
+
+  isValidEmail(email: string) : boolean{
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailRegex.test(email);
+  }
+
+  isValidName(name: string) : boolean{
+    const nameRegex = /^[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ]+$/;
+    return nameRegex.test(name);
+  }
+
+  isValidPassword(password: string) : boolean{
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
   }
 
 }

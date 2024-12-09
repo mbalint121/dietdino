@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { NavigationStart, Router, RouterOutlet } from '@angular/router';
+import { PopupService } from './popups/popup.service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,14 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'Diet Dino';
+  popupService : PopupService = inject(PopupService);
+  router : Router = inject(Router);
+
+  ngOnInit(){
+    this.router.events.subscribe(event => {
+      if(event instanceof NavigationStart){
+        this.popupService.isVisible = false;
+      }
+    });
+  }
 }

@@ -8,12 +8,12 @@
         <div class="mt-5">
             <p><label for="loginPassword">Jelszó</label></p>
             <p class="relative">
-                <input class="rounded-md" [type]="passwordInputType" name="loginPassword" [(ngModel)]="loginPassword" maxlength="75"/>
-                <img (click)="ChangePasswordVisibility()" src="../../../assets/${}" [src]="'../../../assets/' + imageName" alt="Password Visibility" class="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer" >
+                <input class="rounded-md" [type]="this.authService.passwordInputType" name="loginPassword" [(ngModel)]="loginPassword"/>
+                <img (click)="ChangePasswordVisibility()" src="../../../assets/${}" [src]="'../../../assets/' + this.authService.imageName" alt="Password Visibility" class="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer" >
             </p>
         </div>
         <div class="text-end mb-10">
-            <p><a routerLink="/forgot-password">Elfelejtetted a jelszavad?</a></p>
+            <p><a routerLink="/password/send-email">Elfelejtetted a jelszavad?</a></p>
         </div>
         <div class="text-center">
             <button class="rounded-xl" (click)="LogIn()">Bejelentkezés</button>
@@ -21,3 +21,5 @@
         </div>
     </div>
 </app-auth-shared-style>
+
+<app-popup></app-popup>
