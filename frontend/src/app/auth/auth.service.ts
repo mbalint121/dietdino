@@ -4,7 +4,6 @@ import { PopupService } from "../popups/popup.service";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  
   popupService : PopupService = inject(PopupService);
   router : Router = inject(Router);
 
@@ -116,9 +115,11 @@ export class AuthService {
   }
 
   LogOut() {
-    this.popupService.isVisible = true;
-    this.popupService.message = "Ki lettél jelentkeztetve!";
-    this.popupService.type = "information";
+    if(localStorage.getItem("token")){
+      this.popupService.isVisible = true;
+      this.popupService.message = "Ki lettél jelentkeztetve!";
+      this.popupService.type = "information";
+    }
     localStorage.clear();
   }
 
@@ -145,6 +146,7 @@ export class AuthService {
     })
     .then(result => result.json())
     .then(data => {
+      localStorage.clear();
       if(data.error){
         this.popupService.message = data.error;
         this.popupService.type = "error";
@@ -160,19 +162,28 @@ export class AuthService {
     .catch(error => console.error("Error:", error))
   }
 
-  isValidEmail(email: string) : boolean{
+  IsValidEmail(email: string) : boolean{
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailRegex.test(email);
   }
 
-  isValidName(name: string) : boolean{
+  IsValidName(name: string) : boolean{
     const nameRegex = /^[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ]+$/;
     return nameRegex.test(name);
   }
 
-  isValidPassword(password: string) : boolean{
+  IsValidPassword(password: string) : boolean{
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
+  }
+
+  AlreadyLoggedIn(){
+    if(localStorage.getItem("token")){
+      this.router.navigate(["/"]);
+      this.popupService.isVisible = true;
+      this.popupService.message = "Már be vagy jelentkezve!";
+      this.popupService.type = "information";
+    }
   }
 
 }

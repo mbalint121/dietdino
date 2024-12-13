@@ -1,8 +1,10 @@
-<div *ngIf="this.popupService.isVisible" class="border-solid border-2 rounded-lg p-3 inline-flex bottom-5 right-5 fixed z-50" 
-    [ngClass]="{
-    'border-green-600 bg-green-100 text-green-600': this.popupService.type === 'success',
-    'border-red-600 bg-red-100 text-red-600': this.popupService.type === 'error',
-    'border-blue-600 bg-blue-100 text-blue-600': this.popupService.type === 'information'}">
-    <p class="me-6">{{ this.popupService.message }}</p>
-    <img (click)="ClosePopup()" class="cursor-pointer" src="../../../assets/popup_close_icon.svg" alt="Close popup">
-  </div>
+@if(this.popupService.isVisible){
+  <div class="border-solid border-2 rounded-lg p-3 inline-flex bottom-5 right-5 fixed z-50" 
+  [ngClass]="{
+  'border-green-600 bg-green-100 text-green-600': this.popupService.type === 'success',
+  'border-red-600 bg-red-100 text-red-600': this.popupService.type === 'error',
+  'border-blue-600 bg-blue-100 text-blue-600': this.popupService.type === 'information'}">
+  <p class="me-6">{{ this.popupService.message }}</p>
+  <img (click)="ClosePopup()" class="cursor-pointer" src="../../../assets/popup_close_icon.svg" alt="Close popup">
+</div>
+}

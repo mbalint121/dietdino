@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { AuthSharedStyleComponent } from "../auth-shared-style.component";
-import { AuthService } from '../../auth.service';
+import { AuthSharedStyleComponent } from "../auth-shared-style/auth-shared-style.component";
+import { AuthService } from '../auth.service';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { PopupService } from '../../../popups/popup.service';
-import { PopupComponent } from '../../../popups/popup/popup.component';
+import { PopupService } from '../../popups/popup.service';
+import { PopupComponent } from '../../popups/popup/popup.component';
 
 @Component({
   selector: 'app-reset-password',
@@ -28,6 +28,7 @@ export class ResetPasswordComponent {
   }
 
   ngOnInit(){
+    this.authService.AlreadyLoggedIn();
     localStorage.clear();
     const token = this.router.snapshot.paramMap.get('token') || '';
     localStorage.setItem("token", token);
@@ -45,13 +46,11 @@ export class ResetPasswordComponent {
       this.popupService.isVisible = true;
       return;
     }
-    else if(!this.authService.isValidPassword(this.newPassword)){
+    else if(!this.authService.IsValidPassword(this.newPassword)){
       this.popupService.message = "A jelszónak legalább 8 karakter hosszúnak kell lennie, legalább egy kisbetűt, nagybetűt, számot és speciális karaktert tartalmaznia kell";
       this.popupService.isVisible = true;
       return;
     }
-    console.log(this.newPassword);
-    console.log(localStorage.getItem("token"));
     this.authService.ResetPassword(this.newPassword);
   }
 

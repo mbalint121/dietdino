@@ -29,17 +29,17 @@ export class RegistrationComponent {
       this.popupService.isVisible = true;
       return;
     }
-    else if(!this.authService.isValidName(this.registrationName)){
+    else if(!this.authService.IsValidName(this.registrationName)){
       this.popupService.message = "A felhasználónévnek 4 és 16 karakter között kell lennie";
       this.popupService.isVisible = true;
       return;
     }
-    else if(!this.authService.isValidEmail(this.registrationEmail)){
+    else if(!this.authService.IsValidEmail(this.registrationEmail)){
       this.popupService.message = "Hibás email cím";
       this.popupService.isVisible = true;
       return;
     }
-    else if(!this.authService.isValidPassword(this.registrationPassword)){
+    else if(!this.authService.IsValidPassword(this.registrationPassword)){
       this.popupService.message = "A jelszónak legalább 8 karakter hosszúnak kell lennie, legalább egy kisbetűt, nagybetűt, számot és speciális karaktert tartalmaznia kell";
       this.popupService.isVisible = true;
       return;
@@ -50,6 +50,10 @@ export class RegistrationComponent {
       return;
     }
     this.authService.SignUp(this.registrationName, this.registrationEmail, this.registrationPassword);
-
   }
+
+  ngOnInit(){
+    this.authService.AlreadyLoggedIn();
+  }
+
 }
