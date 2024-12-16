@@ -6,8 +6,8 @@ import nodemailer from "nodemailer";
 
 dotenv.config();
 
-export class PasswordService{
-    static async SendResetPasswordEmail(user: User, token: string){
+export default class PasswordService{
+    static async SendPasswordResetEmail(user: User, token: string){
         const { MAIL_HOST, MAIL_USER, MAIL_PASS } = process.env;
 
         const transporter = nodemailer.createTransport({

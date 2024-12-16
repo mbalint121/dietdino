@@ -119,6 +119,12 @@ BEGIN
     RETURN(SELECT COUNT(*) FROM users WHERE users.ID = userID);
 END$$
 
+CREATE FUNCTION UserExistsWithUsernameOrEmail(username VARCHAR(16), email VARCHAR(256))
+RETURNS INT
+BEGIN
+    RETURN(SELECT COUNT(*) FROM users WHERE users.username = username OR users.email = email);
+END$$
+
 CREATE FUNCTION GetUserIdByEmail(email VARCHAR(256))
 RETURNS INT
 BEGIN

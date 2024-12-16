@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { SendResetPasswordEmail, ResetPassword } from "./password";
-import { Auth } from "../auth/auth";
+import { SendPasswordResetEmail, ResetPassword } from "./password";
+import AuthService from "../services/auth";
 
 const router: Router = Router();
 
-router.post("/sendemail", SendResetPasswordEmail);
-router.post("/reset", Auth, ResetPassword);
+router.post("/sendemail", SendPasswordResetEmail);
+router.post("/reset", AuthService.DecodeToken, AuthService.Auth, ResetPassword);
 
 export default router;

@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export class UserService{
+export default class UserService{
     static async GetUserByUsernameOrEmailAndPassword(user: User){
         const conn = await mysql.createConnection(dbConfig);
         
@@ -51,6 +51,18 @@ export class UserService{
 
         try{
             const [rows]: any = await conn.query("SELECT GetUserIdByEmail(?) as userID", [user.email]);
+            return rows[0].userID;
+        }
+        catch(error){
+            throw error;
+        }
+    }
+
+    static async UserExistsWithUsernameOrEmail(user: User){
+        const conn = await mysql.createConnection(dbConfig);
+
+        try{
+            const [rows]: any = await conn.query("SELECT UserExistsWithUsernameOrEmail(?, ?) as userID", [user.username, user.email]);
             return rows[0].userID;
         }
         catch(error){

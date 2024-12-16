@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { User } from "../models/user";
-import { UserService } from "../services/user";
-import { PasswordService } from "../services/password";
+import UserService from "../services/user";
+import PasswordService from "../services/password";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-export async function SendResetPasswordEmail(req: Request, res: Response){
+export async function SendPasswordResetEmail(req: Request, res: Response){
     const user: User = new User();
     Object.assign(user, req.body);
 
@@ -32,7 +32,7 @@ export async function SendResetPasswordEmail(req: Request, res: Response){
         const payload = {userID: user.ID};
         const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "15m"});
         try{
-            await PasswordService.SendResetPasswordEmail(user, token);
+            await PasswordService.SendPasswordResetEmail(user, token);
             res.status(200).send({message: "Az email elküldve"});
             return;
         }

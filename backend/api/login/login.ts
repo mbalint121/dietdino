@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../models/user";
-import { UserService } from "../services/user";
+import UserService from "../services/user";
 import jwt from "jsonwebtoken";
 
 export async function LogIn(req: Request, res: Response){
