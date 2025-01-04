@@ -4,7 +4,7 @@ USE dietdino;
 
 CREATE TABLE roles(
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    roleName VARCHAR(16) NOT NULL
+    roleName VARCHAR(16) NOT NULL UNIQUE
 );
 
 CREATE TABLE users(
@@ -12,7 +12,7 @@ CREATE TABLE users(
     username VARCHAR(16) NOT NULL UNIQUE,
     email VARCHAR(256) NOT NULL UNIQUE,
     password BLOB NOT NULL,
-    roleID INT,
+    roleID INT NOT NULL,
     FOREIGN KEY(roleID) REFERENCES roles(ID)
 );
 
@@ -110,7 +110,32 @@ END$$
 
 CREATE PROCEDURE GetUserByUsernameOrEmailAndPassword(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256))
 BEGIN
-    SELECT users.ID AS ID, users.username AS username, users.email AS email FROM users WHERE users.username = username AND users.password = SaltAndHashPassword(password) OR users.email = email AND users.password = SaltAndHashPassword(password);
+    SELECT users.ID AS ID, users.username AS username, users.email AS email, roles.roleName AS role FROM users JOIN roles ON users.roleID = roles.ID AND users.username = username AND users.password = SaltAndHashPassword(password) OR users.email = email AND users.password = SaltAndHashPassword(password);
+END$$
+
+CREATE PROCEDURE GetUsers()
+BEGIN
+    SELECT users.username AS username, users.email AS email, roles.roleName AS role FROM users, roles WHERE users.roleID = roles.ID;
+END$$
+
+CREATE PROCEDURE GetUserByID(IN userID INT)
+BEGIN
+    SELECT users.ID AS ID, users.username AS username, users.email AS email, roles.roleName AS role FROM users JOIN roles ON users.roleID = roles.ID AND users.ID = userID;
+END$$
+
+CREATE PROCEDURE UpdateUser(IN userID INT, IN username VARCHAR(16))
+BEGIN
+    UPDATE users SET users.username = username WHERE users.ID = userID;
+END$$
+
+CREATE PROCEDURE UpdateUserRole(IN userID INT, IN roleName VARCHAR(16))
+BEGIN
+    UPDATE users SET users.roleID = (SELECT roles.ID FROM roles WHERE roles.roleName = roleName) WHERE users.ID = userID;
+END$$
+
+CREATE PROCEDURE DeleteUser(IN userID INT)
+BEGIN
+    DELETE FROM users WHERE users.ID = userID;
 END$$
 
 CREATE FUNCTION UserExistsWithId(userID INT)
@@ -129,6 +154,12 @@ CREATE FUNCTION GetUserIdByEmail(email VARCHAR(256))
 RETURNS INT
 BEGIN
     RETURN(SELECT users.ID FROM users WHERE users.email = email);
+END$$
+
+CREATE FUNCTION GetUserRoleById(userID INT)
+RETURNS VARCHAR(16)
+BEGIN
+    RETURN(SELECT roles.roleName FROM users, roles WHERE users.ID = userID AND users.roleID = roles.ID);
 END$$
 
 CREATE FUNCTION SaltAndHashPassword(password VARCHAR(256))
