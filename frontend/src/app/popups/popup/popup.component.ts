@@ -13,8 +13,8 @@ export class PopupComponent {
 
   popupService : PopupService = inject(PopupService);
 
-  ClosePopup(){
-    this.popupService.isVisible = false;
+  HidePopup(){
+    this.popupService.HidePopup();
   }
 
 }

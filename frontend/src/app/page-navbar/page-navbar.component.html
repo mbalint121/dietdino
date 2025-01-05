@@ -1,23 +1,103 @@
-<div class="mx-auto mt-2 rounded-xl text-center flex justify-between" id="navbar">
-    <a class="flex flex-1 justify-start" routerLink="/">
-        <img class="my-auto ms-6" src="../../assets/auth_navbar_logo.svg" alt="Dino Diet">
+<div class="fixed left-1/2 top-2 -translate-x-1/2 rounded-xl flex w-[90%] h-12 bg-[#EAEAEA] border border-[#7F7F7F] font-semibold text-sm xs:text-base items-center justify-between" id="navbar">
+    <button class="space-y-1 group xl:hidden ms-3" (click)="toggleMenu()">
+        <div [ngClass]="{
+            'w-6 h-1 bg-black rounded-md duration-300': true,
+            'rotate-45 translate-y-2': menuOpen,
+            '': !menuOpen
+        }"></div>
+        <div [ngClass]="{
+            'w-6 h-1 bg-black rounded-md duration-300': true,
+            'opacity-0': menuOpen,
+            'opacity-100': !menuOpen
+        }"></div>
+        <div [ngClass]="{
+            'w-6 h-1 bg-black rounded-md duration-300': true,
+            '-rotate-45 -translate-y-2': menuOpen,
+            '': !menuOpen
+        }"></div>
+
+        @if(menuOpen){
+            <ul class="bg-[#EAEAEA] border border-[#7F7F7F] w-full absolute left-0 top-full flex flex-col rounded-xl">
+                
+                <li class="hover:bg-gray-100 rounded-t-xl">
+                    <a class="flex w-full justify-center h-14 items-center" routerLink="">
+                        <img class="my-auto" src="../../assets/recipes_icon.svg" alt="Recipes icon">
+                        <p class="ms-1.5">Receptek</p>
+                    </a>
+                </li>
+                <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
+                <li class="hover:bg-gray-100">
+                    <a class="flex w-full justify-center h-14 items-center" routerLink="">
+                        <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
+                        <p class="ms-1.5">Receptjeim</p>
+                    </a>
+                </li>
+                <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
+                <li [ngClass]="{'hover:bg-gray-100': true, 'rounded-b-xl': !this.adminService.UserIsAdminOrModerator()}">
+                    <a class="flex w-full justify-center h-14 items-center" routerLink="">
+                        <img src="../../assets/star_icon.svg" alt="Favorites icon">
+                        <p class="ms-1.5">Kedvenceim</p>
+                    </a>
+                </li>
+                @if(this.adminService.UserIsAdminOrModerator()){
+                    <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
+                    <li class="hover:bg-gray-100 rounded-b-xl">
+                        <a class="flex w-full justify-center h-14 items-center" routerLink="/admin">
+                            <img src="../../assets/admin-icon.svg" alt="Admin icon">
+                            <p class="ms-1.5">Kezelőpult</p>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </button>
+
+    <a class="xl:ms-6" routerLink="/">
+        <img class="mx-auto w-[80%] xl:m-0" src="../../assets/auth_navbar_logo.svg" alt="Dino Diet">
     </a>
-    <div class="flex flex-1 justify-center">
-        <a class="my-auto flex me-6" routerLink="">
-            <img src="../../assets/recipes_icon.svg" alt="Recipes icon">
-            <p class="my-auto ms-1.5">Receptek</p>
-        </a>
-        <a class="my-auto flex me-6" routerLink="">
-            <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
-            <p class="my-auto ms-1.5">Receptjeim</p>
-        </a>
-        <a class="my-auto flex me-6" routerLink="">
-            <img src="../../assets/star_icon.svg" alt="Favorites icon">
-            <p class="my-auto ms-1.5">Kedvenceim</p>
-        </a>
-    </div>
-    <div class="flex flex-1 justify-end">
-        <a class="my-auto"><img class="me-5" src="../../assets/profile_icon.svg" alt="Profile icon"></a>
-        <a class="my-auto" (click)="LogOut()" routerLink="/login"><img class="me-6" src="../../assets/exit_icon.svg" alt="Exit icon"></a>
-    </div>
+
+
+    <ul class="hidden xl:flex xl:space-x-4">
+        <li>
+            <a class="flex items-center" routerLink="">
+                <img src="../../assets/recipes_icon.svg" alt="Recipes icon">
+                <p class="ms-1.5">Receptek</p>
+            </a>
+        </li>
+        <li>
+            <a class="flex items-center" routerLink="">
+                <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
+                <p class="ms-1.5">Receptjeim</p>
+            </a>
+        </li>
+        <li>
+            <a class="flex items-center" routerLink="">
+                <img src="../../assets/star_icon.svg" alt="Favorites icon">
+                <p class="ms-1.5">Kedvenceim</p>
+            </a>
+        </li>
+        @if(this.adminService.UserIsAdminOrModerator()){
+            <li>
+                <a class="flex items-center" routerLink="/admin">
+                    <img src="../../assets/admin-icon.svg" alt="Admin icon">
+                    <p class="ms-1.5">Kezelőpult</p>
+                </a>
+            </li>
+        }
+    </ul>
+
+    <ul class="flex space-x-3 me-3 xl:space-x-4 xl:me-6">
+        <li>
+            <a class="flex items-center" routerLink="/profile">
+                <img src="../../assets/profile_icon.svg" alt="Profile icon">
+                <p class="ms-1.5 hidden xl:block">Profil</p>
+            </a>
+        </li>
+        <li>
+            <a class="flex items-center" (click)="LogOut()" routerLink="/login">
+                <img src="../../assets/exit_icon.svg" alt="Exit icon">
+                <p class="ms-1.5 hidden xl:block">Kijelentkezés</p>
+            </a>
+        </li>
+    </ul>
 </div>

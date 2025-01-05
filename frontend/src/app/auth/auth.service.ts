@@ -31,14 +31,10 @@ export class AuthService {
         },
         body: body
       })
-      .then(result => 
-        result.json()
-      )
+      .then(result => result.json())
       .then(data => {
         if(data.error){
-          this.popupService.message = data.error;
-          this.popupService.type = "error";
-          this.popupService.isVisible = true;
+          this.popupService.ShowPopup(data.error, "error");
         }
         else{
           this.router.navigate(["/"]);
@@ -46,9 +42,7 @@ export class AuthService {
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
 
-          this.popupService.message = `Sikeres bejelentkezés! Üdvözöllek az oldalon ${JSON.parse(localStorage.getItem("user") || '{}').username}!`;
-          this.popupService.type = "success";
-          this.popupService.isVisible = true;
+          this.popupService.ShowPopup(`Sikeres bejelentkezés! Üdvözöllek az oldalon ${JSON.parse(localStorage.getItem("user") || '{}').username}!`, "success");
         }
       })
       .catch(error => console.error("Error:", error));
@@ -71,15 +65,11 @@ export class AuthService {
       )
       .then(data => {
         if(data.error){
-          this.popupService.message = data.error;
-          this.popupService.type = "error";
-          this.popupService.isVisible = true;
+          this.popupService.ShowPopup(data.error, "error");
         }
         else{
           this.router.navigate(["/login"]);
-          this.popupService.message = `Sikeres regisztráció, jelentkezz be!`;
-          this.popupService.type = "success";
-          this.popupService.isVisible = true;
+          this.popupService.ShowPopup(`Sikeres regisztráció, jelentkezz be!`, "success");
         }
       })
       .catch(error => console.error("Error:", error))
@@ -100,15 +90,11 @@ export class AuthService {
     )
     .then(data => {
       if(data.error){
-        this.popupService.message = data.error;
-        this.popupService.type = "error";
-        this.popupService.isVisible = true;
+        this.popupService.ShowPopup(data.error, "error");
       }
       else{
         this.router.navigate(["/login"]);
-        this.popupService.message = `Az email elküldve!`;
-        this.popupService.type = "success";
-        this.popupService.isVisible = true;
+        this.popupService.ShowPopup(`Az email elküldve!`, "success");
       }
     })
     .catch(error => console.error("Error:", error))
@@ -116,21 +102,9 @@ export class AuthService {
 
   LogOut() {
     if(localStorage.getItem("token")){
-      this.popupService.isVisible = true;
-      this.popupService.message = "Ki lettél jelentkeztetve!";
-      this.popupService.type = "information";
+      this.popupService.ShowPopup("Sikeres kijelentkezés!", "success");
     }
     localStorage.clear();
-  }
-
-  ChangePasswordVisibility(){
-    if(this.imageName == "password_icon_eye_opened.svg"){
-      this.imageName = "password_icon_eye_closed.svg";
-      this.passwordInputType = "text";
-    } else {
-      this.imageName = "password_icon_eye_opened.svg";
-      this.passwordInputType = "password";
-    }
   }
 
   ResetPassword(password: string) {
@@ -148,18 +122,24 @@ export class AuthService {
     .then(data => {
       localStorage.clear();
       if(data.error){
-        this.popupService.message = data.error;
-        this.popupService.type = "error";
-        this.popupService.isVisible = true;
+        this.popupService.ShowPopup(data.error, "error");
       }
       else{
         this.router.navigate(["/login"]);
-        this.popupService.message = `Sikeres jelszóváltoztatás!`;
-        this.popupService.type = "success";
-        this.popupService.isVisible = true;
+        this.popupService.ShowPopup(`Sikeres jelszóváltoztatás!`, "success");
       }
     })
     .catch(error => console.error("Error:", error))
+  }
+
+  ChangePasswordVisibility(){
+    if(this.imageName == "password_icon_eye_opened.svg"){
+      this.imageName = "password_icon_eye_closed.svg";
+      this.passwordInputType = "text";
+    } else {
+      this.imageName = "password_icon_eye_opened.svg";
+      this.passwordInputType = "password";
+    }
   }
 
   IsValidEmail(email: string) : boolean{
@@ -180,9 +160,7 @@ export class AuthService {
   AlreadyLoggedIn(){
     if(localStorage.getItem("token")){
       this.router.navigate(["/"]);
-      this.popupService.isVisible = true;
-      this.popupService.message = "Már be vagy jelentkezve!";
-      this.popupService.type = "information";
+      this.popupService.ShowPopup("Már be vagy jelentkezve!", "information");
     }
   }
 

@@ -3,13 +3,12 @@ import { AuthSharedStyleComponent } from "../auth-shared-style/auth-shared-style
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { FormsModule } from '@angular/forms';
-import { PopupComponent } from "../../popups/popup/popup.component";
 import { PopupService } from '../../popups/popup.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [AuthSharedStyleComponent, RouterLink, FormsModule, PopupComponent],
+  imports: [AuthSharedStyleComponent, RouterLink, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -22,9 +21,7 @@ export class LoginComponent {
 
   LogIn(){
     if(!this.loginNameOrEmail || !this.loginPassword){
-      this.popupService.message = "Kérlek minden adatot adj meg";
-      this.popupService.type = "error";
-      this.popupService.isVisible = true;
+      this.popupService.ShowPopup("Kérlek minden adatot adj meg", "error");
       return;
     }
     this.authService.LogIn(this.loginNameOrEmail, this.loginPassword);

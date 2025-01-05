@@ -1,20 +1,20 @@
-import { Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
-import { AdminService } from '../admin-page/admin.service';
+import { AdminService } from '../admin.service';
 
 @Component({
-  selector: 'app-page-navbar',
+  selector: 'app-admin-navbar',
   standalone: true,
   imports: [RouterLink, CommonModule],
-  templateUrl: './page-navbar.component.html',
-  styleUrl: './page-navbar.component.css'
+  templateUrl: './admin-navbar.component.html',
+  styleUrl: './admin-navbar.component.css'
 })
-export class PageNavbarComponent {
+export class AdminNavbarComponent {
   authService : AuthService = inject(AuthService);
   adminService : AdminService = inject(AdminService);
-
+  
   menuOpen = false;
 
   toggleMenu() {

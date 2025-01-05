@@ -1,0 +1,35 @@
+<app-page-navbar></app-page-navbar>
+<div class="w-[90%] mx-auto h-4">
+    <div class="hidden xl:fixed xl:block w-[20%] float-start bg-[#EAEAEA] rounded-xl border-[#7F7F7F] border p-6 space-y-4 mt-20">
+        <a class="flex items-center" href="/profile#user-profile">
+            <img src="../../assets/profile_icon.svg" alt="">
+            <p class="ms-2 font-semibold">Felhasználói Profil</p>
+        </a>
+        <a class="flex items-center" href="/profile#settings">
+            <img src="../../assets/settings-icon.svg" alt="">
+            <p class="ms-2 font-semibold">Beállítások</p>
+        </a>
+        <a class="flex items-center" href="/profile#statistics">
+            <img src="../../assets/statistics-icon.svg" alt="">
+            <p class="ms-2 font-semibold">Statisztika</p>
+        </a>
+    </div>
+    <div class="xl:w-[75%] mx-auto xl:float-end">
+        <p class="text-3xl font-semibold text-[#378722] pt-20" id="user-profile">Felhasználói Profil</p>
+        <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border">
+            <div class="flex w-[30%]">
+                <img class="w-[300px] bg-[#EAEAEA] rounded-full ms-3" src="../../assets/profile_icon.svg" alt="">
+                <div class="bg-[#378722] w-[1px] ms-8"></div>
+            </div>
+            <div class="w-[70%] text-center">
+                <p class="font-medium text-3xl text-[#378722]">{{username}}</p>
+            </div>
+        </div>
+
+        <p class="text-3xl font-semibold text-[#378722] mt-10" id="settings">Beállítások</p>
+        <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border h-96"></div>
+        
+        <p class="text-3xl font-semibold text-[#378722] mt-10" id="statistics">Statisztika</p>
+        <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border h-96"></div>
+    </div>
+</div>

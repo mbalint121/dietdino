@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { PopupService } from './popups/popup.service';
+import { PopupComponent } from './popups/popup/popup.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, PopupComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

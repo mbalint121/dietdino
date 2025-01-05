@@ -3,19 +3,19 @@
     <div class="mx-auto" id="form">
         <div>
             <p><label for="registrationName">Felhasználónév</label></p>
-            <p><input class="rounded-md" type="text" name="registrationName" [(ngModel)]="registrationName"/></p>
+            <p><input class="rounded-md" type="text" name="registrationName" [(ngModel)]="registrationName" required/></p>
         </div>
         <div class="mt-5">
             <p><label for="registrationEmail">Email</label></p>
-            <p><input class="rounded-md" type="text" name="registrationEmail" [(ngModel)]="registrationEmail"/></p>
+            <p><input class="rounded-md" type="text" name="registrationEmail" [(ngModel)]="registrationEmail" required/></p>
         </div>
         <div class="mt-5">
             <p><label for="registrationPassword">Jelszó</label></p>
-            <p><input class="rounded-md" type="text" name="registrationPassword" [(ngModel)]="registrationPassword"/></p>
+            <p><input class="rounded-md" type="text" name="registrationPassword" [(ngModel)]="registrationPassword" required/></p>
         </div>
         <div class="mt-5 mb-10">
             <p><label for="registrationConfirmPassword">Jelszó megerősítése</label></p>
-            <p><input class="rounded-md" type="text" name="registrationConfirmPassword" [(ngModel)]="registrationConfirmPassword"/></p>
+            <p><input class="rounded-md" type="text" name="registrationConfirmPassword" [(ngModel)]="registrationConfirmPassword" required/></p>
         </div>
         <div class="text-center">
             <button class="rounded-xl" (click)="Registration()">Regisztráció</button>
@@ -23,4 +23,3 @@
         </div>
     </div>
 </app-auth-shared-style>
-<app-popup></app-popup>
