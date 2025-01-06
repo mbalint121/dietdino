@@ -41,7 +41,7 @@ export default class AuthService{
             res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
             return;
         });
-        if(userExists.length == 0){
+        if(!userExists){
             res.status(401).send({error: "Nem létezik felhasználó ezzel az azonosítóval"});
             return;
         }
