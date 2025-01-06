@@ -20,6 +20,9 @@ export default class UserService{
         catch(error){
             throw error;
         }
+        finally{
+            conn.end();
+        }
     }
 
     static async GetUserIdByEmail(user: User){
@@ -31,6 +34,9 @@ export default class UserService{
         }
         catch(error){
             throw error;
+        }
+        finally{
+            conn.end();
         }
     }
     
@@ -44,6 +50,9 @@ export default class UserService{
         catch(error){
             throw error;
         }
+        finally{
+            conn.end();
+        }
     }
 
     static async GetUserRole(user: User){
@@ -55,6 +64,9 @@ export default class UserService{
         }
         catch(error){
             throw error;
+        }
+        finally{
+            conn.end();
         }
     }
 
@@ -68,6 +80,9 @@ export default class UserService{
         catch(error){
             throw error;
         }
+        finally{
+            conn.end();
+        }
     }
 
     static async GetUserById(user: User){
@@ -79,6 +94,9 @@ export default class UserService{
         }
         catch(error){
             throw error;
+        }
+        finally{
+            conn.end();
         }
     }
 
@@ -92,6 +110,9 @@ export default class UserService{
         catch(error){
             throw error;
         }
+        finally{
+            conn.end();
+        }
     }
 
     static async UpdateUser(user: User){
@@ -103,6 +124,9 @@ export default class UserService{
         }
         catch(error){
             throw error;
+        }
+        finally{
+            conn.end();
         }
     }
 
@@ -116,6 +140,9 @@ export default class UserService{
         catch(error){
             throw error;
         }
+        finally{
+            conn.end();
+        }
     }
 
     static async DeleteUser(user: User){
@@ -127,6 +154,9 @@ export default class UserService{
         }
         catch(error){
             throw error;
+        }
+        finally{
+            conn.end();
         }
     }
 }

@@ -5,7 +5,7 @@ import UserService from "../services/user";
 export async function GetUsers(req: Request, res: Response){
     await UserService.GetUsers()
     .then(async (result) => {
-        res.status(200).send({data: result});
+        res.status(200).send({users: result});
         return;
     })
     .catch((err) => {
@@ -21,7 +21,7 @@ export async function GetUserById(req: any, res: Response){
 
     await UserService.GetUserById(user)
     .then(async (result) => {
-        res.status(200).send({data: result});
+        res.status(200).send({user: result});
         return;
     })
     .catch((err) => {

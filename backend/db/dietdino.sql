@@ -115,7 +115,7 @@ END$$
 
 CREATE PROCEDURE GetUsers()
 BEGIN
-    SELECT users.username AS username, users.email AS email, roles.roleName AS role FROM users, roles WHERE users.roleID = roles.ID;
+    SELECT users.ID AS ID, users.username AS username, users.email AS email, roles.roleName AS role FROM users, roles WHERE users.roleID = roles.ID;
 END$$
 
 CREATE PROCEDURE GetUserByID(IN userID INT)

@@ -38,5 +38,8 @@ export default class PasswordService{
         catch(error){
             throw error;
         }
+        finally{
+            conn.end();
+        }
     }
 }
