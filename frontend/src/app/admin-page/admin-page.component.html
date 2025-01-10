@@ -14,7 +14,7 @@
     </div>
     <div class="w-[90%] mx-auto" id="recipes">
         @for (item of users; track item) {
-            <app-admin-data-row-style numberOfCols="4">
+            <app-admin-data-row-style numberOfCols="4" type="user" [user]="item">
                 <p class="text-start">{{item.username}}</p>
                 <p class="text-start xs:text-center truncate">{{item.email}}</p>
                 <p class="text-center">{{item.role}}</p>
@@ -38,4 +38,5 @@
         <p class="text-center">TestAdmin</p>
     </app-admin-data-row-style>
 </div>
+<app-edit-user></app-edit-user>
 <app-popup></app-popup>

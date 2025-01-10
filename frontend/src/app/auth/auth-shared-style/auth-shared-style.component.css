@@ -7,11 +7,11 @@
 }
 
 ::ng-deep input{
-    @apply w-full h-6 text-black border border-[#378722] px-2.5 md:h-8;
+    @apply w-full h-6 text-sm text-black border border-[#378722] px-2.5 md:h-8 md:text-base;
 }
 
 ::ng-deep button{
-    @apply font-medium text-xl w-1/2 h-16 text-white bg-[#378722] align-middle md:w-[340px] md:h-[68px] md:text-[28px];
+    @apply font-medium text-xl h-16 text-white bg-[#378722] align-middle py-2 px-8 md:text-[28px] mb-1;
 }
 
 ::ng-deep #form{

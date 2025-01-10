@@ -50,4 +50,8 @@ export class RegistrationComponent {
     this.authService.AlreadyLoggedIn();
   }
 
+  ChangePasswordVisibility(){
+    this.authService.ChangePasswordVisibility();
+  }
+
 }

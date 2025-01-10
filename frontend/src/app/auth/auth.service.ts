@@ -1,10 +1,12 @@
 import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { PopupService } from "../popups/popup.service";
+import { UserService } from "../common-service/user.service";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
   popupService : PopupService = inject(PopupService);
+  userService : UserService = inject(UserService);
   router : Router = inject(Router);
 
   imageName : string = "password_icon_eye_opened.svg";
@@ -39,8 +41,8 @@ export class AuthService {
         else{
           this.router.navigate(["/"]);
           localStorage.clear();
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
+          this.userService.SetUserToken(data.token);
+          this.userService.SetUser(data.user);
 
           this.popupService.ShowPopup(`Sikeres bejelentkezés! Üdvözöllek az oldalon ${JSON.parse(localStorage.getItem("user") || '{}').username}!`, "success");
         }
@@ -69,7 +71,7 @@ export class AuthService {
         }
         else{
           this.router.navigate(["/login"]);
-          this.popupService.ShowPopup(`Sikeres regisztráció, jelentkezz be!`, "success");
+          this.popupService.ShowPopup(data.message, "information");
         }
       })
       .catch(error => console.error("Error:", error))
@@ -101,7 +103,7 @@ export class AuthService {
   }
 
   LogOut() {
-    if(localStorage.getItem("token")){
+    if(this.userService.GetUserToken()){
       this.popupService.ShowPopup("Sikeres kijelentkezés!", "success");
     }
     localStorage.clear();
@@ -112,7 +114,7 @@ export class AuthService {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "token": localStorage.getItem("token") || ""
+        "token": this.userService.GetUserToken() || ""
       },
       body: JSON.stringify({
         "password": password
@@ -130,6 +132,25 @@ export class AuthService {
       }
     })
     .catch(error => console.error("Error:", error))
+  }
+
+  VerifyRegistration() {
+    fetch("http://localhost:3000/api/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "token": this.userService.GetUserToken() || ""
+      }
+    })
+    .then(result => result.json())
+    .then(data => {
+      localStorage.clear();
+      this.router.navigate(["/login"]);
+      this.popupService.ShowPopup(data.message, "success");
+    })
+    .catch(error => {
+      this.popupService.ShowPopup(error, "error");
+    })
   }
 
   ChangePasswordVisibility(){
@@ -158,7 +179,7 @@ export class AuthService {
   }
 
   AlreadyLoggedIn(){
-    if(localStorage.getItem("token")){
+    if(this.userService.GetUserToken()){
       this.router.navigate(["/"]);
       this.popupService.ShowPopup("Már be vagy jelentkezve!", "information");
     }

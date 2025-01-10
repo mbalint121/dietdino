@@ -1,0 +1,27 @@
+@if(this.editUserComponentService.isVisible == true){
+    <div class="fixed top-0 w-screen h-screen">
+        <div class="w-screen h-screen bg-gray-800 opacity-75" (click)="ChangeEditUserComponentVisibility()"></div>
+        <div class="bg-white w-[35%] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl p-4 flex flex-col text-[#378722] border-2 border-[#378722]">
+            <p class="text-2xl text-center">Felhasználói profil szerkesztése</p>
+            <p class="text-center">({{username}})</p>
+            <div class="mt-4 w-3/4 mx-auto flex flex-col">
+                <label class="text-lg" for="username">Felhasználónév</label>
+                <input class="px-2.5 h-8 text-black rounded-md border border-[#378722]" type="text" name="username" id="username" [(ngModel)]="newUsername"/>
+            </div>
+            @if(this.adminService.UserIsAdmin() == true){
+                <div class="mt-4 w-3/4 mx-auto flex flex-col">
+                    <label class="text-lg" for="role">Szerepkör</label>
+                    <select class="px-2.5 h-8 text-black rounded-md border border-[#378722]" name="role" id="role" [(ngModel)]="newRole" disabled="{{this.userService.GetUsername() == this.username}}">
+                        <option value="Admin">Admin</option>
+                        <option value="Moderator">Moderátor</option>
+                        <option value="User">Felhasználó</option>
+                    </select>
+                </div>
+            }
+            <div class="flex justify-between w-1/2 mx-auto mt-6">
+                <button class="p-4 bg-[#378722] text-white text-lg rounded-xl" (click)="EditUser()">Mentés</button>
+                <button class="p-4 bg-[#DC2626] text-white text-lg rounded-xl" (click)="ChangeEditUserComponentVisibility()">Mégse</button>
+            </div>
+        </div>
+    </div>
+}

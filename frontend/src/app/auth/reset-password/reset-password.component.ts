@@ -4,6 +4,7 @@ import { AuthService } from '../auth.service';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { PopupService } from '../../popups/popup.service';
+import { UserService } from '../../common-service/user.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -17,6 +18,7 @@ export class ResetPasswordComponent {
   router : ActivatedRoute = inject(ActivatedRoute);
   authService : AuthService = inject(AuthService);
   popupService : PopupService = inject(PopupService);
+  userService : UserService = inject(UserService);
 
   newPassword! : string;
   confirmNewPassword! : string;
@@ -30,7 +32,7 @@ export class ResetPasswordComponent {
     this.authService.AlreadyLoggedIn();
     localStorage.clear();
     const token = this.router.snapshot.paramMap.get('token') || '';
-    localStorage.setItem("token", token);
+    this.userService.SetUserToken(token);
   }
   
   ResetPassword(){

@@ -23,13 +23,17 @@
             </div>
             <div class="w-[70%] text-center">
                 <p class="font-medium text-3xl text-[#378722]">{{username}}</p>
+                <button class="font-medium text-xl w-1/2 h-16 text-white bg-[#378722] align-middle md:w-[340px] md:h-[68px] md:text-xl rounded-xl mt-32" (click)="ChangeEditUserComponentVisibility()">
+                    Felhasználói profil szerkesztése
+                </button>
             </div>
         </div>
 
-        <p class="text-3xl font-semibold text-[#378722] mt-10" id="settings">Beállítások</p>
+        <p class="text-3xl font-semibold text-[#378722] pt-20 -mt-10" id="settings">Beállítások</p>
         <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border h-96"></div>
         
-        <p class="text-3xl font-semibold text-[#378722] mt-10" id="statistics">Statisztika</p>
+        <p class="text-3xl font-semibold text-[#378722] pt-20 -mt-10" id="statistics">Statisztika</p>
         <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border h-96"></div>
     </div>
 </div>
+<app-edit-user></app-edit-user>

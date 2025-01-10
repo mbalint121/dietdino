@@ -26,4 +26,17 @@ export class PopupService {
     public HidePopup(){
         this.isVisible = false;
     }
+
+    public SavePopup(){
+        localStorage.setItem("popup", JSON.stringify({
+            message: this.message,
+            type: this.type
+        }));
+    }
+
+    public LoadPopup(){
+        let popup = JSON.parse(localStorage.getItem("popup") || '{}');
+        this.ShowPopup(popup.message, popup.type);
+        localStorage.removeItem("popup");
+    }
 }
