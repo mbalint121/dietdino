@@ -1,9 +1,11 @@
 import { inject, Injectable } from "@angular/core";
 import { PopupService } from "../popups/popup.service";
+import { Router } from "@angular/router";
 
 @Injectable({"providedIn": "root"})
 export class UserService{
     popupService : PopupService = inject(PopupService);
+    router : Router = inject(Router);
 
     GetUserToken(){
         return localStorage.getItem("token");
@@ -65,4 +67,28 @@ export class UserService{
         });
     }
 
+    UserDeleteSelf(){
+        fetch("http://localhost:3000/api/users/", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "token": this.GetUserToken() || ""
+            }
+        })
+        .then(result => result.json())
+        .then(data => {
+            if(data.error){
+                this.popupService.ShowPopup(data.error, "error");
+            } else{
+                this.popupService.ShowPopup(data.message, "success");
+            }
+            this.popupService.SavePopup();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            this.router.navigate(["/login"]);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
 }

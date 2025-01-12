@@ -31,4 +31,12 @@ export class ProfilePageComponent {
     this.editUserComponentService.GetEditedUserData(this.username, this.role);
     this.editUserComponentService.ChangeEditUserComponentVisibility();
   }
+
+  DeleteUser(){
+    if(this.userService.GetUserRole() == "Admin"){
+      this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát!", "warning");
+      return;
+    }
+    this.userService.UserDeleteSelf();
+  }
 }

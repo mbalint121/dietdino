@@ -23,7 +23,7 @@ export class AdminDataRowStyleComponent {
 
   DeleteUser(){
     if(this.adminService.UserIsAdmin() && this.userService.GetUsername() == this.user.username){
-      this.popupService.ShowPopup("Nem törölheted önmagad!", "warning");
+      this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát!", "warning");
       return;
     }
     this.adminService.DeleteUser(this.user.ID);

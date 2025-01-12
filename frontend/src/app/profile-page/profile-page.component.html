@@ -18,14 +18,26 @@
         <p class="text-3xl font-semibold text-[#378722] pt-20" id="user-profile">Felhasználói Profil</p>
         <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border">
             <div class="flex w-[30%]">
-                <img class="w-[300px] bg-[#EAEAEA] rounded-full ms-3" src="../../assets/profile_icon.svg" alt="">
-                <div class="bg-[#378722] w-[1px] ms-8"></div>
+                <img class="sm:ms-3" src="../../assets/user_page_profile_icon.svg" alt="">
+                <div class="bg-[#378722] w-[1px] h-full ms-8"></div>
             </div>
             <div class="w-[70%] text-center">
-                <p class="font-medium text-3xl text-[#378722]">{{username}}</p>
-                <button class="font-medium text-xl w-1/2 h-16 text-white bg-[#378722] align-middle md:w-[340px] md:h-[68px] md:text-xl rounded-xl mt-32" (click)="ChangeEditUserComponentVisibility()">
+                <p class="font-medium text-2xl xs:text-3xl text-[#378722]">{{username}}</p>
+                <button class="hidden sm:inline font-medium text-sm text-white bg-[#378722] align-middle px-4 py-2 md:px-6 md:py-4 sm:text-base md:text-lg xl:text-xl rounded-xl mt-6" (click)="ChangeEditUserComponentVisibility()">
                     Felhasználói profil szerkesztése
                 </button>
+                <br>
+                <button class="hidden sm:inline font-medium text-sm text-white bg-[#DC2626] align-middle px-4 py-2 md:px-6 md:py-4 sm:text-base md:text-lg xl:text-xl rounded-xl mt-6" (click)="DeleteUser()">
+                    Felhasználói fiók törlése
+                </button>
+                <div class="inline sm:hidden">
+                    <button class="bg-[#378722] p-1 rounded-lg me-2.5">
+                        <img class="h-8" src="../../assets/edit_icon.svg" alt="Szerkesztés" (click)="ChangeEditUserComponentVisibility()">
+                    </button>
+                    <button class="bg-[#DC2626] p-1 rounded-lg">
+                        <img class="h-8" src="../../assets/delete_icon.svg" alt="Törlés" (click)="DeleteUser()">
+                    </button>
+                </div>
             </div>
         </div>
 

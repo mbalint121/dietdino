@@ -33,6 +33,9 @@ export class LoginComponent {
 
   ngOnInit() {
     this.authService.AlreadyLoggedIn();
+    if(localStorage.getItem("popup")){
+      this.popupService.LoadPopup();
+    }
   }
 
 }
