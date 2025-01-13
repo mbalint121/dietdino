@@ -35,7 +35,7 @@ export default class AuthService{
         const user: User = new User();
         user.ID = decodedToken.userID;
 
-        const userExists = await UserService.GetUserById(user)
+        const userExists = await UserService.GetUserByID(user)
         .catch((err) => {
             console.log(err);
             res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});

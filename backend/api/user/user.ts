@@ -15,11 +15,11 @@ export async function GetUsers(req: Request, res: Response){
     });
 }
 
-export async function GetUserById(req: any, res: Response){
+export async function GetUserByID(req: any, res: Response){
     const user = new User();
     user.ID = req.params.ID;
 
-    await UserService.GetUserById(user)
+    await UserService.GetUserByID(user)
     .then(async (result) => {
         res.status(200).send({user: result});
         return;
@@ -41,7 +41,7 @@ export async function UpdateUserSelf(req: any, res: Response){
         return;
     }
 
-    const currentUser = await UserService.GetUserById(user)
+    const currentUser = await UserService.GetUserByID(user)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
@@ -88,7 +88,7 @@ export async function UpdateUser(req: any, res: Response){
         return;
     }
 
-    const currentUser = await UserService.GetUserById(user)
+    const currentUser = await UserService.GetUserByID(user)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
@@ -141,7 +141,7 @@ export async function UpdateUserRole(req: any, res: Response){
         return;
     }
 
-    const currentUser = await UserService.GetUserById(user)
+    const currentUser = await UserService.GetUserByID(user)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
@@ -182,7 +182,7 @@ export async function DeleteUser(req: any, res: Response){
     const user = new User();
     user.ID = req.params.ID;
 
-    const currentUser = await UserService.GetUserById(user)
+    const currentUser = await UserService.GetUserByID(user)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
@@ -214,7 +214,7 @@ export async function DeleteUserSelf(req: any, res: Response){
     const user = new User();
     user.ID = req.decodedToken.userID;
 
-    const currentUser = await UserService.GetUserById(user)
+    const currentUser = await UserService.GetUserByID(user)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});

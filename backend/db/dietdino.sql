@@ -36,7 +36,7 @@ CREATE TABLE recipes(
 
 CREATE TABLE images(
     recipeID INT,
-    imageUrl VARCHAR(64) NOT NULL,
+    imageURL VARCHAR(64) NOT NULL,
     FOREIGN KEY(recipeID) REFERENCES recipes(ID)
 );
 
@@ -138,7 +138,7 @@ BEGIN
     DELETE FROM users WHERE users.ID = userID;
 END$$
 
-CREATE FUNCTION UserExistsWithId(userID INT)
+CREATE FUNCTION UserExistsWithID(userID INT)
 RETURNS INT
 BEGIN
     RETURN(SELECT COUNT(*) FROM users WHERE users.ID = userID);
@@ -150,13 +150,13 @@ BEGIN
     RETURN(SELECT COUNT(*) FROM users WHERE users.username = username OR users.email = email);
 END$$
 
-CREATE FUNCTION GetUserIdByEmail(email VARCHAR(256))
+CREATE FUNCTION GetUserIDByEmail(email VARCHAR(256))
 RETURNS INT
 BEGIN
     RETURN(SELECT users.ID FROM users WHERE users.email = email);
 END$$
 
-CREATE FUNCTION GetUserRoleById(userID INT)
+CREATE FUNCTION GetUserRoleByID(userID INT)
 RETURNS VARCHAR(16)
 BEGIN
     RETURN(SELECT roles.roleName FROM users, roles WHERE users.ID = userID AND users.roleID = roles.ID);

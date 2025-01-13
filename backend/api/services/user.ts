@@ -25,11 +25,11 @@ export default class UserService{
         }
     }
 
-    static async GetUserIdByEmail(user: User){
+    static async GetUserIDByEmail(user: User){
         const conn = await mysql.createConnection(dbConfig);
 
         try{
-            const [rows]: any = await conn.query("SELECT GetUserIdByEmail(?) as userID", [user.email]);
+            const [rows]: any = await conn.query("SELECT GetUserIDByEmail(?) as userID", [user.email]);
             return rows[0].userID;
         }
         catch(error){
@@ -59,7 +59,7 @@ export default class UserService{
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("SELECT GetUserRoleById(?) as role", [user.ID]);
+            const [rows]: any = await conn.query("SELECT GetUserRoleByID(?) as role", [user.ID]);
             return rows[0].role;
         }
         catch(error){
@@ -85,11 +85,11 @@ export default class UserService{
         }
     }
 
-    static async GetUserById(user: User){
+    static async GetUserByID(user: User){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetUserById(?)", [user.ID]);
+            const [rows]: any = await conn.query("CALL GetUserByID(?)", [user.ID]);
             return rows[0][0];
         }
         catch(error){
