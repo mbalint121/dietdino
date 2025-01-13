@@ -3,5 +3,5 @@ export class User{
     username?: string;
     email?: string;
     password?: string;
-    role?: string;
+    role?: "Admin" | "Moderator" | "User";
 }

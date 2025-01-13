@@ -13,6 +13,24 @@ export async function Register(req: Request, res: Response){
         return;
     }
 
+    let regex = /^[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ]{4,16}$/;
+    if(!regex.test(user.username)){
+        res.status(400).send({error: "Nem megfelelő az felhasználónév formátuma"});
+        return;
+    }
+    
+    regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if(!regex.test(user.email)){
+        res.status(400).send({error: "Nem megfelelő az email cím formátuma"});
+        return;
+    }
+
+    regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if(!regex.test(user.password)){
+        res.status(400).send({error: "Nem megfelelő a jelszó formátuma"});
+        return;
+    }
+
     const userExists = await UserService.UserExistsWithUsernameOrEmail(user)
     .catch((err) => {
         console.log(err);

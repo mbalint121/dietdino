@@ -128,6 +128,12 @@ export async function UpdateUser(req: any, res: Response){
 export async function UpdateUserRole(req: any, res: Response){
     const user = new User();
     user.ID = req.params.ID;
+
+    if(user.ID == req.decodedToken.userID){
+        res.status(400).send({error: "Nem módosíthatod a saját szerepköröd"});
+        return;
+    }
+
     user.role = req.body.role;
 
     if(!user.role){
