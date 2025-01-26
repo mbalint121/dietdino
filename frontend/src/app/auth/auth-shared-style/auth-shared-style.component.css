@@ -11,7 +11,7 @@
 }
 
 ::ng-deep button{
-    @apply font-medium text-xl h-16 text-white bg-[#378722] align-middle py-2 px-8 md:text-[28px] mb-1;
+    @apply font-medium text-xl h-16 text-white bg-[#378722] py-2 px-8 md:text-[28px] mb-1;
 }
 
 ::ng-deep #form{

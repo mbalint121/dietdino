@@ -20,21 +20,21 @@
             <ul class="bg-[#EAEAEA] border border-[#7F7F7F] w-full absolute left-0 top-full flex flex-col rounded-xl">
                 
                 <li class="hover:bg-gray-100 rounded-t-xl">
-                    <a class="flex w-full justify-center h-14 items-center" routerLink="">
+                    <a class="flex w-full justify-center h-14 items-center" routerLink="/recipes">
                         <img class="my-auto" src="../../assets/recipes_icon.svg" alt="Recipes icon">
                         <p class="ms-1.5">Receptek</p>
                     </a>
                 </li>
                 <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
                 <li class="hover:bg-gray-100">
-                    <a class="flex w-full justify-center h-14 items-center" routerLink="">
+                    <a class="flex w-full justify-center h-14 items-center" routerLink="/my-recipes">
                         <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
                         <p class="ms-1.5">Receptjeim</p>
                     </a>
                 </li>
                 <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
                 <li [ngClass]="{'hover:bg-gray-100': true, 'rounded-b-xl': !this.adminService.UserIsAdminOrModerator()}">
-                    <a class="flex w-full justify-center h-14 items-center" routerLink="">
+                    <a class="flex w-full justify-center h-14 items-center" routerLink="/my-favorite-recipes">
                         <img src="../../assets/star_icon.svg" alt="Favorites icon">
                         <p class="ms-1.5">Kedvenceim</p>
                     </a>
@@ -59,19 +59,19 @@
 
     <ul class="hidden xl:flex xl:space-x-4">
         <li>
-            <a class="flex items-center" routerLink="">
+            <a class="flex items-center" routerLink="/recipes" routerLinkActive="bg-[#EAEAEA]">
                 <img src="../../assets/recipes_icon.svg" alt="Recipes icon">
                 <p class="ms-1.5">Receptek</p>
             </a>
         </li>
         <li>
-            <a class="flex items-center" routerLink="">
+            <a class="flex items-center" routerLink="/my-recipes">
                 <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
                 <p class="ms-1.5">Receptjeim</p>
             </a>
         </li>
         <li>
-            <a class="flex items-center" routerLink="">
+            <a class="flex items-center" routerLink="/my-favorite-recipes">
                 <img src="../../assets/star_icon.svg" alt="Favorites icon">
                 <p class="ms-1.5">Kedvenceim</p>
             </a>

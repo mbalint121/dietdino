@@ -1,5 +1,5 @@
 import { Component, inject} from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../admin-page/admin.service';
@@ -7,7 +7,7 @@ import { AdminService } from '../admin-page/admin.service';
 @Component({
   selector: 'app-page-navbar',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, RouterLinkActive],
   templateUrl: './page-navbar.component.html',
   styleUrl: './page-navbar.component.css'
 })
