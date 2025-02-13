@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { User } from "../models/user";
 import dotenv from "dotenv";
 import UserService from "../services/user";
@@ -30,7 +30,7 @@ export async function VerifyUser(req: any, res: Response){
     
     await UserService.RegisterUser(user)
     .then((result) => {
-        if(!result){
+        if(!result.affectedRows){
             res.status(500).send({error: "Nem sikerült megerősíteni a regisztrációt"});
             return;
         }

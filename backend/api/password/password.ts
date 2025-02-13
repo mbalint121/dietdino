@@ -16,7 +16,7 @@ export async function SendPasswordResetEmail(req: Request, res: Response){
         return;
     }
 
-    await UserService.GetUserIDByEmail(user)
+    await UserService.GetUserIDByEmail(user.email)
     .then(async (result) => {
         user.ID = result;
         if(!user.ID){

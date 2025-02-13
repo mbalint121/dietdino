@@ -12,28 +12,31 @@ export async function LogIn(req: Request, res: Response){
         return;
     }
 
-    await UserService.GetUserByUsernameOrEmailAndPassword(user)
-    .then(resultUser => {
-        if(!resultUser.ID){
-            res.status(401).send({error: "Hibás email vagy jelszó"});
-            return;
-        }
-    
-        const { JWT_SECRET } = process.env;
-        if(!JWT_SECRET){
-            res.status(500).send({error: "Hiba a token létrehozásakor"});
-            return;
-        }
-    
-        const payload = {userID: resultUser.ID};
-        const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
-        resultUser.ID = undefined;
-        res.status(200).send({token: token, user: resultUser});
-        return;
-    })
+    const userData = await UserService.GetUserByUsernameOrEmailAndPassword(user)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbáziskapcsolat során"});
         return;
     });
+
+    Object.assign(user, userData);
+    user.password = undefined;
+
+    if(!user.ID){
+        res.status(401).send({error: "Hibás email vagy jelszó"});
+        return;
+    }
+
+    const { JWT_SECRET } = process.env;
+    if(!JWT_SECRET){
+        res.status(500).send({error: "Hiba a token létrehozásakor"});
+        return;
+    }
+
+    const payload = {userID: user.ID};
+    const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
+    
+    user.ID = undefined;
+    res.status(200).send({token: token, user: user});
+    return;
 }

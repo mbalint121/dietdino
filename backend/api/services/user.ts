@@ -25,11 +25,11 @@ export default class UserService{
         }
     }
 
-    static async GetUserIDByEmail(user: User){
+    static async GetUserIDByEmail(userEmail: string){
         const conn = await mysql.createConnection(dbConfig);
 
         try{
-            const [rows]: any = await conn.query("SELECT GetUserIDByEmail(?) as userID", [user.email]);
+            const [rows]: any = await conn.query("SELECT GetUserIDByEmail(?) as userID", [userEmail]);
             return rows[0].userID;
         }
         catch(error){
@@ -55,11 +55,11 @@ export default class UserService{
         }
     }
 
-    static async GetUserRole(user: User){
+    static async GetUserRoleByID(userID: number){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("SELECT GetUserRoleByID(?) as role", [user.ID]);
+            const [rows]: any = await conn.query("SELECT GetUserRoleByID(?) AS role", [userID]);
             return rows[0].role;
         }
         catch(error){
@@ -85,11 +85,11 @@ export default class UserService{
         }
     }
 
-    static async GetUserByID(user: User){
+    static async GetUserByID(userID: number){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetUserByID(?)", [user.ID]);
+            const [rows]: any = await conn.query("CALL GetUserByID(?)", [userID]);
             return rows[0][0];
         }
         catch(error){
@@ -105,7 +105,7 @@ export default class UserService{
 
         try{
             const [rows]: any = await conn.query("CALL RegisterUser(?, ?, ?)", [user.username, user.email, user.password]);
-            return rows.affectedRows;
+            return rows;
         }
         catch(error){
             throw error;
@@ -145,11 +145,11 @@ export default class UserService{
         }
     }
 
-    static async DeleteUser(user: User){
+    static async DeleteUserByID(userID: number){
         const conn = await mysql.createConnection(dbConfig);
 
         try{
-            const [rows]: any = await conn.query("CALL DeleteUser(?)", [user.ID]);
+            const [rows]: any = await conn.query("CALL DeleteUserByID(?)", [userID]);
             return rows;
         }
         catch(error){
