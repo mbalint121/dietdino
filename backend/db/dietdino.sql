@@ -97,15 +97,20 @@ CREATE TABLE ingredients(
 
 DELIMITER $$
 
-CREATE PROCEDURE AddRole(IN roleName VARCHAR(16))
+CREATE PROCEDURE GetUserRoles()
+BEGIN
+    SELECT roles.roleName AS roleName FROM roles;
+END$$
+
+CREATE PROCEDURE AddUserRole(IN roleName VARCHAR(16))
 BEGIN
     INSERT INTO roles VALUES(null, roleName);
-END $$
+END$$
 
 CREATE PROCEDURE AddUser(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256), IN role VARCHAR(16))
 BEGIN
     INSERT INTO users VALUES(null, username, email, password, (SELECT roles.ID FROM roles WHERE roles.roleName = role));
-END $$
+END$$
 
 CREATE PROCEDURE RegisterUser(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256))
 BEGIN
@@ -328,9 +333,9 @@ FOR EACH ROW
 
 DELIMITER ;
 
-CALL AddRole("Admin");
-CALL AddRole("Moderator");
-CALL AddRole("User");
+CALL AddUserRole("Admin");
+CALL AddUserRole("Moderator");
+CALL AddUserRole("User");
 
 CALL AddUser("TestAdmin", "admin@testuser.com", "admin", "Admin");
 CALL AddUser("TestMod", "mod@testuser.com", "mod", "Moderator");

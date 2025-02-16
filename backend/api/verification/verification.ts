@@ -12,12 +12,13 @@ export async function VerifyUser(req: any, res: Response){
     user.username = decodedToken.username;
     user.email = decodedToken.email;
     user.password = decodedToken.password;
+    
     if(!user.username || !user.email || !user.password){
         res.status(400).send({error: "Hiányzó adatok"});
         return;
     }
 
-    let userVerified = await UserService.UserExistsWithUsernameOrEmail(user)
+    const userVerified = await UserService.UserExistsWithUsernameOrEmail(user)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});

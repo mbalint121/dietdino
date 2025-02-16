@@ -55,6 +55,21 @@ export default class UserService{
         }
     }
 
+    static async GetUserRoles(){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetUserRoles()");
+            return rows[0];
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
     static async GetUserRoleByID(userID: number){
         const conn = await mysql.createConnection(dbConfig);
         
@@ -134,7 +149,7 @@ export default class UserService{
         const conn = await mysql.createConnection(dbConfig);
 
         try{
-            const [rows]: any = await conn.query("CALL UpdateUserRole(?, ?)", [user.ID, user.role]);
+            const [rows]: any = await conn.query("CALL UpdateUserRole(?, ?)", [user.ID, user.role?.roleName]);
             return rows;
         }
         catch(error){

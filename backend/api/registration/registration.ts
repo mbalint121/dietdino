@@ -3,6 +3,7 @@ import { User } from "../models/user";
 import UserService from "../services/user";
 import VerificationService from "../services/verification";
 import jwt from "jsonwebtoken";
+import { cwd } from "process";
 
 export async function Register(req: Request, res: Response){
     const user: User = new User();
@@ -31,15 +32,20 @@ export async function Register(req: Request, res: Response){
         return;
     }
 
-    const userExists = await UserService.UserExistsWithUsernameOrEmail(user)
+    const existingUsers: Array<User> = await UserService.GetUsers()
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
     });
 
-    if(userExists){
-        res.status(400).send({error: "Már létezik felhasználó ezzel a felhasználónévvel vagy email címmel"});
+    if(existingUsers.some(existingUser => existingUser.username?.toLowerCase() == user.username?.toLowerCase())){
+        res.status(400).send({error: "Már létezik felhasználó ezzel a felhasználónévvel"});
+        return;
+    }
+
+    if(existingUsers.some(existingUser => existingUser.email == user.email)){
+        res.status(400).send({error: "Már létezik felhasználó ezzel az email címmel"});
         return;
     }
 

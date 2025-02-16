@@ -7,8 +7,13 @@ export async function LogIn(req: Request, res: Response){
     const user: User = new User();
     Object.assign(user, req.body);
 
-    if(!user.email && !user.username || !user.password){
+    if(!user.username && !user.email || !user.password){
         res.status(400).send({error: "Hiányzó adatok"});
+        return;
+    }
+
+    if(user.username && user.email){
+        res.status(400).send({error: "Vagy felhasználónévvel, vagy email címmel jelentkezzen be"});
         return;
     }
 

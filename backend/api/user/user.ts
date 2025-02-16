@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/user";
 import UserService from "../services/user";
+import { UserRole } from "../models/userrole";
 
 export async function GetUsers(req: Request, res: Response){
     const users: Array<User> = await UserService.GetUsers()
@@ -26,7 +27,7 @@ export async function GetUserByID(req: any, res: Response){
 }
 
 export async function UpdateUserSelf(req: any, res: Response){
-    const user = new User();
+    const user: User = new User();
     user.ID = req.decodedToken.userID;
     Object.assign(user, req.body);
     
@@ -35,7 +36,7 @@ export async function UpdateUserSelf(req: any, res: Response){
         return;
     }
     
-    const currentUser = await UserService.GetUserByID(user.ID!)
+    const currentUser: User = await UserService.GetUserByID(user.ID!)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
@@ -73,7 +74,7 @@ export async function UpdateUserSelf(req: any, res: Response){
 }
 
 export async function UpdateUserByID(req: any, res: Response){
-    const user = new User();
+    const user: User = new User();
     user.ID = req.params.ID;
     Object.assign(user, req.body);
 
@@ -120,21 +121,25 @@ export async function UpdateUserByID(req: any, res: Response){
 }
 
 export async function UpdateUserRoleByID(req: any, res: Response){
-    const user = new User();
+    const user: User = new User();
     user.ID = req.params.ID;
     Object.assign(user, req.body);
+
+    const userRole: UserRole = new UserRole();
+    userRole.roleName = req.body.role;
+    user.role = userRole;
 
     if(user.ID == req.decodedToken.userID){
         res.status(400).send({error: "Nem módosíthatod a saját szerepköröd"});
         return;
     }
 
-    if(!user.role){
+    if(!user.role || !user.role.roleName){
         res.status(400).send({error: "Hiányzó adatok"});
         return;
     }
 
-    const currentUser = await UserService.GetUserByID(user.ID!)
+    const currentUser: User = await UserService.GetUserByID(user.ID!)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
@@ -146,8 +151,20 @@ export async function UpdateUserRoleByID(req: any, res: Response){
         return;
     }
 
-    if(currentUser.role == user.role){
+    if(currentUser.role == user.role.roleName){
         res.status(400).send({error: "Az új szerepkör nem egyezhet meg a régi szerepkörrel"});
+        return;
+    }
+
+    const userRoles: Array<UserRole> = await UserService.GetUserRoles()
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+        return;
+    });
+
+    if(!userRoles.some((role) => role.roleName == user.role!.roleName)){
+        res.status(400).send({error: "Nem létezik ilyen szerepkör"});
         return;
     }
 
@@ -161,10 +178,6 @@ export async function UpdateUserRoleByID(req: any, res: Response){
         return;
     })
     .catch((err) => {
-        if(err.errno == 1452){
-            res.status(400).send({error: "Nem létezik ilyen szerepkör"});
-            return;
-        }
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
@@ -172,10 +185,10 @@ export async function UpdateUserRoleByID(req: any, res: Response){
 }
 
 export async function DeleteUserSelf(req: any, res: Response){
-    const user = new User();
+    const user: User = new User();
     user.ID = req.decodedToken.userID;
 
-    const currentUser = await UserService.GetUserByID(user.ID!)
+    const currentUser: User = await UserService.GetUserByID(user.ID!)
     .catch((err) => {
         console.log(err);
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
