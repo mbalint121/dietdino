@@ -33,11 +33,26 @@ export default class RecipeService{
         }
     }
 
-    static async GetDraftRecipesByUserID(userID: number){
+    static async GetDraftRecipes(){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetDraftRecipesByUserID(?)", [userID]);
+            const [rows]: any = await conn.query("CALL GetDraftRecipes()");
+            return rows[0];
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetRecipesByUserID(userID: number){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetRecipesByUserID(?)", [userID]);
             return rows[0];
         }
         catch(error){
@@ -150,7 +165,7 @@ export default class RecipeService{
         
         conn.beginTransaction();
         try{
-            const [rows]: any = await conn.query("CALL UpdateRecipeByID(?, ?, ?, ?, ?)", [recipe.ID, recipe.recipeName, recipe.image, recipe.preparationTime, recipe.preparationDescription]);
+            const [rows]: any = await conn.query("CALL UpdateRecipeByID(?, ?, ?, ?, ?, ?)", [recipe.ID, recipe.recipeName, recipe.image, recipe.preparationTime, recipe.preparationDescription, recipe.state?.stateName]);
             for(const ingredient of recipe.ingredients!){
                 if(!ingredient.measure && !ingredient.quantity){
                     await conn.query("CALL DeleteIngredientByRecipeIDAndCommodityName(?, ?)", [recipe.ID, ingredient.commodity?.commodityName]);

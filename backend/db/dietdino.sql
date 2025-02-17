@@ -177,9 +177,14 @@ BEGIN
     SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Waiting");
 END$$
 
-CREATE PROCEDURE GetDraftRecipesByUserID(IN userID INT)
+CREATE PROCEDURE GetDraftRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.uploaderID = userID AND recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Draft");
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Draft");
+END$$
+
+CREATE PROCEDURE GetRecipesByUserID(IN userID INT)
+BEGIN
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.uploaderID = userID;
 END$$
 
 CREATE PROCEDURE AddRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN uploadDateTime DATETIME, IN likeCount INT, IN state VARCHAR(16))
@@ -193,9 +198,9 @@ BEGIN
     SELECT LAST_INSERT_ID() AS insertID;
 END$$
 
-CREATE PROCEDURE UpdateRecipeByID(IN recipeID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT)
+CREATE PROCEDURE UpdateRecipeByID(IN recipeID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN state VARCHAR(16))
 BEGIN
-    UPDATE recipes SET recipes.recipeName = recipeName, recipes.image = image, recipes.preparationTime = preparationTime, recipes.preparationDescription = preparationDescription, recipes.uploadDateTime = NOW() WHERE recipes.ID = recipeID;
+    UPDATE recipes SET recipes.recipeName = recipeName, recipes.image = image, recipes.preparationTime = preparationTime, recipes.preparationDescription = preparationDescription, recipes.uploadDateTime = NOW(), recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = state) WHERE recipes.ID = recipeID;
 END$$
 
 CREATE PROCEDURE AcceptRecipeByID(IN recipeID INT)

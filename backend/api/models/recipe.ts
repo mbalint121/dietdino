@@ -4,6 +4,7 @@ import { RecipeState } from "./recipestate";
 export class Recipe{
     ID?: number;
     uploaderID?: number;
+    uploader?: string;
     recipeName?: string;
     image?: string;
     ingredients?: Array<Ingredient>;
