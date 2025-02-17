@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { AdminNavbarComponent } from "./admin-navbar/admin-navbar.component";
 import { AdminDataRowStyleComponent } from "./admin-data-row-style/admin-data-row-style.component";
 import { PopupComponent } from "../popups/popup/popup.component";
 import { AdminService } from "./admin.service";
 import { EditUserComponent } from "../edit-user/edit-user.component";
 import { PopupService } from '../popups/popup.service';
+import { AuthService } from '../auth/auth.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-admin-page',
@@ -16,10 +18,17 @@ import { PopupService } from '../popups/popup.service';
 export class AdminPageComponent {
   adminService : AdminService = inject(AdminService);
   popupService : PopupService = inject(PopupService);
+  destroyRef : DestroyRef = inject(DestroyRef);
+  authService : AuthService = inject(AuthService);
+  userService : UserService = inject(UserService);
+
   name! : string;
-  users! : [any];
 
   async ngOnInit() {
+    if(this.authService.IsTokenExpired(JSON.stringify(this.userService.GetUserToken()))){
+      this.authService.LogOut();
+      return;
+    }
     if(!this.adminService.UserIsAdminOrModerator()){
       this.adminService.UserIsNotAuthorized();
       return;
@@ -28,17 +37,18 @@ export class AdminPageComponent {
     this.name = JSON.parse(localStorage.getItem("user") || '{}').username;
 
     if(this.adminService.UserIsAdmin()){
-      await this.GetAllUsers();
-    }
-    if(localStorage.getItem("popup")){
-      this.popupService.LoadPopup();
+      this.GetAllUsers();
     }
   }
 
 
 
-  async GetAllUsers() {
-    this.users = await this.adminService.GetAllUsers();
+  GetAllUsers() {
+    const subscription = this.adminService.GetAllUsers().subscribe();
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
 }

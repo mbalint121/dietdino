@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { UserService } from '../../common-service/user.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-verify',
@@ -14,11 +14,17 @@ export class VerifyComponent {
   router : ActivatedRoute = inject(ActivatedRoute);
   authService : AuthService = inject(AuthService);
   userService : UserService = inject(UserService);
+  destroyRef : DestroyRef = inject(DestroyRef);
 
   ngOnInit(){
     const token = this.router.snapshot.paramMap.get('token') || "";
     this.userService.SetUserToken(token);
-    this.authService.VerifyRegistration();
+
+    const subscription = this.authService.VerifyRegistration().subscribe();
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
 }

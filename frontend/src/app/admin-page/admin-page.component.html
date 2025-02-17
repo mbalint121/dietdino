@@ -13,7 +13,7 @@
         <p class="text-end">Műveletek</p>
     </div>
     <div class="w-[90%] mx-auto" id="recipes">
-        @for (item of users; track item) {
+        @for (item of this.adminService.users(); track item.username) {
             <app-admin-data-row-style numberOfCols="4" type="user" [user]="item">
                 <p class="text-start">{{item.username}}</p>
                 <p class="text-start xs:text-center truncate">{{item.email}}</p>

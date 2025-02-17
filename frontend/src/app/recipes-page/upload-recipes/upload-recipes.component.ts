@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { PageNavbarComponent } from "../../page-navbar/page-navbar.component";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-upload-recipes',
   standalone: true,
-  imports: [],
+  imports: [PageNavbarComponent, RouterLink],
   templateUrl: './upload-recipes.component.html',
   styleUrl: './upload-recipes.component.css'
 })

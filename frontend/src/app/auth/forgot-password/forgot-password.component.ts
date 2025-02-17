@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthSharedStyleComponent } from "../auth-shared-style/auth-shared-style.component";
 import { PopupService } from '../../popups/popup.service';
@@ -15,6 +15,7 @@ import { AuthService } from '../auth.service';
 export class ForgotPasswordComponent {
   popupService : PopupService = inject(PopupService);
   authService : AuthService = inject(AuthService);
+  destroyRef : DestroyRef = inject(DestroyRef);
   forgotPasswordEmail! : string;
 
   ngOnInit(){
@@ -33,6 +34,10 @@ export class ForgotPasswordComponent {
     else{
       this.popupService.ShowPopup("Az email elküldve", "success");
     }
-    this.authService.SendResetPasswordEmail(this.forgotPasswordEmail);
+    const subscription = this.authService.SendResetPasswordEmail(this.forgotPasswordEmail).subscribe();
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 }

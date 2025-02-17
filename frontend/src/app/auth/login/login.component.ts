@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { AuthSharedStyleComponent } from "../auth-shared-style/auth-shared-style.component";
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
@@ -18,24 +18,27 @@ export class LoginComponent {
   loginNameOrEmail! : string;
   loginPassword! : string;
   router : Router = inject(Router);
-
+  destroyRef : DestroyRef = inject(DestroyRef);
+  
+  ngOnInit() {
+    this.authService.AlreadyLoggedIn();
+  }
+  
   LogIn(){
     if(!this.loginNameOrEmail || !this.loginPassword){
       this.popupService.ShowPopup("Kérlek minden adatot adj meg", "error");
       return;
     }
-    this.authService.LogIn(this.loginNameOrEmail, this.loginPassword);
+    const subscription = this.authService.LogIn(this.loginNameOrEmail, this.loginPassword).subscribe();
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
   ChangePasswordVisibility(){
     this.authService.ChangePasswordVisibility();
   }
 
-  ngOnInit() {
-    this.authService.AlreadyLoggedIn();
-    if(localStorage.getItem("popup")){
-      this.popupService.LoadPopup();
-    }
-  }
 
 }

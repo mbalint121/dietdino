@@ -1,14 +1,19 @@
-import { inject, Injectable } from "@angular/core";
+import { DestroyRef, inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { PopupService } from "../popups/popup.service";
-import { UserService } from "../common-service/user.service";
+import { UserService } from "../services/user.service";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { catchError, tap } from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
   popupService : PopupService = inject(PopupService);
   userService : UserService = inject(UserService);
   router : Router = inject(Router);
+  httpClient : HttpClient = inject(HttpClient);
+  destroyRef : DestroyRef = inject(DestroyRef);
 
+  passwordIsVisible : boolean = false;
   imageName : string = "password_icon_eye_opened.svg";
   passwordInputType : string = "password";
 
@@ -26,140 +31,152 @@ export class AuthService {
         });
       }
 
-      fetch("http://localhost:3000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: body
-      })
-      .then(result => result.json())
-      .then(data => {
-        if(data.error){
-          this.popupService.ShowPopup(data.error, "error");
-        }
-        else{
-          this.router.navigate(["/"]);
-          localStorage.clear();
-          this.userService.SetUserToken(data.token);
-          this.userService.SetUser(data.user);
+      const headers = new HttpHeaders({ "Content-Type": "application/json" });
 
-          this.popupService.ShowPopup(`Sikeres bejelentkezés! Üdvözöllek az oldalon ${JSON.parse(localStorage.getItem("user") || '{}').username}!`, "success");
-        }
-      })
-      .catch(error => console.error("Error:", error));
+      return this.httpClient.post("http://localhost:3000/api/auth/login", body, { headers: headers })
+      .pipe(
+        tap((response : any) => {
+          if(response.user){
+            localStorage.clear();
+            this.router.navigate(["/"]);
+            this.userService.SetUserToken(response.token);
+            this.userService.SetUser(response.user);
+  
+            this.popupService.ShowPopup(`Sikeres bejelentkezés! Üdvözöllek az oldalon ${this.userService.user()!.username}!`, "success");
+          }
+        }),
+        catchError(response => {
+          if (response.error) {
+            this.popupService.ShowPopup(response.error.error, "error");
+          } else {
+              this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+          }
+          return response.error.error;
+        })
+      );
   }
   
   SignUp(userName: string, email: string, password: string) {
-      fetch("http://localhost:3000/api/registration", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          "username": userName, 
-          "email": email, 
-          "password": password
-      })
-      })
-      .then(result =>
-        result.json()
-      )
-      .then(data => {
-        if(data.error){
-          this.popupService.ShowPopup(data.error, "error");
-        }
-        else{
+
+    const headers = new HttpHeaders({ "Content-Type": "application/json" });
+    const body = JSON.stringify({
+      "username": userName, 
+      "email": email, 
+      "password": password
+    });
+
+    return this.httpClient.post("http://localhost:3000/api/registration", body, { headers: headers })
+    .pipe(
+      tap((response : any) => {
+        if(response){
           this.router.navigate(["/login"]);
-          this.popupService.ShowPopup(data.message, "information");
+          this.popupService.ShowPopup(response.message, "information");
         }
+      }),
+      catchError(response => {
+        if (response.error) {
+          this.popupService.ShowPopup(response.error.error, "error");
+        } else {
+            this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+        }
+        return response.error.error;
       })
-      .catch(error => console.error("Error:", error))
+    );
   }
 
   SendResetPasswordEmail(email: string) {
-    fetch("http://localhost:3000/api/password/sendemail", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        "email": email
+    const headers = new HttpHeaders({ "Content-Type": "application/json" });
+    const body = JSON.stringify({
+      "email": email
+    });
+
+    return this.httpClient.post("http://localhost:3000/api/password/sendemail", body, { headers: headers })
+    .pipe(
+      tap((response : any) => {
+        if(response){
+          this.router.navigate(["/login"]);
+          this.popupService.ShowPopup(`Az email elküldve!`, "success");
+        }
+      }),
+      catchError(response => {
+        if (response.error) {
+          this.popupService.ShowPopup(response.error.error, "error");
+        } else {
+            this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+        }
+        return response.error.error;
       })
-    })
-    .then(result =>
-      result.json()
-    )
-    .then(data => {
-      if(data.error){
-        this.popupService.ShowPopup(data.error, "error");
-      }
-      else{
-        this.router.navigate(["/login"]);
-        this.popupService.ShowPopup(`Az email elküldve!`, "success");
-      }
-    })
-    .catch(error => console.error("Error:", error))
+    );
   }
 
   LogOut() {
-    if(this.userService.GetUserToken()){
-      this.popupService.ShowPopup("Sikeres kijelentkezés!", "success");
+    this.router.navigate(["/login"]);
+    this.userService.SetUser(null);
+    if(this.IsTokenExpired(this.userService.GetUserToken() || "")){
+      this.popupService.ShowPopup("A munkamenet lejárt, jelentkezz be újra!", "information");
+      return;
     }
-    localStorage.clear();
+    this.popupService.ShowPopup("Sikeres kijelentkezés!", "success");
   }
 
   ResetPassword(password: string) {
-    fetch("http://localhost:3000/api/password/reset", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "token": this.userService.GetUserToken() || ""
-      },
-      body: JSON.stringify({
-        "password": password
+    const headers = new HttpHeaders({ "Content-Type": "application/json" });
+    const body = JSON.stringify({
+      "password": password
+    });
+
+    return this.httpClient.post("http://localhost:3000/api/password/reset", body, { headers: headers })
+    .pipe(
+      tap((response : any) => {
+        if(response){
+          this.router.navigate(["/login"]);
+          this.popupService.ShowPopup(`Sikeres jelszóváltoztatás!`, "success");
+        }
+      }),
+      catchError(response => {
+        if (response.error) {
+          this.popupService.ShowPopup(response.error.error, "error");
+        } else {
+            this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+        }
+        return response.error.error;
       })
-    })
-    .then(result => result.json())
-    .then(data => {
-      localStorage.clear();
-      if(data.error){
-        this.popupService.ShowPopup(data.error, "error");
-      }
-      else{
-        this.router.navigate(["/login"]);
-        this.popupService.ShowPopup(`Sikeres jelszóváltoztatás!`, "success");
-      }
-    })
-    .catch(error => console.error("Error:", error))
+    );
   }
 
   VerifyRegistration() {
-    fetch("http://localhost:3000/api/verify", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "token": this.userService.GetUserToken() || ""
-      }
-    })
-    .then(result => result.json())
-    .then(data => {
-      localStorage.clear();
-      this.router.navigate(["/login"]);
-      this.popupService.ShowPopup(data.message, "success");
-    })
-    .catch(error => {
-      this.popupService.ShowPopup(error, "error");
-    })
+
+    const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
+
+    return this.httpClient.post("http://localhost:3000/api/password/reset", { headers: headers })
+    .pipe(
+      tap((response : any) => {
+        if(response){
+          localStorage.clear();
+          this.router.navigate(["/login"]);
+          this.popupService.ShowPopup(response.message, "success");
+        }
+      }),
+      catchError(response => {
+        if (response.error) {
+          this.popupService.ShowPopup(response.error.error, "error");
+        } else {
+            this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+        }
+        return response.error.error;
+      })
+    );
   }
 
   ChangePasswordVisibility(){
-    if(this.imageName == "password_icon_eye_opened.svg"){
+    if(this.passwordIsVisible){
       this.imageName = "password_icon_eye_closed.svg";
       this.passwordInputType = "text";
+      this.passwordIsVisible = false;
     } else {
       this.imageName = "password_icon_eye_opened.svg";
       this.passwordInputType = "password";
+      this.passwordIsVisible = true;
     }
   }
 
@@ -169,7 +186,7 @@ export class AuthService {
   }
 
   IsValidName(name: string) : boolean{
-    const nameRegex = /^[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ]+$/;
+    const nameRegex = /^[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ]{4,16}$/;
     return nameRegex.test(name);
   }
 
@@ -185,4 +202,13 @@ export class AuthService {
     }
   }
 
+  IsTokenExpired(token : string){
+    if(!token){
+      return true;
+    }
+
+    const payload = JSON.parse(atob(token.split(".")[1]));
+
+    return payload.exp * 1000 < Date.now();
+  }
 }

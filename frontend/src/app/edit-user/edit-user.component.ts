@@ -1,11 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { EditUserComponentService } from '../common-service/edit-user-component.service';
+import { Component, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { EditUserComponentService } from './edit-user-component.service';
 import { AdminService } from '../admin-page/admin.service';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../common-service/user.service';
+import { UserService } from '../services/user.service';
 import { PopupService } from '../popups/popup.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-edit-user',
@@ -14,25 +15,28 @@ import { Router } from '@angular/router';
   templateUrl: './edit-user.component.html',
   styleUrl: './edit-user.component.css'
 })
-export class EditUserComponent implements OnInit {
+export class EditUserComponent {
   editUserComponentService: EditUserComponentService = inject(EditUserComponentService);
   adminService: AdminService = inject(AdminService);
   userService: UserService = inject(UserService);
   popupService: PopupService = inject(PopupService);
   router : Router = inject(Router);
+  destroyRef : DestroyRef = inject(DestroyRef);
 
   username! : string;
   newUsername! : string;
-  newRole! : string;
+  newRole! : "Admin" | "Moderator" | "User" | undefined;
 
-  ngOnInit() {
-    this.editUserComponentService.userDataChanged.subscribe(() => {
-      this.setUserData();
+  constructor(){
+    effect(() => {
+      if(this.editUserComponentService.userData()){
+        this.setUserData();
+      }
     });
   }
 
   setUserData() {
-    this.username = this.editUserComponentService.GetEditedUserName();
+    this.username = this.editUserComponentService.GetEditedUserName()!;
     this.newUsername = this.username;
     this.newRole = this.editUserComponentService.GetEditedUserRole();
   }
@@ -43,18 +47,42 @@ export class EditUserComponent implements OnInit {
       return;
     }
     if(this.router.url.includes("/profile")){
-      this.userService.UserEditSelf(this.newUsername);
+      const subscription = this.userService.UserEditSelf(this.newUsername).subscribe();
+
+      this.destroyRef.onDestroy(() => {
+        subscription.unsubscribe();
+      });
     } else if(this.router.url.includes("/admin")){
-      if(this.editUserComponentService.GetEditedUserName() != this.newUsername && this.editUserComponentService.GetEditedUserRole() != this.newRole){
-        this.adminService.EditUserRole(this.editUserComponentService.GetEditedUserId(), this.newRole);
-        this.adminService.EditUser(this.editUserComponentService.GetEditedUserId(), this.newUsername);
-      } else if(this.editUserComponentService.GetEditedUserName() != this.newUsername && this.editUserComponentService.GetEditedUserRole() == this.newRole){
-        this.adminService.EditUser(this.editUserComponentService.GetEditedUserId(), this.newUsername);
-      } else if(this.editUserComponentService.GetEditedUserName() == this.newUsername && this.editUserComponentService.GetEditedUserRole() != this.newRole) {
-        this.adminService.EditUserRole(this.editUserComponentService.GetEditedUserId(), this.newRole);
-      }
-      localStorage.removeItem("ID");
+        let roleSubscription: Subscription | null = null;
+        let nameSubscription: Subscription | null = null;
+
+        const userId = this.editUserComponentService.GetEditedUserId();
+        const currentUserName = this.editUserComponentService.GetEditedUserName();
+        const currentUserRole = this.editUserComponentService.GetEditedUserRole();
+
+        const isNameChanged = currentUserName !== this.newUsername;
+        const isRoleChanged = currentUserRole !== this.newRole;
+
+        if (isNameChanged && isRoleChanged) {
+          roleSubscription = this.adminService.EditUserRole(userId, this.newRole).subscribe();
+          nameSubscription = this.adminService.EditUser(userId, this.newUsername).subscribe();
+        } else if (isNameChanged) {
+          nameSubscription = this.adminService.EditUser(userId, this.newUsername).subscribe();
+        } else if (isRoleChanged) {
+          roleSubscription = this.adminService.EditUserRole(userId, this.newRole).subscribe();
+        }
+        
+        this.destroyRef.onDestroy(() => {
+          localStorage.removeItem("ID");
+          if (roleSubscription) {
+          roleSubscription.unsubscribe();
+          }
+          if (nameSubscription) {
+            nameSubscription.unsubscribe();
+          }
+      });      
     }
+    this.editUserComponentService.ChangeEditUserComponentVisibility();
   }
 
   ChangeEditUserComponentVisibility() {

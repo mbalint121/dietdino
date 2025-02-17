@@ -1,8 +1,9 @@
-import { Component, inject} from '@angular/core';
+import { Component, inject, signal} from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../admin-page/admin.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-page-navbar',
@@ -14,8 +15,19 @@ import { AdminService } from '../admin-page/admin.service';
 export class PageNavbarComponent {
   authService : AuthService = inject(AuthService);
   adminService : AdminService = inject(AdminService);
+  userService : UserService = inject(UserService);
 
   menuOpen = false;
+
+  ngOnInit(){
+    if(this.userService.GetUserToken() == null){
+      this.authService.router.navigate(["/"]);
+      return;
+    }
+    if(this.authService.IsTokenExpired(JSON.stringify(this.userService.GetUserToken()))){
+      this.authService.LogOut();
+    }
+  }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;

@@ -10,6 +10,7 @@ import { VerifyComponent } from './auth/verify/verify.component';
 import { RecipesPageComponent } from './recipes-page/recipes-page.component';
 import { MyRecipesPageComponent } from './recipes-page/my-recipes-page/my-recipes-page.component';
 import { MyFavoriteRecipesPageComponent } from './recipes-page/my-favorite-recipes-page/my-favorite-recipes-page.component';
+import { UploadRecipesComponent } from './recipes-page/upload-recipes/upload-recipes.component';
 
 export const routes: Routes = [
     { path: 'login', title: "Bejelentkezés", component: LoginComponent },
@@ -22,5 +23,6 @@ export const routes: Routes = [
     { path: 'verify/:token', title: "Verify", component: VerifyComponent },
     { path: 'recipes', title: "Receptek", component: RecipesPageComponent },
     { path: 'my-recipes', title: "Receptjeim", component: MyRecipesPageComponent },
-    { path: 'my-favorite-recipes', title: "Kedvenc Receptjeim", component: MyFavoriteRecipesPageComponent }
+    { path: 'my-favorite-recipes', title: "Kedvenc Receptjeim", component: MyFavoriteRecipesPageComponent },
+    { path: 'upload-recipe', title: "Recept feltöltése", component: UploadRecipesComponent },
 ];

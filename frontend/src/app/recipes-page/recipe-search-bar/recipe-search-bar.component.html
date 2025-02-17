@@ -6,10 +6,11 @@
                 <img src="../../../assets/recipe_search_icon.svg" alt="Search icon">
             </button>
 
-                        
-        <button class="ms-3 border border-[#5E5E5E] bg-[#378722] rounded-lg p-2 h-12 2xs:max-xs:w-[22%] items-center flex text-white xl:w-1/4 justify-center text-xl">
-            <img src="../../../assets/upload_recipe_icon.svg" alt="Upload recipe icon" class="h-10 me-1.5">
-            Recept Feltöltése
-        </button>
-        </div>
+        @if(this.router.url.includes('my-recipes')) {
+            <button class="ms-3 border border-[#5E5E5E] bg-[#378722] rounded-lg px-3 xs:px-2 lg:px-8 h-12 items-center flex text-white justify-center" routerLink="/upload-recipe">
+                <img src="../../../assets/upload_recipe_icon.svg" alt="Upload recipe icon" class="h-10 lg:h-6 lg:me-1.5">
+                <p class="hidden lg:inline whitespace-nowrap text-lg">Recept Feltöltése</p>
+            </button>
+        }
+        </div>  
 </div>

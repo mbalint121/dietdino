@@ -1,7 +1,10 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { PopupService } from "../popups/popup.service";
 import { Router } from "@angular/router";
-import { UserService } from "../common-service/user.service";
+import { UserService } from "../services/user.service";
+import { User } from "../models/user.model";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { catchError, tap } from "rxjs";
 
 
 @Injectable({providedIn: 'root'})
@@ -9,6 +12,9 @@ export class AdminService {
     router : Router = inject(Router);
     popupService : PopupService = inject(PopupService);
     userService : UserService = inject(UserService);
+    httpClient : HttpClient = inject(HttpClient);
+
+    users = signal<User[]>([]);
 
     UserIsAdmin(){
         if(this.userService.GetUserRole() == "Admin"){
@@ -31,98 +37,90 @@ export class AdminService {
         }
     }
 
-    async GetAllUsers() {
-        let users! : [any];
-        await fetch("http://localhost:3000/api/users/", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "token": this.userService.GetUserToken() || ""
-            }
-        })
-        .then(result => result.json())
-        .then(data => {
-            users = data.users;
-        })
-        .catch(error => {
-            console.error(this.popupService.ShowPopup(error, "error"));
-        });
-        return users;
+    GetAllUsers() {
+        
+        const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
+
+        return this.httpClient.get("http://localhost:3000/api/users/", { headers: headers })
+        .pipe(
+            tap((response : any) => {
+                this.users.set(response.users);
+            }),
+            catchError(response => {
+                if (response.error) {
+                    this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+
     }
 
     DeleteUser(id : number){
-        fetch("http://localhost:3000/api/users/" + id, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "token": this.userService.GetUserToken() || ""
-            }
-        })
-        .then(result => result.json())
-        .then(data => {
-            if(data.error){
-                this.popupService.ShowPopup(data.error, "error");
-            } else{
-                this.popupService.ShowPopup(data.message, "success");
-            }
-            this.popupService.SavePopup();
-            location.reload();
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
+        const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
 
-    EditUserRole(id : number, role : string){
-        fetch("http://localhost:3000/api/users/" + id + "/role", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "token": this.userService.GetUserToken() || ""
-            },
-            body: JSON.stringify({
-                "role": role
+        return this.httpClient.delete("http://localhost:3000/api/users/" + id, { headers: headers })
+        .pipe(
+            tap((response : any) => {
+                this.popupService.ShowPopup(response.message, "success");
+                this.users().splice(this.users().findIndex(user => user.ID == id), 1);
+            }),
+            catchError(response => {
+                if (response.error) {
+                    this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
             })
-        })
-        .then(result => result.json())
-        .then(data => {
-            if(data.error){
-                this.popupService.ShowPopup(data.error, "error");
-            } else{
-                this.popupService.ShowPopup(data.message, "success");
-            }
-            this.popupService.SavePopup();
-            location.reload();
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        );
     }
 
     EditUser(id : number, username : string){
-        fetch("http://localhost:3000/api/users/" + id, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "token": this.userService.GetUserToken() || ""
-            },
-            body: JSON.stringify({
-                "username": username
+        const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
+        const body = JSON.stringify({
+            "username": username
+        })
+
+        return this.httpClient.put("http://localhost:3000/api/users/" + id, body, { headers: headers })
+        .pipe(
+            tap((response : any) => {
+                this.popupService.ShowPopup(response.message, "success");
+                this.users().find(user => user.ID == id)!.username = username;
+            }),
+            catchError(response => {
+                if (response.error) {
+                    this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
             })
-        })
-        .then(result => result.json())
-        .then(data => {
-            if(data.error){
-                this.popupService.ShowPopup(data.error, "error");
-            } else{
-                this.popupService.ShowPopup(data.message, "success");
-            }
-            this.popupService.SavePopup();
-            location.reload();
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        );
     }
 
+    EditUserRole(id : number, role : "Admin" | "Moderator" | "User" | undefined){
+        const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
+        const body = JSON.stringify({
+            "role": role
+        })
+
+        return this.httpClient.put("http://localhost:3000/api/users/" + id + "/role", body, { headers: headers })
+        .pipe(
+            tap((response : any) => {
+                this.popupService.ShowPopup(response.message, "success");
+                this.users().find(user => user.ID == id)!.role = role;
+            }),
+            catchError(response => {
+                if (response.error) {
+                    this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
 }

@@ -25,14 +25,14 @@
                         <p class="ms-1.5">Receptek</p>
                     </a>
                 </li>
-                <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
+                <div class="border border-black w-[75%] mx-auto"></div>
                 <li class="hover:bg-gray-100">
                     <a class="flex w-full justify-center h-14 items-center" routerLink="/my-recipes">
                         <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
                         <p class="ms-1.5">Receptjeim</p>
                     </a>
                 </li>
-                <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
+                <div class="border border-black w-[75%] mx-auto"></div>
                 <li [ngClass]="{'hover:bg-gray-100': true, 'rounded-b-xl': !this.adminService.UserIsAdminOrModerator()}">
                     <a class="flex w-full justify-center h-14 items-center" routerLink="/my-favorite-recipes">
                         <img src="../../assets/star_icon.svg" alt="Favorites icon">
@@ -40,7 +40,7 @@
                     </a>
                 </li>
                 @if(this.adminService.UserIsAdminOrModerator()){
-                    <div class="bg-black h-[1px] w-[75%] mx-auto"></div>
+                    <div class="border border-black w-[75%] mx-auto"></div>
                     <li class="hover:bg-gray-100 rounded-b-xl">
                         <a class="flex w-full justify-center h-14 items-center" routerLink="/admin">
                             <img src="../../assets/admin-icon.svg" alt="Admin icon">
@@ -94,10 +94,17 @@
             </a>
         </li>
         <li>
-            <a class="flex items-center" (click)="LogOut()" routerLink="/login">
-                <img src="../../assets/exit_icon.svg" alt="Exit icon">
-                <p class="ms-1.5 hidden xl:block">Kijelentkezés</p>
-            </a>
+            @if(this.userService.GetUserToken()){
+                <a class="flex items-center" (click)="LogOut()">
+                    <img src="../../assets/log_out_icon.svg" alt="Log out icon">
+                    <p class="ms-1.5 hidden xl:block">Kijelentkezés</p>
+                </a>
+            } @else {
+                <a class="flex items-center" routerLink="/login">
+                    <img src="../../assets/log_in_icon.svg" alt="Log in icon">
+                    <p class="ms-1.5 hidden xl:block">Bejelentkezés</p>
+                </a>
+            }
         </li>
     </ul>
 </div>

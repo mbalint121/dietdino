@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AuthSharedStyleComponent } from "../auth-shared-style/auth-shared-style.component";
 import { AuthService } from '../auth.service';
@@ -20,9 +20,13 @@ export class RegistrationComponent {
   registrationConfirmPassword! : string;
   router : Router = inject(Router); 
   popupService : PopupService = inject(PopupService);
+  destroyRef : DestroyRef = inject(DestroyRef);
+  
+  ngOnInit(){
+    this.authService.AlreadyLoggedIn();
+  }
 
   Registration(){
-    this.popupService.type = "error";
     if(!this.registrationName || !this.registrationEmail || !this.registrationPassword || !this.registrationConfirmPassword){
       this.popupService.ShowPopup("Kérlek minden adatot adj meg", "error");
       return;
@@ -43,12 +47,13 @@ export class RegistrationComponent {
       this.popupService.ShowPopup("A jelszavak nem egyeznek", "error");
       return;
     }
-    this.authService.SignUp(this.registrationName, this.registrationEmail, this.registrationPassword);
+    const subscription = this.authService.SignUp(this.registrationName, this.registrationEmail, this.registrationPassword).subscribe();
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
-  ngOnInit(){
-    this.authService.AlreadyLoggedIn();
-  }
 
   ChangePasswordVisibility(){
     this.authService.ChangePasswordVisibility();
