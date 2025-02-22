@@ -121,8 +121,8 @@ export async function GetRecipesByUser(req: any, res: Response){
 
 export async function NewRecipe(req: any, res: Response){
     const recipe: Recipe = new Recipe();
-    recipe.uploaderID = req.decodedToken.userID;
     Object.assign(recipe, req.body);
+    recipe.uploaderID = req.decodedToken.userID;
     
     const ingredients: Array<Ingredient> = new Array<Ingredient>();
     for(const ingredient of req.body.ingredients){

@@ -28,8 +28,8 @@ export async function GetUserByID(req: any, res: Response){
 
 export async function UpdateUserSelf(req: any, res: Response){
     const user: User = new User();
-    user.ID = req.decodedToken.userID;
     Object.assign(user, req.body);
+    user.ID = req.decodedToken.userID;
     
     if(!user.username){
         res.status(400).send({error: "Hiányzó adatok"});
@@ -49,7 +49,7 @@ export async function UpdateUserSelf(req: any, res: Response){
     }
     
     if(currentUser.username == user.username){
-        res.status(400).send({error: "Az új felhasználónév nem egyezhet meg a régi felhasználónévvel"});
+        res.status(400).send({error: "Nem történt módosítás"});
         return;
     }
     
@@ -75,8 +75,8 @@ export async function UpdateUserSelf(req: any, res: Response){
 
 export async function UpdateUserByID(req: any, res: Response){
     const user: User = new User();
-    user.ID = req.params.ID;
     Object.assign(user, req.body);
+    user.ID = req.params.ID;
 
     if(!user.username){
         res.status(400).send({error: "Hiányzó adatok"});
@@ -96,7 +96,7 @@ export async function UpdateUserByID(req: any, res: Response){
     }
 
     if(currentUser.username == user.username){
-        res.status(400).send({error: "Az új felhasználónév nem egyezhet meg a régi felhasználónévvel"});
+        res.status(400).send({error: "Nem történt módosítás"});
         return;
     }
 
@@ -122,8 +122,8 @@ export async function UpdateUserByID(req: any, res: Response){
 
 export async function UpdateUserRoleByID(req: any, res: Response){
     const user: User = new User();
-    user.ID = req.params.ID;
     Object.assign(user, req.body);
+    user.ID = req.params.ID;
 
     const userRole: UserRole = new UserRole();
     userRole.roleName = req.body.role;
@@ -152,7 +152,7 @@ export async function UpdateUserRoleByID(req: any, res: Response){
     }
 
     if(currentUser.role == user.role.roleName){
-        res.status(400).send({error: "Az új szerepkör nem egyezhet meg a régi szerepkörrel"});
+        res.status(400).send({error: "Nem történt módosítás"});
         return;
     }
 

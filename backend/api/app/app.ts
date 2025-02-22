@@ -7,6 +7,7 @@ import passwordRouter from "../password/router";
 import userRouter from "../user/router";
 import recipeRouter from "../recipe/router";
 import commodityRouter from "../commodity/router";
+import commentRouter from "../comment/router";
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use("/api/password", passwordRouter);
 app.use("/api/users", userRouter);
 app.use("/api/recipes", recipeRouter);
 app.use("/api/commodities", commodityRouter);
+app.use("/api/comments", commentRouter);
 
 export default app;

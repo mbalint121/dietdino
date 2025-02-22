@@ -37,12 +37,12 @@ CREATE TABLE recipes(
 
 CREATE TABLE comments(
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    userID INT NOT NULL,
+    authorID INT NOT NULL,
     recipeID INT NOT NULL,
     text TEXT NOT NULL,
     commentDateTime DATETIME NOT NULL,
-    FOREIGN KEY(recipeID) REFERENCES recipes(ID) ON DELETE CASCADE,
-    FOREIGN KEY(userID) REFERENCES users(ID) ON DELETE CASCADE
+    FOREIGN KEY(authorID) REFERENCES users(ID) ON DELETE CASCADE,
+    FOREIGN KEY(recipeID) REFERENCES recipes(ID) ON DELETE CASCADE
 );
 
 CREATE TABLE favorites(
@@ -277,6 +277,31 @@ BEGIN
     DELETE FROM ingredients WHERE ingredients.recipeID = recipeID AND ingredients.commodityID = (SELECT commodities.ID FROM commodities WHERE commodities.commodityName = commodityName);
 END$$
 
+CREATE PROCEDURE GetCommentsByRecipeID(IN recipeID INT)
+BEGIN
+    SELECT comments.ID AS ID, users.username AS author, comments.text as text, comments.commentDateTime AS commentDateTime FROM comments JOIN users ON comments.authorID = users.ID WHERE comments.recipeID = recipeID;
+END$$
+
+CREATE PROCEDURE GetCommentByID(IN commentID INT)
+BEGIN
+    SELECT comments.ID AS ID, users.username AS author, comments.text as text, comments.commentDateTime AS commentDateTime FROM comments JOIN users ON comments.authorID = users.ID WHERE comments.ID = commentID;
+END$$
+
+CREATE PROCEDURE NewCommentByRecipeID(IN authorID INT, IN recipeID INT, IN text TEXT)
+BEGIN
+    INSERT INTO comments VALUES(null, authorID, recipeID, text, NOW());
+END$$
+
+CREATE PROCEDURE UpdateCommentByID(IN commentID INT, IN text TEXT)
+BEGIN
+    UPDATE comments SET comments.text = text, comments.commentDateTime = NOW() WHERE comments.ID = commentID;
+END$$
+
+CREATE PROCEDURE DeleteCommentByID(IN commentID INT)
+BEGIN
+    DELETE FROM comments WHERE comments.ID = commentID;
+END$$
+
 CREATE FUNCTION UserExistsWithID(userID INT)
 RETURNS INT
 BEGIN
@@ -321,6 +346,12 @@ BEGIN
     WHERE ingredients.recipeID = recipeID;
 
     RETURN calorieValue;
+END$$
+
+CREATE FUNCTION GetAuthorIDByCommentID(commentID INT)
+RETURNS INT
+BEGIN
+    RETURN(SELECT comments.authorID FROM comments WHERE comments.ID = commentID);
 END$$
 
 CREATE FUNCTION SaltAndHashPassword(password VARCHAR(256))
@@ -395,3 +426,7 @@ CALL NewIngredientByRecipeID(1, "Só", "gramm", 5);
 CALL NewIngredientByRecipeID(1, "feketebors", "gramm", 2);
 CALL NewIngredientByRecipeID(1, "Burgonya", "kilogramm", 0.5);
 CALL NewIngredientByRecipeID(1, "Csirkemell", "dekagramm", 30);
+
+CALL NewCommentByRecipeID(1, 1, "Teszt komment. Nagyon finom volt.");
+CALL NewCommentByRecipeID(2, 1, "Teszt komment. Nekem nem ízlett.");
+CALL NewCommentByRecipeID(3, 2, "Teszt komment. Az egész családnak ízlett.");
