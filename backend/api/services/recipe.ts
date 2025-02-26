@@ -138,6 +138,21 @@ export default class RecipeService{
         }
     }
 
+    static async GetLikeCountByRecipeID(recipeID: number){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("SELECT GetLikeCountByRecipeID(?) AS likeCount", [recipeID]);
+            return rows[0].likeCount;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
     static async NewRecipe(recipe: Recipe){
         const conn = await mysql.createConnection(dbConfig);
         

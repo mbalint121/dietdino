@@ -1,6 +1,6 @@
+import { Request, Response } from "express";
 import { Commodity } from "../models/commodity";
 import CommodityService from "../services/commodity";
-import { Request, Response } from "express";
 import { Measure } from "../models/measure";
 
 export async function GetCommodities(req: Request, res: Response){

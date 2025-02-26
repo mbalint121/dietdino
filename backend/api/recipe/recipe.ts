@@ -1,13 +1,15 @@
-import RecipeService from "../services/recipe";
-import CommodityService from "../services/commodity";
 import { Request, Response } from "express";
 import { Recipe } from "../models/recipe";
-import { Ingredient } from "../models/ingredient";
+import RecipeService from "../services/recipe";
 import { Commodity } from "../models/commodity";
+import CommodityService from "../services/commodity";
+import { Ingredient } from "../models/ingredient";
 import { Measure } from "../models/measure";
 import { RecipeState } from "../models/recipestate";
+import { Like } from "../models/like";
+import LikeService from "../services/like";
 
-export async function GetAcceptedRecipes(req: Request, res: Response){
+export async function GetAcceptedRecipes(req: any, res: Response){
     const recipes: Array<Recipe> = await RecipeService.GetAcceptedRecipes()
     .catch((err) => {
         console.log(err);
@@ -29,13 +31,38 @@ export async function GetAcceptedRecipes(req: Request, res: Response){
             res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
             return;
         });
+
+        recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        const like: Like = new Like();
+        like.userID = req.decodedToken.userID;
+        like.recipeID = recipe.ID;
+
+        const likeExists: Like = await LikeService.GetLike(like)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(likeExists){
+            recipe.userHasLiked = true;
+        }
+        else{
+            recipe.userHasLiked = false;
+        }
     }
 
     res.status(200).send({recipes: recipes});
     return;
 }
 
-export async function GetWaitingRecipes(req: Request, res: Response){
+export async function GetWaitingRecipes(req: any, res: Response){
     const recipes: Array<Recipe> = await RecipeService.GetWaitingRecipes()
     .catch((err) => {
         console.log(err);
@@ -57,6 +84,31 @@ export async function GetWaitingRecipes(req: Request, res: Response){
             res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
             return;
         });
+
+        recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        const like: Like = new Like();
+        like.userID = req.decodedToken.userID;
+        like.recipeID = recipe.ID;
+
+        const likeExists: Like = await LikeService.GetLike(like)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(likeExists){
+            recipe.userHasLiked = true;
+        }
+        else{
+            recipe.userHasLiked = false;
+        }
     }
 
     res.status(200).send({recipes: recipes});
@@ -85,6 +137,31 @@ export async function GetDraftRecipes(req: any, res: Response){
             res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
             return;
         });
+
+        recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        const like: Like = new Like();
+        like.userID = req.decodedToken.userID;
+        like.recipeID = recipe.ID;
+
+        const likeExists: Like = await LikeService.GetLike(like)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(likeExists){
+            recipe.userHasLiked = true;
+        }
+        else{
+            recipe.userHasLiked = false;
+        }
     }
 
     res.status(200).send({recipes: recipes});
@@ -176,7 +253,7 @@ export async function NewRecipe(req: any, res: Response){
         });
         
         if(!ingredient.commodity.usableMeasures || ingredient.commodity.usableMeasures?.length == 0){
-            res.status(400).send({error: "Nem létezik ilyen hozzávaló"});
+            res.status(404).send({error: "Nem létezik ilyen hozzávaló"});
             return;
         }
         
@@ -204,7 +281,7 @@ export async function NewRecipe(req: any, res: Response){
     });
 
     if(!recipeStates.some(recipeState => recipeState.stateName == recipe.state?.stateName)){
-        res.status(400).send({error: "Nem létezik ilyen recept státusz"});
+        res.status(404).send({error: "Nem létezik ilyen recept státusz"});
         return;
     }
 
@@ -236,6 +313,11 @@ export async function UpdateRecipeByID(req: any, res: Response){
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
     });
+
+    if(!oldRecipe){
+        res.status(404).send({error: "Nem létezik ilyen recept"});
+        return;
+    }
 
     oldRecipe.ingredients = await RecipeService.GetIngredientsByRecipeID(oldRecipe.ID!)
     .catch((err) => {
@@ -307,7 +389,7 @@ export async function UpdateRecipeByID(req: any, res: Response){
             });
     
             if(!ingredient.commodity.usableMeasures || ingredient.commodity.usableMeasures?.length == 0){
-                res.status(400).send({error: "Nem létezik ilyen hozzávaló"});
+                res.status(404).send({error: "Nem létezik ilyen hozzávaló"});
                 return;
             }
     
@@ -344,7 +426,7 @@ export async function UpdateRecipeByID(req: any, res: Response){
     });
 
     if(!recipeStates.some(recipeState => recipeState.stateName == recipe.state?.stateName)){
-        res.status(400).send({error: "Nem létezik ilyen recept státusz"});
+        res.status(404).send({error: "Nem létezik ilyen recept státusz"});
         return;
     }
 
@@ -376,6 +458,11 @@ export async function AcceptRecipeByID(req: any, res: Response){
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
     });
+
+    if(!recipe){
+        res.status(404).send({error: "Nem létezik ilyen recept"});
+        return;
+    }
 
     const state: RecipeState = new RecipeState();
     state.stateName = recipe.state as string;
@@ -409,6 +496,11 @@ export async function RejectRecipeByID(req: any, res: Response){
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
     });
+
+    if(!recipe){
+        res.status(404).send({error: "Nem létezik ilyen recept"});
+        return;
+    }
 
     const state: RecipeState = new RecipeState();
     state.stateName = recipe.state as string;
@@ -444,7 +536,7 @@ export async function DeleteRecipeByID(req: any, res: Response){
     });
 
     if(!recipe){
-        res.status(400).send({error: "Nem létezik ilyen recept"});
+        res.status(404).send({error: "Nem létezik ilyen recept"});
         return;
     }
 

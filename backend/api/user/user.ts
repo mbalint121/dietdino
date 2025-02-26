@@ -44,7 +44,7 @@ export async function UpdateUserSelf(req: any, res: Response){
     });
     
     if(!currentUser){
-        res.status(400).send({error: "Nem létezik ilyen felhasználó"});
+        res.status(404).send({error: "Nem létezik ilyen felhasználó"});
         return;
     }
     
@@ -91,7 +91,7 @@ export async function UpdateUserByID(req: any, res: Response){
     });
 
     if(!currentUser){
-        res.status(400).send({error: "Nem létezik ilyen felhasználó"});
+        res.status(404).send({error: "Nem létezik ilyen felhasználó"});
         return;
     }
 
@@ -147,7 +147,7 @@ export async function UpdateUserRoleByID(req: any, res: Response){
     });
 
     if(!currentUser){
-        res.status(400).send({error: "Nem létezik ilyen felhasználó"});
+        res.status(404).send({error: "Nem létezik ilyen felhasználó"});
         return;
     }
 
@@ -164,7 +164,7 @@ export async function UpdateUserRoleByID(req: any, res: Response){
     });
 
     if(!userRoles.some((role) => role.roleName == user.role!.roleName)){
-        res.status(400).send({error: "Nem létezik ilyen szerepkör"});
+        res.status(404).send({error: "Nem létezik ilyen szerepkör"});
         return;
     }
 
@@ -196,7 +196,7 @@ export async function DeleteUserSelf(req: any, res: Response){
     });
 
     if(!currentUser){
-        res.status(400).send({error: "Nem létezik ilyen felhasználó"});
+        res.status(404).send({error: "Nem létezik ilyen felhasználó"});
         return;
     }
 
@@ -228,7 +228,7 @@ export async function DeleteUserByID(req: any, res: Response){
     });
 
     if(!currentUser){
-        res.status(400).send({error: "Nem létezik ilyen felhasználó"});
+        res.status(404).send({error: "Nem létezik ilyen felhasználó"});
         return;
     }
 

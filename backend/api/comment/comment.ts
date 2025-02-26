@@ -1,6 +1,6 @@
-import CommentService from "../services/comment";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Comment } from "../models/comment";
+import CommentService from "../services/comment";
 
 export async function GetCommentsByRecipeID(req: any, res: Response){
     const comments: Array<Comment> = await CommentService.GetCommentsByRecipeID(req.params.ID)
@@ -59,7 +59,7 @@ export async function UpdateCommentByID(req: any, res: Response){
     });
     
     if(!currentComment){
-        res.status(400).send({error: "Nem létezik ilyen komment"});
+        res.status(404).send({error: "Nem létezik ilyen komment"});
         return;
     }
     
@@ -96,7 +96,7 @@ export async function DeleteCommentByID(req: any, res: Response){
     });
     
     if(!currentComment){
-        res.status(400).send({error: "Nem létezik ilyen komment"});
+        res.status(404).send({error: "Nem létezik ilyen komment"});
         return;
     }
 

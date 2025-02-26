@@ -1,6 +1,6 @@
+import dotenv from "dotenv";
 import { Response } from "express";
 import { User } from "../models/user";
-import dotenv from "dotenv";
 import UserService from "../services/user";
 
 dotenv.config();
@@ -25,7 +25,7 @@ export async function VerifyUser(req: any, res: Response){
         return;
     });
     if(userVerified){
-        res.status(400).send({error: "A regisztráció már meg lett erősítve"});
+        res.status(409).send({error: "A regisztráció már meg lett erősítve"});
         return;
     }
     

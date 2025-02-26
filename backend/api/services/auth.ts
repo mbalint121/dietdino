@@ -1,10 +1,13 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { User } from "../models/user";
+import jwt from "jsonwebtoken";
 import { Response } from "express";
+import { User } from "../models/user";
 import UserService from "./user";
-import RecipeService from "./recipe";
 import { Recipe } from "../models/recipe";
+import RecipeService from "./recipe";
+import { Comment } from "../models/comment";
 import CommentService from "./comment";
+import { Like } from "../models/like";
+import LikeService from "./like";
 
 export default class AuthService{
     static DecodeToken(req: any, res: Response, next: any){
@@ -120,7 +123,7 @@ export default class AuthService{
         });
 
         if(!recipe){
-            res.status(401).send({error: "Nem létezik ilyen recept"});
+            res.status(404).send({error: "Nem létezik ilyen recept"});
             return;
         }
         next();
@@ -166,7 +169,7 @@ export default class AuthService{
     }
 
     static async CommentExists(req: any, res: Response, next: any){
-        const comment: any = await CommentService.GetCommentByID(req.params.ID)
+        const comment: Comment = await CommentService.GetCommentByID(req.params.ID)
         .catch((err) => {
             console.log(err);
             res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
@@ -174,7 +177,7 @@ export default class AuthService{
         });
 
         if(!comment){
-            res.status(401).send({error: "Nem létezik ilyen hozzászólás"});
+            res.status(404).send({error: "Nem létezik ilyen hozzászólás"});
             return;
         }
         next();
@@ -215,6 +218,25 @@ export default class AuthService{
                 res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
+        }
+        next();
+    }
+
+    static async LikeExists(req: any, res: Response, next: any){
+        const like: Like = new Like();
+        like.userID = req.decodedToken.userID;
+        like.recipeID = req.params.ID;
+
+        const currentLike: Like = await LikeService.GetLike(like)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(!currentLike){
+            res.status(404).send({error: "Még nem kedvelted ezt a receptet"});
+            return;
         }
         next();
     }

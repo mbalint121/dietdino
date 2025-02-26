@@ -1,9 +1,9 @@
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
+import PasswordService from "../services/password";
 import { User } from "../models/user";
 import UserService from "../services/user";
-import PasswordService from "../services/password";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ export async function SendPasswordResetEmail(req: Request, res: Response){
     .then(async (result) => {
         user.ID = result;
         if(!user.ID){
-            res.status(400).send({error: "Nem létezik felhasználó ezzel az email címmel"});
+            res.status(401).send({error: "Nem létezik felhasználó ezzel az email címmel"});
             return;
         }
 

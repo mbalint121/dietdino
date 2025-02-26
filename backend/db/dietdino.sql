@@ -29,7 +29,6 @@ CREATE TABLE recipes(
     preparationTime TIME NOT NULL,
     preparationDescription TEXT NOT NULL,
     uploadDateTime DATETIME NOT NULL,
-    likeCount INT NOT NULL,
     stateID INT,
     FOREIGN KEY(uploaderID) REFERENCES users(ID) ON DELETE CASCADE,
     FOREIGN KEY(stateID) REFERENCES recipeStates(ID)
@@ -164,37 +163,37 @@ END$$
 
 CREATE PROCEDURE GetRecipeByID(IN recipeID INT)
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.ID = recipeID;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.ID = recipeID;
 END$$
 
 CREATE PROCEDURE GetAcceptedRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Accepted");
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Accepted");
 END$$
 
 CREATE PROCEDURE GetWaitingRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Waiting");
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Waiting");
 END$$
 
 CREATE PROCEDURE GetDraftRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Draft");
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Draft");
 END$$
 
 CREATE PROCEDURE GetRecipesByUserID(IN userID INT)
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, recipes.likeCount AS likeCount, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.uploaderID = userID;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.uploaderID = userID;
 END$$
 
-CREATE PROCEDURE AddRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN uploadDateTime DATETIME, IN likeCount INT, IN state VARCHAR(16))
+CREATE PROCEDURE AddRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN uploadDateTime DATETIME, IN state VARCHAR(16))
 BEGIN
-    INSERT INTO recipes VALUES(null, uploaderID, recipeName, image, preparationTime, preparationDescription, uploadDateTime, likeCount, (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
+    INSERT INTO recipes VALUES(null, uploaderID, recipeName, image, preparationTime, preparationDescription, uploadDateTime, (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
 END$$
 
 CREATE PROCEDURE NewRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN state VARCHAR(16))
 BEGIN
-    INSERT INTO recipes VALUES(null, uploaderID, recipeName, image, preparationTime, preparationDescription, NOW(), 0, (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
+    INSERT INTO recipes VALUES(null, uploaderID, recipeName, image, preparationTime, preparationDescription, NOW(), (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
     SELECT LAST_INSERT_ID() AS insertID;
 END$$
 
@@ -302,6 +301,21 @@ BEGIN
     DELETE FROM comments WHERE comments.ID = commentID;
 END$$
 
+CREATE PROCEDURE GetLike(IN userID INT, IN recipeID INT)
+BEGIN
+    SELECT likes.userID AS userID, likes.recipeID AS recipeID FROM likes WHERE likes.userID = userID AND likes.recipeID = recipeID;
+END$$
+
+CREATE PROCEDURE NewLike(IN userID INT, IN recipeID INT)
+BEGIN
+    INSERT INTO likes VALUES(userID, recipeID);
+END$$
+
+CREATE PROCEDURE DeleteLike(IN userID INT, IN recipeID INT)
+BEGIN
+    DELETE FROM likes WHERE likes.userID = userID AND likes.recipeID = recipeID;
+END$$
+
 CREATE FUNCTION UserExistsWithID(userID INT)
 RETURNS INT
 BEGIN
@@ -348,6 +362,12 @@ BEGIN
     RETURN calorieValue;
 END$$
 
+CREATE FUNCTION GetLikeCountByRecipeID(recipeID INT)
+RETURNS INT
+BEGIN
+    RETURN(SELECT COUNT(*) FROM likes WHERE likes.recipeID = recipeID);
+END$$
+
 CREATE FUNCTION GetAuthorIDByCommentID(commentID INT)
 RETURNS INT
 BEGIN
@@ -381,9 +401,9 @@ CALL AddRecipeState("Draft");
 CALL AddRecipeState("Waiting");
 CALL AddRecipeState("Accepted");
 
-CALL AddRecipe(1, "Piszkozat Recept", "PiszkozatReceptKep.wepb", "00:30:00", "Teszt recept leírás", "2024-01-01 17:00:00", 0, "Draft");
-CALL AddRecipe(2, "Várakozó Recept", "VarakozoReceptKep.webp", "00:10:00", "Teszt recept leírás", "2024-01-02 18:00:00", 0, "Waiting");
-CALL AddRecipe(3, "Elfogadott Recept", "ElfogadottReceptKep.webp", "01:30:00", "Teszt recept leírás", "2024-01-03 19:00:00", 24, "Accepted");
+CALL AddRecipe(1, "Piszkozat Recept", "PiszkozatReceptKep.wepb", "00:30:00", "Teszt recept leírás", "2024-01-01 17:00:00", "Draft");
+CALL AddRecipe(2, "Várakozó Recept", "VarakozoReceptKep.webp", "00:10:00", "Teszt recept leírás", "2024-01-02 18:00:00", "Waiting");
+CALL AddRecipe(3, "Elfogadott Recept", "ElfogadottReceptKep.webp", "01:30:00", "Teszt recept leírás", "2024-01-03 19:00:00", "Accepted");
 
 CALL AddCommodityType("Solid");
 CALL AddCommodityType("Liquid");

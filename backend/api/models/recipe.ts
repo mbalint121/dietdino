@@ -12,6 +12,7 @@ export class Recipe{
     preparationDescription?: string;
     calorieValue?: number;
     uploadDateTime?: Date;
-    likeCount?: number;
     state?: RecipeState;
+    likeCount?: number;
+    userHasLiked?: boolean;
 }
