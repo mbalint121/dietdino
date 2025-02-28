@@ -153,6 +153,21 @@ export default class RecipeService{
         }
     }
 
+    static async GetCommentCountByRecipeID(recipeID: number){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("SELECT GetCommentCountByRecipeID(?) AS commentCount", [recipeID]);
+            return rows[0].commentCount;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
     static async NewRecipe(recipe: Recipe){
         const conn = await mysql.createConnection(dbConfig);
         

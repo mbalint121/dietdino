@@ -14,5 +14,7 @@ export class Recipe{
     uploadDateTime?: Date;
     state?: RecipeState;
     likeCount?: number;
+    commentCount?: number;
     userHasLiked?: boolean;
+    userHasFavorited?: boolean;
 }

@@ -8,6 +8,8 @@ import { Measure } from "../models/measure";
 import { RecipeState } from "../models/recipestate";
 import { Like } from "../models/like";
 import LikeService from "../services/like";
+import { Favorite } from "../models/favorite";
+import FavoriteService from "../services/favorite";
 
 export async function GetAcceptedRecipes(req: any, res: Response){
     const recipes: Array<Recipe> = await RecipeService.GetAcceptedRecipes()
@@ -39,6 +41,13 @@ export async function GetAcceptedRecipes(req: any, res: Response){
             return;
         });
 
+        recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
         const like: Like = new Like();
         like.userID = req.decodedToken.userID;
         like.recipeID = recipe.ID;
@@ -55,6 +64,24 @@ export async function GetAcceptedRecipes(req: any, res: Response){
         }
         else{
             recipe.userHasLiked = false;
+        }
+
+        const favorite: Favorite = new Favorite();
+        favorite.userID = req.decodedToken.userID;
+        favorite.recipeID = recipe.ID;
+
+        const favoriteExists: Favorite = await FavoriteService.GetFavorite(favorite)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(favoriteExists){
+            recipe.userHasFavorited = true;
+        }
+        else{
+            recipe.userHasFavorited = false;
         }
     }
 
@@ -92,6 +119,13 @@ export async function GetWaitingRecipes(req: any, res: Response){
             return;
         });
 
+        recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
         const like: Like = new Like();
         like.userID = req.decodedToken.userID;
         like.recipeID = recipe.ID;
@@ -108,6 +142,24 @@ export async function GetWaitingRecipes(req: any, res: Response){
         }
         else{
             recipe.userHasLiked = false;
+        }
+
+        const favorite: Favorite = new Favorite();
+        favorite.userID = req.decodedToken.userID;
+        favorite.recipeID = recipe.ID;
+
+        const favoriteExists: Favorite = await FavoriteService.GetFavorite(favorite)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(favoriteExists){
+            recipe.userHasFavorited = true;
+        }
+        else{
+            recipe.userHasFavorited = false;
         }
     }
 
@@ -145,6 +197,13 @@ export async function GetDraftRecipes(req: any, res: Response){
             return;
         });
 
+        recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
         const like: Like = new Like();
         like.userID = req.decodedToken.userID;
         like.recipeID = recipe.ID;
@@ -161,6 +220,24 @@ export async function GetDraftRecipes(req: any, res: Response){
         }
         else{
             recipe.userHasLiked = false;
+        }
+
+        const favorite: Favorite = new Favorite();
+        favorite.userID = req.decodedToken.userID;
+        favorite.recipeID = recipe.ID;
+
+        const favoriteExists: Favorite = await FavoriteService.GetFavorite(favorite)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(favoriteExists){
+            recipe.userHasFavorited = true;
+        }
+        else{
+            recipe.userHasFavorited = false;
         }
     }
 
@@ -190,6 +267,56 @@ export async function GetRecipesByUser(req: any, res: Response){
             res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
             return;
         });
+
+        recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        const like: Like = new Like();
+        like.userID = req.decodedToken.userID;
+        like.recipeID = recipe.ID;
+
+        const likeExists: Like = await LikeService.GetLike(like)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(likeExists){
+            recipe.userHasLiked = true;
+        }
+        else{
+            recipe.userHasLiked = false;
+        }
+
+        const favorite: Favorite = new Favorite();
+        favorite.userID = req.decodedToken.userID;
+        favorite.recipeID = recipe.ID;
+
+        const favoriteExists: Favorite = await FavoriteService.GetFavorite(favorite)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(favoriteExists){
+            recipe.userHasFavorited = true;
+        }
+        else{
+            recipe.userHasFavorited = false;
+        }
     }
 
     res.status(200).send({recipes: recipes});

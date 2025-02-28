@@ -316,6 +316,21 @@ BEGIN
     DELETE FROM likes WHERE likes.userID = userID AND likes.recipeID = recipeID;
 END$$
 
+CREATE PROCEDURE GetFavorite(IN userID INT, IN recipeID INT)
+BEGIN
+    SELECT favorites.userID AS userID, favorites.recipeID AS recipeID FROM favorites WHERE favorites.userID = userID AND favorites.recipeID = recipeID;
+END$$
+
+CREATE PROCEDURE NewFavorite(IN userID INT, IN recipeID INT)
+BEGIN
+    INSERT INTO favorites VALUES(userID, recipeID);
+END$$
+
+CREATE PROCEDURE DeleteFavorite(IN userID INT, IN recipeID INT)
+BEGIN
+    DELETE FROM favorites WHERE favorites.userID = userID AND favorites.recipeID = recipeID;
+END$$
+
 CREATE FUNCTION UserExistsWithID(userID INT)
 RETURNS INT
 BEGIN
@@ -366,6 +381,12 @@ CREATE FUNCTION GetLikeCountByRecipeID(recipeID INT)
 RETURNS INT
 BEGIN
     RETURN(SELECT COUNT(*) FROM likes WHERE likes.recipeID = recipeID);
+END$$
+
+CREATE FUNCTION GetCommentCountByRecipeID(recipeID INT)
+RETURNS INT
+BEGIN
+    RETURN(SELECT COUNT(*) FROM comments WHERE comments.recipeID = recipeID);
 END$$
 
 CREATE FUNCTION GetAuthorIDByCommentID(commentID INT)
@@ -443,10 +464,18 @@ CALL AddCommodity("Tej", "Liquid", 0.69);
 CALL AddCommodity("Olaj", "Liquid", 9.28);
 
 CALL NewIngredientByRecipeID(1, "Só", "gramm", 5);
-CALL NewIngredientByRecipeID(1, "feketebors", "gramm", 2);
+CALL NewIngredientByRecipeID(1, "Feketebors", "gramm", 2);
 CALL NewIngredientByRecipeID(1, "Burgonya", "kilogramm", 0.5);
 CALL NewIngredientByRecipeID(1, "Csirkemell", "dekagramm", 30);
 
 CALL NewCommentByRecipeID(1, 1, "Teszt komment. Nagyon finom volt.");
 CALL NewCommentByRecipeID(2, 1, "Teszt komment. Nekem nem ízlett.");
 CALL NewCommentByRecipeID(3, 2, "Teszt komment. Az egész családnak ízlett.");
+
+CAll NewLike(1, 1);
+CAll NewLike(2, 2);
+CAll NewLike(3, 3);
+
+CALL NewFavorite(1, 1);
+CALL NewFavorite(2, 2);
+CALL NewFavorite(3, 3);

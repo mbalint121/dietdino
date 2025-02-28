@@ -8,6 +8,8 @@ import { Comment } from "../models/comment";
 import CommentService from "./comment";
 import { Like } from "../models/like";
 import LikeService from "./like";
+import { Favorite } from "../models/favorite";
+import FavoriteService from "./favorite";
 
 export default class AuthService{
     static DecodeToken(req: any, res: Response, next: any){
@@ -236,6 +238,25 @@ export default class AuthService{
 
         if(!currentLike){
             res.status(404).send({error: "Még nem kedvelted ezt a receptet"});
+            return;
+        }
+        next();
+    }
+
+    static async FavoriteExists(req: any, res: Response, next: any){
+        const favorite: Favorite = new Favorite();
+        favorite.userID = req.decodedToken.userID;
+        favorite.recipeID = req.params.ID;
+
+        const currentFavorite: Favorite = await FavoriteService.GetFavorite(favorite)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if(!currentFavorite){
+            res.status(404).send({error: "Még nincs a kedvenceid között ez a recept"});
             return;
         }
         next();

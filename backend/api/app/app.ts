@@ -9,6 +9,7 @@ import recipeRouter from "../recipe/router";
 import commodityRouter from "../commodity/router";
 import commentRouter from "../comment/router";
 import likeRouter from "../like/router";
+import favoriteRouter from "../favorite/router";
 
 const app = express();
 
@@ -24,5 +25,6 @@ app.use("/api/recipes", recipeRouter);
 app.use("/api/commodities", commodityRouter);
 app.use("/api/comments", commentRouter);
 app.use("/api/likes", likeRouter);
+app.use("/api/favorites", favoriteRouter);
 
 export default app;

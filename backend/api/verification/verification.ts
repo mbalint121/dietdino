@@ -35,7 +35,7 @@ export async function VerifyUser(req: any, res: Response){
             res.status(500).send({error: "Nem sikerült megerősíteni a regisztrációt"});
             return;
         }
-        res.status(200).send({message: "Regisztráció sikeresen megerőstve"});
+        res.status(200).send({message: "Regisztráció sikeresen megerősítve"});
         return;
     })
     .catch((err) => {
