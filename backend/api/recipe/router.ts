@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { GetAcceptedRecipes, GetWaitingRecipes, GetDraftRecipes, GetRecipesByUser, NewRecipe, UpdateRecipeByID, AcceptRecipeByID, RejectRecipeByID, DeleteRecipeByID } from "./recipe";
+import { GetRecipeByID, GetAcceptedRecipes, GetWaitingRecipes, GetDraftRecipes, GetRecipesByUser, NewRecipe, UpdateRecipeByID, AcceptRecipeByID, RejectRecipeByID, DeleteRecipeByID } from "./recipe";
 import AuthService from "../services/auth";
 
 const router: Router = Router();
 
+router.get("/:ID", AuthService.DecodeToken, AuthService.UserExists, AuthService.RecipeExists, GetRecipeByID);
 router.get("/accepted", AuthService.DecodeToken, AuthService.UserExists, GetAcceptedRecipes);
 router.get("/waiting", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserModeratorOrAdmin, GetWaitingRecipes);
 router.get("/draft", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, GetDraftRecipes);
