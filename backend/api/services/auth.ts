@@ -131,6 +131,21 @@ export default class AuthService{
         next();
     }
 
+    static async IsRecipeAccepted(req: any, res: Response, next: any){
+        const recipe: Recipe = await RecipeService.GetRecipeByID(req.params.ID)
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+            return;
+        });
+
+        if((recipe.state as string) != "Accepted"){
+            res.status(401).send({error: "Ezt a műveletet csak elfogadott recepteknél lehet végrehajtani"});
+            return;
+        }
+        next();
+    }
+
     static async IsUserUploader(req: any, res: Response, next: any){
         const uploaderID: number = await RecipeService.GetUploaderIDByRecipeID(req.params.ID)
         .catch((err) => {
