@@ -123,7 +123,7 @@ END$$
 
 CREATE PROCEDURE GetUserByUsernameOrEmailAndPassword(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256))
 BEGIN
-    SELECT users.ID AS ID, users.username AS username, users.email AS email, roles.roleName AS role FROM users JOIN roles ON users.roleID = roles.ID AND users.username = username AND users.password = SaltAndHashPassword(password) OR users.email = email AND users.password = SaltAndHashPassword(password);
+    SELECT users.ID AS ID, users.username AS username, users.email AS email, roles.roleName AS role FROM users JOIN roles ON users.roleID = roles.ID WHERE users.username = username AND users.password = SaltAndHashPassword(password) OR users.email = email AND users.password = SaltAndHashPassword(password);
 END$$
 
 CREATE PROCEDURE GetUsers()
