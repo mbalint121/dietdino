@@ -73,7 +73,7 @@ CREATE TABLE commodities(
 
 CREATE TABLE measures(
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    measureName VARCHAR(64) UNIQUE NOT NULL,
+    measureName VARCHAR(64) NOT NULL UNIQUE,
     grams FLOAT NOT NULL
 );
 
@@ -168,17 +168,17 @@ END$$
 
 CREATE PROCEDURE GetAcceptedRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Accepted");
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted";
 END$$
 
 CREATE PROCEDURE GetWaitingRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Waiting");
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Waiting";
 END$$
 
 CREATE PROCEDURE GetDraftRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Draft");
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Draft";
 END$$
 
 CREATE PROCEDURE GetRecipesByUserID(IN userID INT)
@@ -186,7 +186,12 @@ BEGIN
     SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.uploaderID = userID;
 END$$
 
-CREATE PROCEDURE GetFavoriteRecipesByUserID(IN userID INT)
+CREATE PROCEDURE GetAcceptedRecipesByUsername(IN username VARCHAR(16))
+BEGIN
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE users.username = username AND recipeStates.stateName = "Accepted";
+END$$
+
+CREATE PROCEDURE GetAcceptedFavoriteRecipesByUserID(IN userID INT)
 BEGIN
     SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID JOIN favorites ON recipes.ID = favorites.recipeID WHERE recipestates.stateName = "Accepted" AND favorites.userID = userID;
 END$$
@@ -306,21 +311,6 @@ BEGIN
     DELETE FROM comments WHERE comments.ID = commentID;
 END$$
 
-CREATE PROCEDURE GetLike(IN userID INT, IN recipeID INT)
-BEGIN
-    SELECT likes.userID AS userID, likes.recipeID AS recipeID FROM likes WHERE likes.userID = userID AND likes.recipeID = recipeID;
-END$$
-
-CREATE PROCEDURE NewLike(IN userID INT, IN recipeID INT)
-BEGIN
-    INSERT INTO likes VALUES(userID, recipeID);
-END$$
-
-CREATE PROCEDURE DeleteLike(IN userID INT, IN recipeID INT)
-BEGIN
-    DELETE FROM likes WHERE likes.userID = userID AND likes.recipeID = recipeID;
-END$$
-
 CREATE PROCEDURE GetFavorite(IN userID INT, IN recipeID INT)
 BEGIN
     SELECT favorites.userID AS userID, favorites.recipeID AS recipeID FROM favorites WHERE favorites.userID = userID AND favorites.recipeID = recipeID;
@@ -334,6 +324,21 @@ END$$
 CREATE PROCEDURE DeleteFavorite(IN userID INT, IN recipeID INT)
 BEGIN
     DELETE FROM favorites WHERE favorites.userID = userID AND favorites.recipeID = recipeID;
+END$$
+
+CREATE PROCEDURE GetLike(IN userID INT, IN recipeID INT)
+BEGIN
+    SELECT likes.userID AS userID, likes.recipeID AS recipeID FROM likes WHERE likes.userID = userID AND likes.recipeID = recipeID;
+END$$
+
+CREATE PROCEDURE NewLike(IN userID INT, IN recipeID INT)
+BEGIN
+    INSERT INTO likes VALUES(userID, recipeID);
+END$$
+
+CREATE PROCEDURE DeleteLike(IN userID INT, IN recipeID INT)
+BEGIN
+    DELETE FROM likes WHERE likes.userID = userID AND likes.recipeID = recipeID;
 END$$
 
 CREATE FUNCTION UserExistsWithID(userID INT)

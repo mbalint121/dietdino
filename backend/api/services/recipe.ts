@@ -63,11 +63,26 @@ export default class RecipeService{
         }
     }
 
-    static async GetFavoriteRecipesByUserID(userID: number){
+    static async GetAcceptedFavoriteRecipesByUserID(userID: number){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetFavoriteRecipesByUserID(?)", [userID]);
+            const [rows]: any = await conn.query("CALL GetAcceptedFavoriteRecipesByUserID(?)", [userID]);
+            return rows[0];
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetAcceptedRecipesByUsername(username: string){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetAcceptedRecipesByUsername(?)", [username]);
             return rows[0];
         }
         catch(error){
