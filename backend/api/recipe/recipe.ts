@@ -696,7 +696,7 @@ export async function NewRecipe(req: any, res: Response){
             res.status(500).send({error: "Hiba a recept feltöltése során"});
             return;
         }
-        res.status(200).send({message: "Recept sikeresen feltölteve"});
+        res.status(201).send({message: "Recept sikeresen feltöltve"});
         return;
     })
     .catch((err) => {

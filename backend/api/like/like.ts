@@ -25,7 +25,7 @@ export async function NewLike(req: any, res: Response){
             res.status(500).send({error: "Hiba a recept kedvelése során"});
             return;
         }
-        res.status(200).send({message: "Recept sikeresen kedvelve"});
+        res.status(201).send({message: "Recept sikeresen kedvelve"});
         return;
     })
     .catch((err) => {
@@ -58,7 +58,7 @@ export async function DeleteLike(req: any, res: Response){
             res.status(500).send({error: "Hiba a kedvelés törlése során"});
             return;
         }
-        res.status(200).send({message: "Kedvelés sikeresen törölve"});
+        res.status(200).send({message: "Kedvelés sikeresen eltávolítva"});
         return;
     })
     .catch((err) => {

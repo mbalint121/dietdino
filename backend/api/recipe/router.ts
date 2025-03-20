@@ -8,7 +8,7 @@ router.get("/accepted", AuthService.DecodeToken, AuthService.UserExists, GetAcce
 router.get("/waiting", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserModeratorOrAdmin, GetWaitingRecipes);
 router.get("/draft", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, GetDraftRecipes);
 router.get("/mine", AuthService.DecodeToken, AuthService.UserExists, GetRecipesByUserSelf);
-router.get("/favorites", AuthService.DecodeToken, AuthService.UserExists, GetFavoriteRecipesByUser);
+router.get("/favorite", AuthService.DecodeToken, AuthService.UserExists, GetFavoriteRecipesByUser);
 router.get("/user/:username", AuthService.DecodeToken, AuthService.UserExists, GetRecipesByUser);
 router.get("/:ID", AuthService.DecodeToken, AuthService.UserExists, AuthService.RecipeExists, GetRecipeByID);
 router.post("", AuthService.DecodeToken, AuthService.UserExists, NewRecipe);

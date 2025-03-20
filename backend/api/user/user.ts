@@ -22,6 +22,11 @@ export async function GetUserByID(req: any, res: Response){
         return;
     });
 
+    if(!user){
+        res.status(404).send({error: "Nem létezik ilyen felhasználó"});
+        return;
+    }
+
     res.status(200).send({user: user});
     return;
 }

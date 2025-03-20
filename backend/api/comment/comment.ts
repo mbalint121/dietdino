@@ -31,7 +31,7 @@ export async function NewComment(req: any, res: Response){
             res.status(500).send({error: "Hiba a komment feltöltése során"});
             return;
         }
-        res.status(200).send({message: "Komment sikeresen feltöltve"});
+        res.status(201).send({message: "Komment sikeresen feltöltve"});
         return;
     })
     .catch((err) => {

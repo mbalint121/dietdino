@@ -5,6 +5,6 @@ import AuthService from "../services/auth";
 const router: Router = Router();
 
 router.post("/sendemail", SendPasswordResetEmail);
-router.post("/reset", AuthService.DecodeToken, AuthService.UserExists, ResetPassword);
+router.put("/reset", AuthService.DecodeToken, AuthService.UserExists, ResetPassword);
 
 export default router;

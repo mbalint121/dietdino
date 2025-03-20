@@ -25,7 +25,7 @@ export async function NewFavorite(req: any, res: Response){
             res.status(500).send({error: "Hiba a recept kedvencekhez adása során"});
             return;
         }
-        res.status(200).send({message: "Recept sikeresen a kedvencekhez adva"});
+        res.status(201).send({message: "Recept sikeresen a kedvencekhez adva"});
         return;
     })
     .catch((err) => {
@@ -58,7 +58,7 @@ export async function DeleteFavorite(req: any, res: Response){
             res.status(500).send({error: "Hiba a recept kedvencek közül való törlése során"});
             return;
         }
-        res.status(200).send({message: "Recept sikeresen törölve a kedvencek közül"});
+        res.status(200).send({message: "Recept sikeresen eltávolítva a kedvencek közül"});
         return;
     })
     .catch((err) => {
