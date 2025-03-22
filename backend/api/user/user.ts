@@ -57,6 +57,18 @@ export async function UpdateUserSelf(req: any, res: Response){
         res.status(400).send({error: "Nem történt módosítás"});
         return;
     }
+
+    const users: Array<User> = await UserService.GetUsers()
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+        return;
+    });
+
+    if(users.some((currentUser) => currentUser.username?.toLowerCase() == user.username?.toLowerCase())){
+        res.status(400).send({error: "Ez a felhasználónév már használatban van"});
+        return
+    }
     
     await UserService.UpdateUser(user)
     .then(async (result) => {
@@ -69,10 +81,6 @@ export async function UpdateUserSelf(req: any, res: Response){
     })
     .catch((err) => {
         console.log(err);
-        if(err.errno == 1062){
-            res.status(400).send({error: "Ez a felhasználónév már használatban van"});
-            return;
-        }
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
     });
@@ -105,6 +113,18 @@ export async function UpdateUserByID(req: any, res: Response){
         return;
     }
 
+    const users: Array<User> = await UserService.GetUsers()
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
+        return;
+    });
+
+    if(users.some((currentUser) => currentUser.username?.toLowerCase() == user.username?.toLowerCase())){
+        res.status(400).send({error: "Ez a felhasználónév már használatban van"});
+        return
+    }
+
     await UserService.UpdateUser(user)
     .then(async (result) => {
         if(!result.affectedRows){
@@ -116,10 +136,6 @@ export async function UpdateUserByID(req: any, res: Response){
     })
     .catch((err) => {
         console.log(err);
-        if(err.errno == 1062){
-            res.status(400).send({error: "Ez a felhasználónév már használatban van"});
-            return;
-        }
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
     });

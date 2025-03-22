@@ -24,6 +24,7 @@ export async function VerifyUser(req: any, res: Response){
         res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
         return;
     });
+    
     if(userVerified){
         res.status(409).send({error: "A regisztráció már meg lett erősítve"});
         return;

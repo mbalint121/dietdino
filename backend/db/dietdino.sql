@@ -18,20 +18,56 @@ CREATE TABLE users(
 
 CREATE TABLE recipeStates(
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    stateName VARCHAR(16) NOT NULL
+    stateName VARCHAR(16) NOT NULL UNIQUE
 );
 
 CREATE TABLE recipes(
     ID INT PRIMARY KEY AUTO_INCREMENT,
     uploaderID INT NOT NULL,
     recipeName VARCHAR(64) NOT NULL,
-    image VARCHAR(64) NOT NULL,
+    image VARCHAR(256) NOT NULL,
     preparationTime TIME NOT NULL,
     preparationDescription TEXT NOT NULL,
     uploadDateTime DATETIME NOT NULL,
     stateID INT,
     FOREIGN KEY(uploaderID) REFERENCES users(ID) ON DELETE CASCADE,
     FOREIGN KEY(stateID) REFERENCES recipeStates(ID)
+);
+
+CREATE TABLE commodityTypes(
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    commodityTypeName VARCHAR(64) NOT NULL UNIQUE
+);
+
+CREATE TABLE commodities(
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    commodityName VARCHAR(64) NOT NULL UNIQUE,
+    commodityTypeID INT NOT NULL,
+    calorieValue FLOAT NOT NULL,
+    FOREIGN KEY(commodityTypeID) REFERENCES commodityTypes(ID) ON DELETE CASCADE
+);
+
+CREATE TABLE measures(
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    measureName VARCHAR(64) NOT NULL UNIQUE,
+    grams FLOAT NOT NULL
+);
+
+CREATE TABLE usableMeasures(
+    commodityTypeID INT NOT NULL,
+    measureID INT NOT NULL,
+    FOREIGN KEY(commodityTypeID) REFERENCES commodityTypes(ID) ON DELETE CASCADE,
+    FOREIGN KEY(measureID) REFERENCES measures(ID) ON DELETE CASCADE
+);
+
+CREATE TABLE ingredients(
+    recipeID INT NOT NULL,
+    commodityID INT NOT NULL,
+    measureID INT NOT NULL,
+    quantity FLOAT NOT NULL,
+    FOREIGN KEY(recipeID) REFERENCES recipes(ID) ON DELETE CASCADE,
+    FOREIGN KEY(commodityID) REFERENCES commodities(ID) ON DELETE CASCADE,
+    FOREIGN KEY(measureID) REFERENCES measures(ID) ON DELETE CASCADE
 );
 
 CREATE TABLE comments(
@@ -56,42 +92,6 @@ CREATE TABLE likes(
     recipeID INT NOT NULL,
     FOREIGN KEY(userID) REFERENCES users(ID) ON DELETE CASCADE,
     FOREIGN KEY(recipeID) REFERENCES recipes(ID) ON DELETE CASCADE
-);
-
-CREATE TABLE commodityTypes(
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    commodityTypeName VARCHAR(64) NOT NULL UNIQUE
-);
-
-CREATE TABLE commodities(
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    commodityName VARCHAR(64) NOT NULL UNIQUE,
-    commodityTypeID INT NOT NULL,
-    calorieValue FLOAT NOT NULL,
-    FOREIGN KEY(commodityTypeID) REFERENCES commodityTypes(ID)
-);
-
-CREATE TABLE measures(
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    measureName VARCHAR(64) NOT NULL UNIQUE,
-    grams FLOAT NOT NULL
-);
-
-CREATE TABLE usableMeasures(
-    commodityTypeID INT NOT NULL,
-    measureID INT NOT NULL,
-    FOREIGN KEY(commodityTypeID) REFERENCES commodityTypes(ID) ON DELETE CASCADE,
-    FOREIGN KEY(measureID) REFERENCES measures(ID) ON DELETE CASCADE
-);
-
-CREATE TABLE ingredients(
-    recipeID INT NOT NULL,
-    commodityID INT NOT NULL,
-    measureID INT NOT NULL,
-    quantity FLOAT NOT NULL,
-    FOREIGN KEY(recipeID) REFERENCES recipes(ID) ON DELETE CASCADE,
-    FOREIGN KEY(commodityID) REFERENCES commodities(ID) ON DELETE CASCADE,
-    FOREIGN KEY(measureID) REFERENCES measures(ID) ON DELETE CASCADE
 );
 
 DELIMITER $$
