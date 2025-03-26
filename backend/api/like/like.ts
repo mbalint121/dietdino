@@ -3,36 +3,37 @@ import { Like } from '../models/like';
 import LikeService from '../services/like';
 
 export async function NewLike(req: any, res: Response){
-    const like: Like = new Like();
-    like.userID = req.decodedToken.userID;  
-    like.recipeID = req.params.ID;
-
-    const currentLike: Like = await LikeService.GetLike(like)
-    .catch((err) => {
-        console.log(err);
-        res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-        return;
-    });
-
-    if(currentLike){
-        res.status(409).send({error: "Már kedvelted ezt a receptet"});
-        return;
-    }
-
-    await LikeService.NewLike(like)
-    .then(async (result) => {
-        if(!result.affectedRows){
-            res.status(500).send({error: "Hiba a recept kedvelése során"});
+    try{
+        const like: Like = new Like();
+        like.userID = req.decodedToken.userID;  
+        like.recipeID = req.params.ID;
+    
+        const currentLike: Like = await LikeService.GetLike(like);
+    
+        if(currentLike){
+            res.status(409).send({error: "Már kedvelted ezt a receptet"});
             return;
         }
-        res.status(201).send({message: "Recept sikeresen kedvelve"});
-        return;
-    })
-    .catch((err) => {
+    
+        await LikeService.NewLike(like)
+        .then(async (result) => {
+            if(!result.affectedRows){
+                res.status(500).send({error: "Hiba a recept kedvelése során"});
+                return;
+            }
+            res.status(201).send({message: "Recept sikeresen kedvelve"});
+        });
+    }
+    catch(err: any){
         console.log(err);
-        res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-        return;
-    });
+
+        if(err.hasOwnProperty("sqlState")){
+            res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+        }
+        else{
+            res.status(500).send({error: "Ismeretlen hiba"});
+        }
+    }
 }
 
 export async function DeleteLike(req: any, res: Response){

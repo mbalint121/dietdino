@@ -2,46 +2,54 @@ import { Request, Response } from "express";
 import { User } from "../models/user";
 import UserService from "../services/user";
 import jwt from "jsonwebtoken";
+import { error } from "console";
 
 export async function LogIn(req: Request, res: Response){
-    const user: User = new User();
-    Object.assign(user, req.body);
+    try{
+        const user: User = new User();
+        Object.assign(user, req.body);
 
-    if(!user.username && !user.email || !user.password){
-        res.status(400).send({error: "Hiányzó adatok"});
-        return;
+        if(!user.username && !user.email || !user.password){
+            res.status(400).send({error: "Hiányzó adatok"});
+            return;
+        }
+
+        if(user.username && user.email){
+            res.status(400).send({error: "Vagy felhasználónévvel, vagy email címmel jelentkezzen be"});
+            return;
+        }
+
+        const userData = await UserService.GetUserByUsernameOrEmailAndPassword(user);
+
+        Object.assign(user, userData);
+        user.password = undefined;
+
+        
+        if(!user.ID){
+            res.status(401).send({error: "Hibás email vagy jelszó"});
+            return;
+        }
+        
+        const { JWT_SECRET } = process.env;
+        if(!JWT_SECRET){
+            res.status(500).send({error: "Hiba a token létrehozásakor"});
+            return;
+        }
+        
+        const payload = {userID: user.ID};
+        const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
+
+        user.ID = undefined;
+        res.status(200).send({token: token, user: user});
     }
-
-    if(user.username && user.email){
-        res.status(400).send({error: "Vagy felhasználónévvel, vagy email címmel jelentkezzen be"});
-        return;
-    }
-
-    const userData = await UserService.GetUserByUsernameOrEmailAndPassword(user)
-    .catch((err) => {
+    catch(err: any){
         console.log(err);
-        res.status(500).send({error: "Hiba az adatbáziskapcsolat során"});
-        return;
-    });
-
-    Object.assign(user, userData);
-    user.password = undefined;
-
-    if(!user.ID){
-        res.status(401).send({error: "Hibás email vagy jelszó"});
-        return;
+        
+        if(err.hasOwnProperty("sqlState")){
+            res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+        }
+        else{
+            res.status(500).send({error: "Ismeretlen hiba"});
+        }
     }
-
-    const { JWT_SECRET } = process.env;
-    if(!JWT_SECRET){
-        res.status(500).send({error: "Hiba a token létrehozásakor"});
-        return;
-    }
-
-    const payload = {userID: user.ID};
-    const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
-    
-    user.ID = undefined;
-    res.status(200).send({token: token, user: user});
-    return;
 }

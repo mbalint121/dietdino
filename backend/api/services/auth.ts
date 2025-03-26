@@ -38,242 +38,330 @@ export default class AuthService{
     }
 
     static async UserExists(req: any, res: Response, next: any){
-        const user: User = await UserService.GetUserByID(req.decodedToken.userID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(!user){
-            res.status(401).send({error: "Nem létezik felhasználó ezzel az azonosítóval"});
-            return;
+        try{
+            const user: User = await UserService.GetUserByID(req.decodedToken.userID);
+    
+            if(!user){
+                res.status(401).send({error: "Nem létezik felhasználó ezzel az azonosítóval"});
+                return;
+            }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async IsUserModeratorOrAdmin(req: any, res: Response, next: any){
-        const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(userRole != "Moderator" && userRole != "Admin"){
-            res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-            return;
-        }
-        next();
-    }
-
-    static async IsUserAdmin(req: any, res: Response, next: any){
-        const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(userRole != "Admin"){
-            res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-            return;
-        }
-        next();
-    }
-
-    static async IsUserItselfOrModeratorOrAdmin(req: any, res: Response, next: any){
-        if(req.decodedToken.userID != req.params.ID){
-            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID)
-            .catch((err) => {
-                console.log(err);
-                res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-                return;
-            });
-
+        try{
+            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
+    
             if(userRole != "Moderator" && userRole != "Admin"){
                 res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
+    }
+
+    static async IsUserAdmin(req: any, res: Response, next: any){
+        try{
+            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
+    
+            if(userRole != "Admin"){
+                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                return;
+            }
+            next();
+        }
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
+    }
+
+    static async IsUserItselfOrModeratorOrAdmin(req: any, res: Response, next: any){
+        try{
+            if(req.decodedToken.userID != req.params.ID){
+                const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
+    
+                if(userRole != "Moderator" && userRole != "Admin"){
+                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    return;
+                }
+            }
+            next();
+        }
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async IsUserItselfOrAdmin(req: any, res: Response, next: any){
-        if(req.decodedToken.userID != req.params.ID){
-            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID)
-            .catch((err) => {
-                console.log(err);
-                res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-                return;
-            });
-
-            if(userRole != "Admin"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-                return;
+        try{
+            if(req.decodedToken.userID != req.params.ID){
+                const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
+    
+                if(userRole != "Admin"){
+                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    return;
+                }
+            }
+            next();
+        }
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
             }
         }
-        next();
     }
 
     static async RecipeExists(req: any, res: Response, next: any){
-        const recipe: Recipe = await RecipeService.GetRecipeByID(req.params.ID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(!recipe){
-            res.status(404).send({error: "Nem létezik ilyen recept"});
-            return;
+        try{
+            const recipe: Recipe = await RecipeService.GetRecipeByID(req.params.ID);
+    
+            if(!recipe){
+                res.status(404).send({error: "Nem létezik ilyen recept"});
+                return;
+            }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async IsRecipeAccepted(req: any, res: Response, next: any){
-        const recipe: Recipe = await RecipeService.GetRecipeByID(req.params.ID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if((recipe.state as string) != "Accepted"){
-            res.status(401).send({error: "Ezt a műveletet csak elfogadott recepteknél lehet végrehajtani"});
-            return;
+        try{
+            const recipe: Recipe = await RecipeService.GetRecipeByID(req.params.ID);
+    
+            if((recipe.state as string) != "Accepted"){
+                res.status(401).send({error: "Ezt a műveletet csak elfogadott recepteknél lehet végrehajtani"});
+                return;
+            }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async IsUserUploader(req: any, res: Response, next: any){
-        const uploaderID: number = await RecipeService.GetUploaderIDByRecipeID(req.params.ID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(req.decodedToken.userID != uploaderID){
-            res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-            return;
+        try{
+            const uploaderID: number = await RecipeService.GetUploaderIDByRecipeID(req.params.ID);
+    
+            if(req.decodedToken.userID != uploaderID){
+                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                return;
+            }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async IsUserUploaderOrAdmin(req: any, res: Response, next: any){
-        const uploaderID: number = await RecipeService.GetUploaderIDByRecipeID(req.params.ID)
-        .catch((err) => {
+        try{
+            const uploaderID: number = await RecipeService.GetUploaderIDByRecipeID(req.params.ID);
+    
+            if(req.decodedToken.userID != uploaderID){
+                const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
+                
+                if(userRole != "Admin"){
+                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    return;
+                }
+            }
+            next();
+        }
+        catch(err: any){
             console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(req.decodedToken.userID != uploaderID){
-            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID)
-            .catch((err) => {
-                console.log(err);
-                res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-                return;
-            });
-            
-            if(userRole != "Admin"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-                return;
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
             }
         }
-        next();
     }
 
     static async CommentExists(req: any, res: Response, next: any){
-        const comment: Comment = await CommentService.GetCommentByID(req.params.ID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(!comment){
-            res.status(404).send({error: "Nem létezik ilyen hozzászólás"});
-            return;
+        try{
+            const comment: Comment = await CommentService.GetCommentByID(req.params.ID);
+    
+            if(!comment){
+                res.status(404).send({error: "Nem létezik ilyen hozzászólás"});
+                return;
+            }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async IsUserAuthor(req: any, res: Response, next: any){
-        const authorID: number = await CommentService.GetAuthorIDByCommentID(req.params.ID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(req.decodedToken.userID != authorID){
-            res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-            return;
-        }
-        next();
-    }
-
-    static async IsUserAuthorOrAdmin(req: any, res: Response, next: any){
-        const authorID: number = await CommentService.GetAuthorIDByCommentID(req.params.ID)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(req.decodedToken.userID != authorID){
-            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID)
-            .catch((err) => {
-                console.log(err);
-                res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-                return;
-            });
-            
-            if(userRole != "Admin"){
+        try{
+            const authorID: number = await CommentService.GetAuthorIDByCommentID(req.params.ID);
+    
+            if(req.decodedToken.userID != authorID){
                 res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
+    }
+
+    static async IsUserAuthorOrModeratorOrAdmin(req: any, res: Response, next: any){
+        try{
+            const authorID: number = await CommentService.GetAuthorIDByCommentID(req.params.ID);
+    
+            if(req.decodedToken.userID != authorID){
+                const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
+                
+                if(userRole != "Moderator" && userRole != "Admin"){
+                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    return;
+                }
+            }
+            next();
+        }
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async LikeExists(req: any, res: Response, next: any){
-        const like: Like = new Like();
-        like.userID = req.decodedToken.userID;
-        like.recipeID = req.params.ID;
-
-        const currentLike: Like = await LikeService.GetLike(like)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(!currentLike){
-            res.status(404).send({error: "Még nem kedvelted ezt a receptet"});
-            return;
+        try{
+            const like: Like = new Like();
+            like.userID = req.decodedToken.userID;
+            like.recipeID = req.params.ID;
+    
+            const currentLike: Like = await LikeService.GetLike(like);
+    
+            if(!currentLike){
+                res.status(404).send({error: "Még nem kedvelted ezt a receptet"});
+                return;
+            }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 
     static async FavoriteExists(req: any, res: Response, next: any){
-        const favorite: Favorite = new Favorite();
-        favorite.userID = req.decodedToken.userID;
-        favorite.recipeID = req.params.ID;
-
-        const currentFavorite: Favorite = await FavoriteService.GetFavorite(favorite)
-        .catch((err) => {
-            console.log(err);
-            res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-            return;
-        });
-
-        if(!currentFavorite){
-            res.status(404).send({error: "Még nincs a kedvenceid között ez a recept"});
-            return;
+        try{
+            const favorite: Favorite = new Favorite();
+            favorite.userID = req.decodedToken.userID;
+            favorite.recipeID = req.params.ID;
+    
+            const currentFavorite: Favorite = await FavoriteService.GetFavorite(favorite);
+    
+            if(!currentFavorite){
+                res.status(404).send({error: "Még nincs a kedvenceid között ez a recept"});
+                return;
+            }
+            next();
         }
-        next();
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
+        }
     }
 }

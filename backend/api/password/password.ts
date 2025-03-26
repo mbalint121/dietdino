@@ -8,19 +8,18 @@ import UserService from "../services/user";
 dotenv.config();
 
 export async function SendPasswordResetEmail(req: Request, res: Response){
-    const user: User = new User();
-    Object.assign(user, req.body);
-
-    if(!user.email){
-        res.status(400).send({error: "Hiányzó adatok"});
-        return;
-    }
-
-    await UserService.GetUserIDByEmail(user.email)
-    .then(async (result) => {
-        user.ID = result;
+    try{
+        const user: User = new User();
+        Object.assign(user, req.body);
+    
+        if(!user.email){
+            res.status(400).send({error: "Hiányzó adatok"});
+            return;
+        }
+    
+        user.ID = await UserService.GetUserIDByEmail(user.email);
         if(!user.ID){
-            res.status(401).send({error: "Nem létezik felhasználó ezzel az email címmel"});
+            res.status(404).send({error: "Nem létezik felhasználó ezzel az email címmel"});
             return;
         }
 
@@ -33,43 +32,56 @@ export async function SendPasswordResetEmail(req: Request, res: Response){
         const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "15m"});
         try{
             await PasswordService.SendPasswordResetEmail(user, token);
-            res.status(200).send({message: "Az email elküldve"});
-            return;
+            res.status(200).send({message: "Jelszó-visszaállító email elküldve"});
         }
-        catch(error){
-            console.log(error);
-            res.status(500).send({error: "Hiba az email küldése során"});
-            return;
+        catch(err: any){
+            err.errType = "emailError";
+            throw err;
         }
-    })
-    .catch((err) => {
+    }
+    catch(err: any){
         console.log(err);
-        res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-        return;
-    });
+
+        if(err.hasOwnProperty("sqlState")){
+            res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+        }
+        else if(err.errType == "emailError"){
+            res.status(500).send({error: "Hiba a jelszó-visszaállító email küldése során"});
+        }
+        else{
+            res.status(500).send({error: "Ismeretlen hiba"});
+        }
+    }
 }
 
 export async function ResetPassword(req: any, res: Response){
-    const user: User = new User();
-    user.ID = req.decodedToken.userID;
-    user.password = req.body.password;
-    if(!user.ID || !user.password){
-        res.status(400).send({error: "Hiányzó adatok"});
-        return;
-    }
-
-    await PasswordService.ResetPassword(user)
-    .then((result) => {
-        if(!result){
-            res.status(500).send({error: "Sikertelen jelszóváltoztatás"});
+    try{
+        const user: User = new User();
+        user.ID = req.decodedToken.userID;
+        user.password = req.body.password;
+        if(!user.ID || !user.password){
+            res.status(400).send({error: "Hiányzó adatok"});
             return;
         }
-        res.status(200).send({message: "Sikeres jelszóváltoztatás"});
-        return;
-    })
-    .catch((err) => {
+    
+        await PasswordService.ResetPassword(user)
+        .then((result) => {
+            if(!result){
+                res.status(500).send({error: "Sikertelen jelszóváltoztatás"});
+                return;
+            }
+            res.status(200).send({message: "Sikeres jelszóváltoztatás"});
+            return;
+        });
+    }
+    catch(err: any){
         console.log(err);
-        res.status(500).send({error: "Hiba az adatbázis kapcsolat során"});
-        return;
-    });
+
+        if(err.hasOwnProperty("sqlState")){
+            res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+        }
+        else{
+            res.status(500).send({error: "Ismeretlen hiba"});
+        }
+    }
 }
