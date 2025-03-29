@@ -357,18 +357,24 @@ export async function GetRecipeByID(req: any, res: Response){
             res.status(404).send({error: "Nem létezik ilyen recept"});
             return;
         }
-    
-        const userRole = await UserService.GetUserRoleByID(req.decodedToken.userID);
-    
-        if((recipe.state as string) == "Draft" && req.decodedToken.userID != recipe.uploaderID && userRole != "Admin"){
-            res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-            return;
+
+        recipe.uploaderID = await RecipeService.GetUploaderIDByRecipeID(recipe.ID!);
+
+        if(req.decodedToken.userID != recipe.uploaderID){
+            const userRole = await UserService.GetUserRoleByID(req.decodedToken.userID);
+        
+            if((recipe.state as string) == "Draft" && userRole != "Admin"){
+                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                return;
+            }
+        
+            if((recipe.state as string) == "Waiting" && userRole != "Admin" && userRole != "Moderator"){
+                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                return;
+            }
         }
-    
-        if((recipe.state as string) == "Waiting" && req.decodedToken.userID != recipe.uploaderID && userRole != "Admin" && userRole != "Moderator"){
-            res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-            return;
-        }
+
+        recipe.uploaderID = undefined;
     
         recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
     
