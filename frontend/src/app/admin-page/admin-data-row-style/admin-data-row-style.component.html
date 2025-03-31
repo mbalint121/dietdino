@@ -9,5 +9,20 @@
                 <img class="h-4 md:h-6 xl:h-8" src="../../../assets/delete_icon.svg" alt="Törlés">
             </button>
         }
+        @else if(type == "waiting-recipes"){
+            <button class="bg-[#0ed0e9] p-1.5 rounded-lg md:rounded-xl">
+                <img class="h-4 md:h-6 xl:h-8 invert" src="../../../assets/password_icon_eye_opened.svg" alt="Szerkesztés" [routerLink]="['/waiting-recipe', data.ID]">
+            </button>
+        }
+        @else if(type == "draft-recipes"){
+            <button class="bg-[#0ed0e9] p-1.5 rounded-lg md:rounded-xl">
+                <img class="h-4 md:h-6 xl:h-8 invert" src="../../../assets/password_icon_eye_opened.svg" alt="Szerkesztés" [routerLink]="['/draft-recipe', data.ID]">
+            </button>
+        }
+        @else if(type == "accepted-recipes"){
+            <button class="bg-[#0ed0e9] p-1.5 rounded-lg md:rounded-xl">
+                <img class="h-4 md:h-6 xl:h-8 invert" src="../../../assets/password_icon_eye_opened.svg" alt="Szerkesztés" [routerLink]="['/recipe', data.ID]">
+            </button>
+        }
     </div>
 </div>

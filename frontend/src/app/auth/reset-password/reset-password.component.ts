@@ -15,7 +15,7 @@ import { UserService } from '../../services/user.service';
 })
 export class ResetPasswordComponent {
 
-  router : ActivatedRoute = inject(ActivatedRoute);
+  route : ActivatedRoute = inject(ActivatedRoute);
   authService : AuthService = inject(AuthService);
   popupService : PopupService = inject(PopupService);
   userService : UserService = inject(UserService);
@@ -26,9 +26,8 @@ export class ResetPasswordComponent {
   token! : string;
   
   ngOnInit(){
-    this.authService.AlreadyLoggedIn();
     localStorage.clear();
-    const token = this.router.snapshot.paramMap.get('token') || '';
+    const token = this.route.snapshot.paramMap.get('token') || '';
     this.userService.SetUserToken(token);
   }
 
@@ -45,9 +44,11 @@ export class ResetPasswordComponent {
       this.popupService.ShowPopup("A jelszónak legalább 8 karakter hosszúnak kell lennie, legalább egy kisbetűt, nagybetűt, számot és speciális karaktert tartalmaznia kell", "error");
       return;
     }
+
     const subscription = this.authService.ResetPassword(this.newPassword).subscribe();
 
     this.destroyRef.onDestroy(() => {
+      localStorage.removeItem("token");
       subscription.unsubscribe();
     });
   }

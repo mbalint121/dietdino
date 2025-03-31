@@ -1,0 +1,17 @@
+<app-page-navbar></app-page-navbar>
+<div class="mt-24 w-[90%] mx-auto mb-10">
+    <h1 class="text-center text-3xl font-semibold text-[#378722]">{{username}} nyilvános profilja</h1>
+
+    <p class="text-3xl font-semibold text-[#378722] pt-20 -mt-10" id="public-recipes">Receptek</p>
+    <div class="bg-[#ECF6EA] mt-3 rounded-xl border-[#378722] border py-8">
+        @if(this.GetRecipes().length > 0) {
+            <div class="grid s:grid-cols-2 lg:grid-cols-3 w-[90%] mx-auto gap-y-10 gap-x-8">
+                @for(recipe of this.GetRecipes(); track recipe.ID) {
+                    <app-recipe-card [recipe]="recipe"></app-recipe-card>
+                }   
+            </div>
+        } @else {
+            <p class="text-lg font-medium text-[#378722] ms-5">Ennek a felhasználónak nincs még jóváhagyott receptje! ({{username}})</p>
+        }
+    </div>
+</div>

@@ -7,11 +7,12 @@ import { EditUserComponentService } from '../edit-user/edit-user-component.servi
 import { PopupService } from '../popups/popup.service';
 import { User } from '../models/user.model';
 import { UserRole } from '../models/user-role.type';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [PageNavbarComponent, EditUserComponent, CommonModule],
+  imports: [PageNavbarComponent, EditUserComponent, CommonModule, RouterLink],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })

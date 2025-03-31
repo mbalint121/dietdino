@@ -1,8 +1,25 @@
-<div class="w-[80%] xl:w-[60%] mx-auto mt-20">
+<div class="w-[80%] xl:w-[60%] mx-auto mt-24">
         <div class="flex">
-            <img src="../../../assets/recipe_filter_icon.svg" alt="Filter recipes icon" class="h-12 me-1.5">
-            <input type="text" class="border border-[#5E5E5E] rounded-l-lg w-full p-2 h-12" placeholder="Recept keresése">
-            <button class="border-r border-t border-b border-[#5E5E5E] bg-[#378722] rounded-r-lg p-2 h-12 2xs:max-xs:w-[22%] text-center">
+            <img src="../../../assets/recipe_filter_icon.svg" alt="Filter recipes icon" class="h-12 me-1.5 cursor-pointer" (click)="ChangeFilterVisibility()">
+            <div [ngClass]="{'bg-white border border-[#5E5E5E] p-4 rounded-lg z-50 absolute top-[150px] transition-all duration-300 space-y-2' : true, 'opacity-100': this.isFilterVisible, 'opacity-0 hidden': !this.isFilterVisible}">
+                <div class="text-lg font-semibold text-center">
+                    Keresési Szűrők
+                </div>
+                <div class="flex whitespace-nowrap space-x-2">
+                    <input type="radio" id="acceptedRecipes" name="recipeFilter" value="accepted" [(ngModel)]="selectedFilter"/>
+                    <label for="acceptedRecipes">Elfogadott receptek</label>
+                </div>
+                <div class="flex whitespace-nowrap space-x-2">
+                    <input type="radio" id="waitingRecipes" name="recipeFilter" value="waiting" [(ngModel)]="selectedFilter"/>
+                    <label for="waitingRecipes">Elfogadásra váró receptek</label>
+                </div>
+                <div class="flex whitespace-nowrap space-x-2">
+                    <input type="radio" id="draftRecipes" name="recipeFilter" value="draft" [(ngModel)]="selectedFilter"/>
+                    <label for="draftRecipes">Piszkozatok</label>
+                </div>
+            </div>
+            <input type="text" class="border border-[#5E5E5E] rounded-l-lg w-full p-2 h-12" placeholder="Recept keresése" [(ngModel)]="searchString" (keydown)="SearchRecipesOnEnter($event)">
+            <button class="border-r border-t border-b border-[#5E5E5E] bg-[#378722] rounded-r-lg p-2 h-12 2xs:max-xs:w-[22%] text-center" (click)="SearchRecipes()">
                 <img src="../../../assets/recipe_search_icon.svg" alt="Search icon">
             </button>
 

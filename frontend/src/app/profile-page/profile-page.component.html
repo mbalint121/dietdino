@@ -1,51 +1,32 @@
 <app-page-navbar></app-page-navbar>
 <div class="w-[90%] mx-auto h-4">
-    <div class="hidden xl:fixed xl:block w-[20%] float-start bg-[#EAEAEA] rounded-xl border-[#7F7F7F] border p-6 space-y-4 mt-20">
-        <a class="flex items-center" href="/profile#user-profile">
-            <img src="../../assets/profile_icon.svg" alt="">
-            <p class="ms-2 font-semibold">Felhasználói Profil</p>
-        </a>
-        <a class="flex items-center" href="/profile#settings">
-            <img src="../../assets/settings-icon.svg" alt="">
-            <p class="ms-2 font-semibold">Beállítások</p>
-        </a>
-        <a class="flex items-center" href="/profile#statistics">
-            <img src="../../assets/statistics-icon.svg" alt="">
-            <p class="ms-2 font-semibold">Statisztika</p>
-        </a>
-    </div>
-    <div class="xl:w-[75%] mx-auto xl:float-end">
-        <p class="text-3xl font-semibold text-[#378722] pt-20" id="user-profile">Felhasználói Profil</p>
-        <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border">
-            <div class="flex w-[30%]">
-                <img class="sm:ms-3" src="../../assets/user_page_profile_icon.svg" alt="">
-                <div class="bg-[#378722] w-[1px] h-full ms-8"></div>
+    <h1 class="text-3xl font-semibold text-[#378722] pt-24" id="user-profile">Felhasználói Profil</h1>
+    <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border">
+        <div class="flex w-[30%]">
+            <img class="sm:ms-3" src="../../assets/user_page_profile_icon.svg" alt="">
+            <div class="bg-[#378722] w-[1px] h-full ms-8"></div>
+        </div>
+        <div class="w-[70%] text-center">
+            <div class="font-medium text-2xl xs:text-3xl text-[#378722] cursor-pointer group w-fit mx-auto" [routerLink]="['/profile', username]">
+                <p>{{username}}</p>
+                <div class="border-b-[3px] border-[#378722] transition-all duration-500 w-0 group-hover:w-full"></div>
             </div>
-            <div class="w-[70%] text-center">
-                <p class="font-medium text-2xl xs:text-3xl text-[#378722]">{{username}}</p>
-                <button class="hidden sm:inline font-medium text-sm text-white bg-[#378722] align-middle px-4 py-2 md:px-6 md:py-4 sm:text-base md:text-lg xl:text-xl rounded-xl mt-6" (click)="ChangeEditUserComponentVisibility()">
-                    Felhasználói profil szerkesztése
+            <button class="hidden sm:inline font-medium text-sm text-white bg-[#378722] align-middle w-3/4 lg:w-1/2 py-2 md:py-4 sm:text-base md:text-lg xl:text-xl rounded-xl mt-6" (click)="ChangeEditUserComponentVisibility()">
+                Felhasználói profil szerkesztése
+            </button>
+            <br>
+            <button class="hidden sm:inline font-medium text-sm text-white bg-[#DC2626] align-middle w-3/4 lg:w-1/2 py-2 md:py-4 sm:text-base md:text-lg xl:text-xl rounded-xl mt-6" (click)="DeleteUser()">
+                Felhasználói fiók törlése
+            </button>
+            <div class="inline sm:hidden">
+                <button class="bg-[#378722] p-1 rounded-lg me-2.5">
+                    <img class="h-8" src="../../assets/edit_icon.svg" alt="Szerkesztés" (click)="ChangeEditUserComponentVisibility()">
                 </button>
-                <br>
-                <button class="hidden sm:inline font-medium text-sm text-white bg-[#DC2626] align-middle px-4 py-2 md:px-6 md:py-4 sm:text-base md:text-lg xl:text-xl rounded-xl mt-6" (click)="DeleteUser()">
-                    Felhasználói fiók törlése
+                <button class="bg-[#DC2626] p-1 rounded-lg">
+                    <img class="h-8" src="../../assets/delete_icon.svg" alt="Törlés" (click)="DeleteUser()">
                 </button>
-                <div class="inline sm:hidden">
-                    <button class="bg-[#378722] p-1 rounded-lg me-2.5">
-                        <img class="h-8" src="../../assets/edit_icon.svg" alt="Szerkesztés" (click)="ChangeEditUserComponentVisibility()">
-                    </button>
-                    <button class="bg-[#DC2626] p-1 rounded-lg">
-                        <img class="h-8" src="../../assets/delete_icon.svg" alt="Törlés" (click)="DeleteUser()">
-                    </button>
-                </div>
             </div>
         </div>
-
-        <p class="text-3xl font-semibold text-[#378722] pt-20 -mt-10" id="settings">Beállítások</p>
-        <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border h-96"></div>
-        
-        <p class="text-3xl font-semibold text-[#378722] pt-20 -mt-10" id="statistics">Statisztika</p>
-        <div class="flex bg-[#ECF6EA] p-6 mt-3 rounded-xl border-[#378722] border h-96"></div>
     </div>
 </div>
 <app-edit-user></app-edit-user>

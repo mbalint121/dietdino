@@ -1,0 +1,173 @@
+<app-page-navbar></app-page-navbar>
+@if(!this.loading){
+    <div class="mt-24 mb-10 w-[90%] mx-auto">
+        <div class="flex items-center mb-4 gap-6">
+            @if(route.snapshot.url[0].path == "waiting-recipe"){
+                <button class="bg-[#22C55E] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="AcceptRecipe()">
+                    <img class="h-6 xl:h-8" src="../../../assets/accept_recipe_icon.svg" alt="Jóváhagyás">
+                    <p class="font-semibold text-white text-base md:text-lg">Jóváhagyás</p>
+                </button>
+                <button class="bg-[#DC2626] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="RejectRecipe()">
+                    <img class="h-6 xl:h-8" src="../../../assets/decline_recipe_icon.svg" alt="Törlés">
+                    <p class="font-semibold text-white text-base md:text-lg">Elutasítás</p>
+                </button>
+            }
+            @else if(this.adminService.UserIsAdmin() || this.userService.GetUsername() == recipe()?.uploader){
+                @if(this.userService.GetUsername() == recipe()?.uploader){
+                    <button class="bg-[#0EA5E9] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="EditRecipe()">
+                        <img class="h-6 xl:h-8" src="../../../assets/edit_icon.svg" alt="Szerkesztés">
+                        <p class="font-semibold text-white text-base md:text-lg">Szerkesztés</p>
+                    </button>
+                }
+                <button class="bg-[#DC2626] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="DeleteRecipe()">
+                    <img class="h-6 xl:h-8" src="../../../assets/delete_icon.svg" alt="Törlés">
+                    <p class="font-semibold text-white text-base md:text-lg">Törlés</p>
+                </button>
+            }
+        </div>
+    
+        <div class="grid lg:grid-cols-5 gap-5">
+            <div class="col-span-2">
+                <img [src]="recipe()?.image" alt="Recept képe" class="w-full lg:w-[600px] h-[400px] object-cover rounded-lg border border-[#7F7F7F]">
+            </div>
+            
+    
+            <div class="lg:col-span-3">
+                <div class="flex items-center text-3xl font-semibold">
+                    {{recipe()?.recipeName}}
+                    <button class="ms-4 flex items-center" (click)="this.FavoriteRecipe()">
+                        <img class="h-8" [src]="this.favoriteService.GetFavoriteIcon(this.recipe()!)" alt="Kedvencekhez adás">
+                    </button>
+                </div>
+                <div class="text-lg font-normal mt-1 cursor-pointer group w-fit" [routerLink]="['/profile', recipe()?.uploader]">
+                    <p class="transition duration-500 group-hover:text-[#378722]">{{recipe()?.uploader}}</p>
+                    <div class="border-b-[3px] border-[#378722] transition-all duration-500 w-0 group-hover:w-full"></div>
+                </div>
+                <div class="text-lg font-normal mt-1">
+                    {{formatDate(recipe()!.uploadDateTime)}}
+                </div>
+                <div class="mt-2">
+                    <button class="group flex py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722]" (click)="this.LikeRecipe()">
+                        <img [src]="this.likeService.GetLikeIcon(this.recipe()!)" alt="Kedvelések" class="h-6 me-3 cursor-pointer transition duration-300 group-hover:invert">
+                        <p class="text-lg transition duration-300 group-hover:text-white">{{recipe()?.likeCount}}</p>
+                    </button>
+                </div>
+                <hr class="my-3 broder border-black">
+    
+                <p class="text-2xl font-semibold px-2 text-black border-b-[#378722] border-b-4 w-fit mb-2">Összetevők</p>
+                <ul class="flex flex-wrap overflow-y-auto gap-3 lg:max-h-[180px]">
+                    @for(ingredient of recipe()?.ingredients; track ingredient.commodity){
+                        <li class="text-lg font-normal border border-[#7F7F7F] w-fit rounded-lg p-2 mb-1 bg-slate-100 flex items-center h-12">
+                            {{ingredient.commodity}} - {{ingredient.quantity}} {{ingredient.measure}}
+                        </li>
+                    }
+                </ul> 
+            </div>
+        </div>
+    
+        <div class="mt-7 grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-20">
+            <div class="md:col-start-2 md:row-start-1">
+                <p class="text-2xl font-semibold px-2 text-black border-b-[#378722] border-b-4 w-fit mb-2">Kalóriák</p>
+                <p>Összesített kalória: @if(recipe()?.calorieValue){ {{recipe()?.calorieValue + " kcal"}} } @else{ {{"Nincs adat"}} } </p>
+            </div>
+            
+            <div class="md:col-start-1 md:row-start-1">
+                <p class="text-2xl font-semibold px-2 text-black border-b-[#378722] border-b-4 w-fit mb-2">Elkészítési idő:</p>
+                <p>{{this.FormatTimeToText(this.recipe()?.preparationTime!)}}</p>
+            </div>
+        </div>
+    
+        <div class="mt-7 text-justify">
+            <p class="text-2xl font-semibold px-2 text-black border-b-[#378722] border-b-4 w-fit mb-2">Elkészítés</p>
+            <div class="overflow-y-auto overflow-x-hidden w-full h-auto text-justify whitespace-pre-wrap pe-2 py-1">
+                {{recipe()?.preparationDescription}}
+            </div>
+        </div>
+    
+        <div class="mt-7">
+            <div class="flex justify-between mb-2">
+                <p class="text-2xl font-semibold px-2 text-black border-b-[#378722] border-b-4 w-fit mb-2">Kommentek</p>
+                <button class="me-2 py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722] hover:text-white" (click)="NewComment()">Küldés</button>
+            </div>
+            <textarea name="" id="" class="w-full border border-[#7F7F7F] rounded-lg p-2" rows="4" [(ngModel)]="text"></textarea>
+    
+            @for(currentComment of this.commentService.GetCurrentComments(); track currentComment.ID){
+                <app-comment [comment]="currentComment" [recipeId]="this.id"></app-comment>
+            }
+        </div>
+    </div>
+} @else {
+    <div class="mt-24 mb-10 w-[90%] mx-auto">
+        <div class="flex items-center mb-4 gap-6">
+            @if(route.snapshot.url[0].path == "waiting-recipe"){
+                <button class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-24 h-12"></button>
+                <button class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-24 h-12"></button>
+            }
+            @else if(this.adminService.UserIsAdmin() || this.userService.GetUsername() == recipe()?.uploader){
+                @if(this.userService.GetUsername() == recipe()?.uploader){
+                    <button class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-24 h-12"></button>
+                }
+                <button class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-24 h-12"></button>
+            }
+        </div>
+    
+        <div class="grid lg:grid-cols-5 gap-5">
+            <div class="col-span-2">
+                <div class="bg-gray-300 animate-pulse w-full h-[400px] rounded-lg"></div>
+            </div>
+            
+    
+            <div class="lg:col-span-3">
+                <div class="flex items-center text-3xl font-semibold">
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-48 h-9"></div>
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-9 h-9 ms-4"></div>
+                </div>
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-36 h-7 mt-1"></div>
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-28 h-7 mt-1"></div>
+                <div class="mt-2">
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-16 h-9"></div>
+                </div>
+                <hr class="my-3 broder border-black">
+    
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-36 h-9 mb-2"></div>
+                <ul class="flex flex-wrap overflow-y-auto gap-3 lg:max-h-[180px]">
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-36 h-12 mb-1"></div>
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-28 h-12 mb-1"></div>
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-36 h-12 mb-1"></div>
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-44 h-12 mb-1"></div>
+                    <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-40 h-12 mb-1"></div>
+                </ul> 
+            </div>
+        </div>
+    
+        <div class="mt-7 grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-20">
+            <div class="md:col-start-2 md:row-start-1">
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-36 h-9 mb-2"></div>
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-56 h-6 mb-2"></div>
+            </div>
+            
+            <div class="md:col-start-1 md:row-start-1">
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-36 h-9 mb-2"></div>
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-28 h-6 mb-2"></div>
+            </div>
+        </div>
+    
+        <div class="mt-7 text-justify">
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-36 h-9 mb-2"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-56 mb-2"></div>
+        </div>
+    
+        <div class="mt-7">
+            <div class="flex justify-between mb-2">
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg md:rounded-xl w-40 h-9 mb-2"></div>
+                <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-24 h-9 me-2"></div>
+            </div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-40 mb-2"></div>
+    
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-32 mt-4"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-32 mt-4"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-32 mt-4"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-32 mt-4"></div>
+        </div>
+    </div>
+}

@@ -1,71 +1,34 @@
-<div class="fixed left-1/2 top-2 -translate-x-1/2 rounded-xl flex w-[90%] h-12 bg-[#EAEAEA] border border-[#7F7F7F] font-semibold text-base items-center justify-between" id="navbar">
-    <button class="space-y-1 group xl:hidden ms-3" (click)="toggleMenu()">
-        <div [ngClass]="{
-            'w-6 h-1 bg-black rounded-md duration-300': true,
-            'rotate-45 translate-y-2': menuOpen,
-            '': !menuOpen
-        }"></div>
-        <div [ngClass]="{
-            'w-6 h-1 bg-black rounded-md duration-300': true,
-            'opacity-0': menuOpen,
-            'opacity-100': !menuOpen
-        }"></div>
-        <div [ngClass]="{
-            'w-6 h-1 bg-black rounded-md duration-300': true,
-            '-rotate-45 -translate-y-2': menuOpen,
-            '': !menuOpen
-        }"></div>
-        @if(menuOpen){
-            <ul class="bg-[#EAEAEA] border border-[#7F7F7F] w-full absolute left-0 top-full flex flex-col rounded-xl">
-                @if(this.adminService.UserIsAdmin()){
-                    <li class="hover:bg-gray-100 rounded-t-xl">
-                        <a class="flex w-full justify-center h-14 items-center" href="/admin#users">
-                            <img class="h-[60%]" src="../../assets/user_icon.svg" alt="Recipes icon">
-                            <p class="my-auto ms-1.5">Felhasználók</p>
-                        </a>
-                    </li>
-                    <div class="border border-black w-[75%] mx-auto"></div>
-                }
+<app-page-navbar></app-page-navbar>
+<div class="w-[90%] hidden xl:block xl:justify-center mt-3 fixed left-1/2 top-16 -translate-x-1/2">
+    <div class="w-fit flex items-center mx-auto rounded-xl h-12 bg-[#EAEAEA] border border-[#7F7F7F] font-semibold text-base" id="navbar">
 
-                <li class="hover:bg-gray-100 rounded-b-xl">
-                    <a class="flex w-full justify-center h-14 items-center" href="/admin#recipes-waiting-for-approval">
-                        <img class="h-[60%]" src="../../assets/recipes_icon.svg" alt="My recipes icon">
-                        <p class="my-auto ms-1.5">Receptek</p>
+        <ul class="flex items-center px-5 space-x-4">
+            @if(this.adminService.UserIsAdmin()){
+                <li>
+                    <a class="flex items-center" href="/admin#users">
+                        <img src="../../assets/user_icon.svg" alt="Recipes icon">
+                        <p class="ms-1.5 font-bold">Felhasználók</p>
                     </a>
                 </li>
-            </ul>
-        }
-    </button>
-
-    <a class="xl:ms-6" routerLink="/">
-        <img class="mx-auto w-[80%] xl:m-0" src="../../assets/auth_navbar_logo.svg" alt="Dino Diet">
-    </a>
-
-
-    <ul class="hidden xl:flex xl:space-x-6">
-        @if(this.adminService.UserIsAdmin()){
+            }
+    
             <li>
-                <a class="flex" href="/admin#users">
-                    <img src="../../assets/user_icon.svg" alt="Recipes icon">
-                    <p class="my-auto ms-1.5">Felhasználók</p>
+                <a class="flex items-center" href="/admin#recipes-waiting-for-approval">
+                <img src="../../assets/waiting_recipes_icon.svg" alt="My recipes icon">
+                <p class="ms-1.5 font-bold whitespace-nowrap">Várakozó receptek</p>
                 </a>
             </li>
-        }
-
-        <li>
-            <a class="flex" href="/admin#recipes-waiting-for-approval">
-                <img src="../../assets/recipes_icon.svg" alt="My recipes icon">
-                <p class="my-auto ms-1.5">Receptek</p>
-            </a>
-        </li>
-    </ul>
-
-    <ul class="flex space-x-3 me-3 xl:space-x-6 xl:me-6 xl:w-64 justify-end">
-        <li>
-            <a class="flex" (click)="LogOut()" routerLink="/login">
-                <img src="../../assets/log_out_icon.svg" alt="Exit icon">
-                <p class="my-auto ms-1.5 hidden xl:block">Kijelentkezés</p>
-            </a>
-        </li>
-    </ul>
+    
+            @if(this.adminService.UserIsAdmin()){
+                <li>
+                    <a class="flex items-center" href="/admin#draft-recipes">
+                        <img class="h-8" src="../../assets/draft_recipe_icon.svg" alt="My recipes icon" style="filter: invert(0) sepia(0) saturate(0) hue-rotate(0deg) brightness(0) contrast(1);">
+                        <p class="ms-1.5 font-bold whitespace-nowrap">Piszkozat receptek</p>
+                    </a>
+                </li>
+            }
+        </ul>
+    </div> 
+    
+    
 </div>

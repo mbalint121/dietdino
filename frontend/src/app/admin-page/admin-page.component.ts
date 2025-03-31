@@ -7,6 +7,8 @@ import { EditUserComponent } from "../edit-user/edit-user.component";
 import { PopupService } from '../popups/popup.service';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../services/user.service';
+import { AdminRecipeService } from './admin-recipe.service';
+import { RecipeService } from '../recipes-page/recipe.service';
 
 @Component({
   selector: 'app-admin-page',
@@ -17,6 +19,7 @@ import { UserService } from '../services/user.service';
 })
 export class AdminPageComponent {
   adminService : AdminService = inject(AdminService);
+  adminRecipeService : AdminRecipeService = inject(AdminRecipeService);
   popupService : PopupService = inject(PopupService);
   destroyRef : DestroyRef = inject(DestroyRef);
   authService : AuthService = inject(AuthService);
@@ -38,7 +41,10 @@ export class AdminPageComponent {
 
     if(this.adminService.UserIsAdmin()){
       this.GetAllUsers();
+      this.GetDraftRecipes();
     }
+
+    this.GetWaitingRecipes();
   }
 
 
@@ -51,4 +57,19 @@ export class AdminPageComponent {
     });
   }
 
+  GetWaitingRecipes(){
+    const subscription = this.adminRecipeService.GetWaitingRecipes().subscribe();
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
+  }
+
+  GetDraftRecipes(){
+    const subscription = this.adminRecipeService.GetDraftRecipes().subscribe();
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
+  }
 }

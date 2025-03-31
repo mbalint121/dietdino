@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../admin.service';
+import { PageNavbarComponent } from "../../page-navbar/page-navbar.component";
 
 @Component({
   selector: 'app-admin-navbar',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, PageNavbarComponent],
   templateUrl: './admin-navbar.component.html',
   styleUrl: './admin-navbar.component.css'
 })

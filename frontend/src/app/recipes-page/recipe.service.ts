@@ -1,0 +1,269 @@
+import { DestroyRef, effect, inject, Injectable, signal } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Recipe } from "../models/recipe";
+import { tap, catchError, map } from "rxjs";
+import { PopupService } from "../popups/popup.service";
+import { UserService } from "../services/user.service";
+import { Ingredient } from "../models/ingredient";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Comment } from "../models/comment";
+import { response } from "express";
+
+@Injectable({providedIn: 'root'})
+export class RecipeService{
+    recipes = signal<Recipe[]>([]);
+    recipe = signal<Recipe | null>(null);
+    httpClient : HttpClient = inject(HttpClient);
+    popupService : PopupService = inject(PopupService);
+    userService : UserService = inject(UserService);
+    router : Router = inject(Router);
+    route : ActivatedRoute = inject(ActivatedRoute);
+    destroyRef : DestroyRef = inject(DestroyRef);
+
+    constructor(){
+        const storedRecipes = JSON.parse(localStorage.getItem("recipes") || '[]');
+        if(storedRecipes){
+            this.SetRecipes(storedRecipes);
+        }
+        
+        effect(() => {
+            if(this.recipes()){
+                localStorage.setItem("recipes", JSON.stringify(this.recipes()));
+            }
+        });
+    }
+
+    SetRecipes(newRecipes: Recipe[]){
+        this.recipes.set(newRecipes);
+    }
+
+    GetRecipes(){
+        return this.recipes() ?? [];
+    }
+
+    SetRecipe(newRecipe: Recipe){
+        this.recipe.set(newRecipe);
+    }
+
+    GetRecipe(){
+        return this.recipe() ?? null;
+    }
+
+    GetAcceptedRecipes() {
+        const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.get('http://localhost:3000/api/recipes/accepted', {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
+                        return this.formatImage(recipe);
+                    }));
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    NewRecipe(recipe: Recipe){
+        const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+        return this.httpClient.post('http://localhost:3000/api/recipes', recipe, {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.router.navigate(['/my-recipes']);
+                    this.popupService.ShowPopup(response.message, "success");
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    UpdateRecipeByID(recipe : Recipe){
+        const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        console.log(recipe);
+
+        return this.httpClient.put(`http://localhost:3000/api/recipes/${recipe.ID}`, recipe, {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.router.navigate(['/my-recipes']);
+                    this.popupService.ShowPopup(response.message, "success");
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    GetRecipesByUser(){
+        const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.get('http://localhost:3000/api/recipes/mine', {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
+                        return this.formatImage(recipe);
+                    }));
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    GetRecipeById(id : number){
+        const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.get(`http://localhost:3000/api/recipes/${id}`, {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.SetRecipe(this.formatImage(response.recipe));
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    DeleteRecipeByID(id: number){
+        const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.delete(`http://localhost:3000/api/recipes/${id}`, {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.recipes()!.splice(this.recipes()!.findIndex(recipe => recipe.ID == id), 1);
+                    this.router.navigate(['/my-recipes']);
+                    this.popupService.ShowPopup(response.message, "success");
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    formatDate(date: Date): string {
+        if(date == null) return '';
+        const d = new Date(date);
+        return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    formatImage(recipe : Recipe){
+        recipe.image = '../../../assets/' + recipe.image;
+        return recipe;
+    }
+
+    GetFavoriteRecipes(){
+        const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.get('http://localhost:3000/api/recipes/favorite', {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
+                        return this.formatImage(recipe);
+                    }));
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    SearchInRecipes(searchText : string){
+        if(this.router.url == '/my-recipes'){
+            return this.GetRecipesByUser().subscribe(() => {
+                this.UpdateRecipesBasedOnSearchString(searchText);
+            });
+        }
+        else if(this.router.url == '/favorite-recipes'){
+            return this.GetFavoriteRecipes().subscribe(() => {
+                this.UpdateRecipesBasedOnSearchString(searchText);
+            });
+        }
+        else{
+            return this.GetAcceptedRecipes().subscribe(() => {
+                this.UpdateRecipesBasedOnSearchString(searchText);
+            });
+        }
+    }
+
+    UpdateRecipesBasedOnSearchString(searchText : string){
+        this.recipes.update(recipes => {
+            return recipes.filter(recipe => recipe.recipeName?.toLocaleLowerCase().includes(searchText.toLowerCase()) || recipe.ingredients?.some(ingredient => ingredient.commodity?.toLowerCase().includes(searchText.toLowerCase())));
+        });
+    }
+
+    GetAcceptedRecipesByUsername(username : string){
+        const headers = new HttpHeaders({"Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.get(`http://localhost:3000/api/recipes/user/${username}`, ({headers: headers}))
+        .pipe(
+            tap((response : any) => {
+                console.log(response);
+                if(response){
+                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
+                        return this.formatImage(recipe);
+                    }));
+                }
+            }),
+            catchError(response => {
+                if(response.error){
+                    this.popupService.ShowPopup(response.error.error, "error");
+                }
+                else{
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+}

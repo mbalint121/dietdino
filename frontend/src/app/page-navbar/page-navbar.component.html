@@ -1,4 +1,5 @@
-<div class="fixed left-1/2 top-2 -translate-x-1/2 rounded-xl flex w-[90%] h-12 bg-[#EAEAEA] border border-[#7F7F7F] font-semibold text-sm xs:text-base items-center justify-between" id="navbar">
+<div class="bg-white w-full h-10 fixed left-1/2 top-0 -translate-x-1/2 z-40"></div>
+<div class="mt-3 fixed left-1/2 top-2 -translate-x-1/2 rounded-xl flex w-[90%] h-12 bg-[#EAEAEA] border border-[#7F7F7F] font-semibold text-sm xs:text-base items-center justify-between z-40" id="navbar">
     <button class="space-y-1 group xl:hidden ms-3" (click)="toggleMenu()">
         <div [ngClass]="{
             'w-6 h-1 bg-black rounded-md duration-300': true,
@@ -21,22 +22,22 @@
                 
                 <li class="hover:bg-gray-100 rounded-t-xl">
                     <a class="flex w-full justify-center h-14 items-center" routerLink="/recipes">
-                        <img class="my-auto" src="../../assets/recipes_icon.svg" alt="Recipes icon">
-                        <p class="ms-1.5">Receptek</p>
+                        <img src="../../assets/recipes_icon.svg" alt="Recipes icon">
+                        <p class="ms-1.5 font-bold">Receptek</p>
                     </a>
                 </li>
                 <div class="border border-black w-[75%] mx-auto"></div>
                 <li class="hover:bg-gray-100">
                     <a class="flex w-full justify-center h-14 items-center" routerLink="/my-recipes">
                         <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
-                        <p class="ms-1.5">Receptjeim</p>
+                        <p class="ms-1.5 font-bold">Receptjeim</p>
                     </a>
                 </li>
                 <div class="border border-black w-[75%] mx-auto"></div>
                 <li [ngClass]="{'hover:bg-gray-100': true, 'rounded-b-xl': !this.adminService.UserIsAdminOrModerator()}">
                     <a class="flex w-full justify-center h-14 items-center" routerLink="/my-favorite-recipes">
                         <img src="../../assets/star_icon.svg" alt="Favorites icon">
-                        <p class="ms-1.5">Kedvenceim</p>
+                        <p class="ms-1.5 font-bold">Kedvenceim</p>
                     </a>
                 </li>
                 @if(this.adminService.UserIsAdminOrModerator()){
@@ -44,9 +45,47 @@
                     <li class="hover:bg-gray-100 rounded-b-xl">
                         <a class="flex w-full justify-center h-14 items-center" routerLink="/admin">
                             <img src="../../assets/admin-icon.svg" alt="Admin icon">
-                            <p class="ms-1.5">Kezelőpult</p>
+                            <p class="ms-1.5 font-bold">Kezelőpult</p>
                         </a>
                     </li>
+
+                    @if(this.route.snapshot.url.length > 0 && this.route.snapshot.url[0].path === "admin"){
+                        @if(this.adminService.UserIsAdmin()){
+                            <div class="border-2 border-black w-[75%] mx-auto"></div>
+                            <li class="hover:bg-gray-100 rounded-t-xl">
+                                <a class="flex w-full justify-center h-14 items-center" href="/admin#users">
+                                    <img class="h-[60%]" src="../../assets/user_icon.svg" alt="Recipes icon">
+                                    <p class="ms-1.5 font-bold">Felhasználók</p>
+                                </a>
+                            </li>
+                            <div class="border border-black w-[75%] mx-auto"></div>
+                        }
+        
+                        <li class="hover:bg-gray-100 rounded-b-xl">
+                            <a class="flex w-full justify-center h-14 items-center" href="/admin#accepted_recipes">
+                                <img class="h-[60%]" src="../../assets/accepted_recipes_icon.svg" alt="My recipes icon">
+                                <p class="ms-1.5 font-bold">Elfogadott receptek</p>
+                            </a>
+                        </li>
+                        <div class="border border-black w-[75%] mx-auto"></div>
+        
+                        <li class="hover:bg-gray-100 rounded-b-xl">
+                            <a class="flex w-full justify-center h-14 items-center" href="/admin#recipes-waiting-for-approval">
+                                <img class="h-[60%]" src="../../assets/waiting_recipes_icon.svg" alt="My recipes icon">
+                                <p class="ms-1.5 font-bold">Várakozó receptek</p>
+                            </a>
+                        </li>
+        
+                        @if(this.adminService.UserIsAdmin()){
+                            <div class="border border-black w-[75%] mx-auto"></div>
+                            <li class="hover:bg-gray-100 rounded-b-xl">
+                                <a class="flex w-full justify-center h-14 items-center" href="/admin#draft-recipes">
+                                    <img class="h-[60%]" src="../../assets/draft_recipe_icon.svg" alt="My recipes icon" style="filter: invert(0) sepia(0) saturate(0) hue-rotate(0deg) brightness(0) contrast(1);">
+                                    <p class="ms-1.5 font-bold">Piszkozat receptek</p>
+                                </a>
+                            </li>
+                        }
+                    }
                 }
             </ul>
         }
@@ -61,48 +100,50 @@
         <li>
             <a class="flex items-center" routerLink="/recipes" routerLinkActive="bg-[#EAEAEA]">
                 <img src="../../assets/recipes_icon.svg" alt="Recipes icon">
-                <p class="ms-1.5">Receptek</p>
+                <p class="ms-1.5 font-bold">Receptek</p>
             </a>
         </li>
         <li>
             <a class="flex items-center" routerLink="/my-recipes">
                 <img src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
-                <p class="ms-1.5">Receptjeim</p>
+                <p class="ms-1.5 font-bold">Receptjeim</p>
             </a>
         </li>
         <li>
             <a class="flex items-center" routerLink="/my-favorite-recipes">
                 <img src="../../assets/star_icon.svg" alt="Favorites icon">
-                <p class="ms-1.5">Kedvenceim</p>
+                <p class="ms-1.5 font-bold">Kedvenceim</p>
             </a>
         </li>
         @if(this.adminService.UserIsAdminOrModerator()){
             <li>
                 <a class="flex items-center" routerLink="/admin">
                     <img src="../../assets/admin-icon.svg" alt="Admin icon">
-                    <p class="ms-1.5">Kezelőpult</p>
+                    <p class="ms-1.5 font-bold">Kezelőpult</p>
                 </a>
             </li>
         }
     </ul>
 
     <ul class="flex space-x-3 me-3 xl:space-x-4 xl:me-6">
-        <li>
-            <a class="flex items-center" routerLink="/profile">
-                <img src="../../assets/profile_icon.svg" alt="Profile icon">
-                <p class="ms-1.5 hidden xl:block">Profil</p>
-            </a>
-        </li>
+        @if(this.userService.GetUserToken() !== null){
+            <li>
+                <a class="flex items-center" routerLink="/profile">
+                    <img src="../../assets/profile_icon.svg" alt="Profile icon">
+                    <p class="ms-1.5 hidden xl:block font-bold">Profil</p>
+                </a>
+            </li>
+        }
         <li>
             @if(this.userService.GetUserToken()){
-                <a class="flex items-center" (click)="LogOut()">
+                <a class="flex items-center cursor-pointer" (click)="LogOut()">
                     <img src="../../assets/log_out_icon.svg" alt="Log out icon">
-                    <p class="ms-1.5 hidden xl:block">Kijelentkezés</p>
+                    <p class="ms-1.5 hidden xl:block font-bold">Kijelentkezés</p>
                 </a>
             } @else {
                 <a class="flex items-center" routerLink="/login">
                     <img src="../../assets/log_in_icon.svg" alt="Log in icon">
-                    <p class="ms-1.5 hidden xl:block">Bejelentkezés</p>
+                    <p class="ms-1.5 hidden xl:block font-bold">Bejelentkezés</p>
                 </a>
             }
         </li>

@@ -11,18 +11,19 @@ import { UserService } from '../../services/user.service';
   styleUrl: './verify.component.css'
 })
 export class VerifyComponent {
-  router : ActivatedRoute = inject(ActivatedRoute);
+  route : ActivatedRoute = inject(ActivatedRoute);
   authService : AuthService = inject(AuthService);
   userService : UserService = inject(UserService);
   destroyRef : DestroyRef = inject(DestroyRef);
 
   ngOnInit(){
-    const token = this.router.snapshot.paramMap.get('token') || "";
+    const token = this.route.snapshot.paramMap.get('token') || "";
     this.userService.SetUserToken(token);
 
     const subscription = this.authService.VerifyRegistration().subscribe();
 
     this.destroyRef.onDestroy(() => {
+      localStorage.removeItem("token");
       subscription.unsubscribe();
     });
   }

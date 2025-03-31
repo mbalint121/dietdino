@@ -1,5 +1,5 @@
 import { Component, inject, signal} from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../admin-page/admin.service';
@@ -16,6 +16,7 @@ export class PageNavbarComponent {
   authService : AuthService = inject(AuthService);
   adminService : AdminService = inject(AdminService);
   userService : UserService = inject(UserService);
+  route : ActivatedRoute = inject(ActivatedRoute);
 
   menuOpen = false;
 

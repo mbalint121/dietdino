@@ -1,0 +1,42 @@
+
+<div class="w-full border border-[#7F7F7F] rounded-lg mt-4 p-4 shadow-md">
+    <div class="text-lg font-semibold flex justify-between">
+        <div class="cursor-pointer group" [routerLink]="['/profile', comment.author]">
+            <p>{{comment.author}}</p>
+            <div class="border-b-[3px] border-[#378722] transition-all duration-1000 w-0 group-hover:w-full"></div>
+        </div>
+        @if(comment.author == this.userService.user()?.username || this.adminService.UserIsAdminOrModerator()){
+            @if(!this.edited){
+                <div class="flex space-x-2">
+                    @if(comment.author == this.userService.user()?.username){
+                        <button class="group py-1 px-2 rounded-lg transition duration-300 hover:bg-[#0EA5E9]" (click)="StartCommentEditing()">
+                            <img class="h-6 invert cursor-pointer transition duration-300 group-hover:invert-0" src="../../../assets/edit_icon.svg" alt="Szerkesztés">
+                        </button>
+                    }
+                    <button class="group py-1 px-2 rounded-lg transition duration-300 hover:bg-[#DC2626]" (click)="DeleteComment()">
+                        <img class="h-6 invert cursor-pointer transition duration-300 group-hover:invert-0" src="../../../assets/delete_icon.svg" alt="Törlés">
+                    </button>
+                </div>
+            } @else {
+                <div class="flex space-x-2">
+                    <button class="group py-1 px-2 rounded-lg transition duration-300 hover:bg-[#22C55E]" (click)="EditComment()">
+                        <img class="h-6 invert cursor-pointer transition duration-300 group-hover:invert-0" src="../../../assets/accept_recipe_icon.svg" alt="Szerkesztés befejezése">
+                    </button>
+                    <button class="group py-1 px-2 rounded-lg transition duration-300 hover:bg-[#DC2626]" (click)="CancelCommentEditing()">
+                        <img class="h-6 invert cursor-pointer transition duration-300 group-hover:invert-0" src="../../../assets/decline_recipe_icon.svg" alt="Mégse">
+                    </button>
+                </div>
+            }
+        }
+    </div>
+    <div class="text-base font-normal mb-4">
+        {{comment.commentDateTime.toString().substring(0, 10).replaceAll("-", ".")+"."}}
+    </div>
+    <div class="text-lg font-normal text-justify">
+        @if(!this.edited){
+            {{comment.text}}
+        } @else {
+            <textarea class="w-full border border-[#7F7F7F] rounded-lg p-2" rows="3" [(ngModel)]="commentText"></textarea>
+        }
+    </div>
+</div>

@@ -41,7 +41,7 @@ export class AuthService {
             this.router.navigate(["/"]);
             this.userService.SetUserToken(response.token);
             this.userService.SetUser(response.user);
-  
+
             this.popupService.ShowPopup(`Sikeres bejelentkezés! Üdvözöllek az oldalon ${this.userService.user()!.username}!`, "success");
           }
         }),
@@ -120,12 +120,12 @@ export class AuthService {
   }
 
   ResetPassword(password: string) {
-    const headers = new HttpHeaders({ "Content-Type": "application/json" });
+    const headers = new HttpHeaders({ "Content-Type": "application/json", "token" : this.userService.GetUserToken() || "" });
     const body = JSON.stringify({
       "password": password
     });
 
-    return this.httpClient.post("http://localhost:3000/api/password/reset", body, { headers: headers })
+    return this.httpClient.put("http://localhost:3000/api/password/reset", body, { headers: headers })
     .pipe(
       tap((response : any) => {
         if(response){
@@ -148,7 +148,7 @@ export class AuthService {
 
     const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
 
-    return this.httpClient.post("http://localhost:3000/api/password/reset", { headers: headers })
+    return this.httpClient.post("http://localhost:3000/api/verify", null,{ headers: headers })
     .pipe(
       tap((response : any) => {
         if(response){
@@ -158,6 +158,7 @@ export class AuthService {
         }
       }),
       catchError(response => {
+        this.router.navigate(["/login"]);
         if (response.error) {
           this.popupService.ShowPopup(response.error.error, "error");
         } else {
