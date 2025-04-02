@@ -361,7 +361,7 @@ export async function GetRecipeByID(req: any, res: Response){
         recipe.uploaderID = await RecipeService.GetUploaderIDByRecipeID(recipe.ID!);
 
         if(req.decodedToken.userID != recipe.uploaderID){
-            const userRole = await UserService.GetUserRoleByID(req.decodedToken.userID);
+            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
         
             if((recipe.state as string) == "Draft" && userRole != "Admin"){
                 res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
@@ -446,7 +446,7 @@ export async function NewRecipe(req: any, res: Response){
         }
         recipe.ingredients = ingredients;
     
-        if(!recipe.recipeName || !recipe.image || !recipe.ingredients || !recipe.preparationTime || !recipe.preparationDescription || !recipe.state){
+        if(!recipe.recipeName || !recipe.ingredients || !recipe.preparationTime || !recipe.preparationDescription || !recipe.state){
             res.status(400).send({error: "Hiányzó adatok"});
             return;
         }
@@ -510,12 +510,12 @@ export async function NewRecipe(req: any, res: Response){
         }
     
         await RecipeService.NewRecipe(recipe)
-        .then(async (result) => {
-            if(!result.affectedRows){
+        .then(async (insertID) => {
+            if(!insertID){
                 res.status(500).send({error: "Hiba a recept feltöltése során"});
                 return;
             }
-            res.status(201).send({message: "Recept sikeresen feltöltve"});
+            res.status(201).send({message: "Recept sikeresen feltöltve", recipeID: insertID});
         });
     }
     catch(err: any){
@@ -551,7 +551,7 @@ export async function UpdateRecipeByID(req: any, res: Response){
             return;
         }
     
-        if(oldRecipe.recipeName == recipe.recipeName && oldRecipe.image == recipe.image && JSON.stringify(oldRecipe.ingredients) == JSON.stringify(recipe.ingredients) && oldRecipe.preparationTime == recipe.preparationTime && oldRecipe.preparationDescription == recipe.preparationDescription && oldRecipe.state == recipe.state){
+        if(oldRecipe.recipeName == recipe.recipeName && JSON.stringify(oldRecipe.ingredients) == JSON.stringify(recipe.ingredients) && oldRecipe.preparationTime == recipe.preparationTime && oldRecipe.preparationDescription == recipe.preparationDescription && oldRecipe.state == recipe.state){
             res.status(400).send({error: "Nem történt módosítás"});
             return;
         }

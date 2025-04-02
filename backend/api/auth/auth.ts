@@ -1,8 +1,10 @@
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { User } from "../models/user";
 import UserService from "../services/user";
-import jwt from "jsonwebtoken";
-import { error } from "console";
+
+dotenv.config();
 
 export async function LogIn(req: Request, res: Response){
     try{
@@ -23,7 +25,6 @@ export async function LogIn(req: Request, res: Response){
 
         Object.assign(user, userData);
         user.password = undefined;
-
         
         if(!user.ID){
             res.status(401).send({error: "Hibás email vagy jelszó"});

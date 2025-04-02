@@ -4,7 +4,7 @@ import AuthService from "../services/auth";
 
 const router: Router = Router();
 
-router.get("/", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, GetUsers);
+router.get("", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, GetUsers);
 router.get("/:ID", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserItselfOrAdmin, GetUserByID);
 router.put("", AuthService.DecodeToken, AuthService.UserExists, UpdateUserSelf);
 router.put("/:ID", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, UpdateUserByID);

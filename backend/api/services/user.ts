@@ -29,7 +29,7 @@ export default class UserService{
         const conn = await mysql.createConnection(dbConfig);
 
         try{
-            const [rows]: any = await conn.query("SELECT GetUserIDByEmail(?) as userID", [userEmail]);
+            const [rows]: any = await conn.query("SELECT GetUserIDByEmail(?) AS userID", [userEmail]);
             return rows[0].userID;
         }
         catch(error){
@@ -44,7 +44,7 @@ export default class UserService{
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("SELECT UserExistsWithUsernameOrEmail(?, ?) as userID", [user.username, user.email]);
+            const [rows]: any = await conn.query("SELECT UserExistsWithUsernameOrEmail(?, ?) AS userID", [user.username, user.email]);
             return rows[0].userID;
         }
         catch(error){

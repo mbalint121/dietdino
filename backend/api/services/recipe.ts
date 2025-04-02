@@ -1,6 +1,7 @@
 import { Recipe } from "../models/recipe";
 import mysql from "mysql2/promise";
 import dbConfig from "../app/config";
+import ImageService from "./image";
 
 export default class RecipeService{
     static async GetAcceptedRecipes(){
@@ -203,13 +204,13 @@ export default class RecipeService{
         
         conn.beginTransaction();
         try{
-            const [rows]: any = await conn.query("CALL NewRecipe(?, ?, ?, ?, ?, ?)", [recipe.uploaderID, recipe.recipeName, recipe.image, recipe.preparationTime, recipe.preparationDescription, recipe.state?.stateName]);
+            const [rows]: any = await conn.query("CALL NewRecipe(?, ?, ?, ?, ?)", [recipe.uploaderID, recipe.recipeName, recipe.preparationTime, recipe.preparationDescription, recipe.state?.stateName]);
             const insertID = rows[0][0].insertID;
             for(const ingredient of recipe.ingredients!){
                 await conn.query("CALL NewIngredientByRecipeID(?, ?, ?, ?)", [insertID, ingredient.commodity?.commodityName, ingredient.measure?.measureName, ingredient.quantity]);
             }
             conn.commit();
-            return rows[1];
+            return insertID;
         }
         catch(error){
             conn.rollback();
@@ -225,7 +226,7 @@ export default class RecipeService{
         
         conn.beginTransaction();
         try{
-            const [rows]: any = await conn.query("CALL UpdateRecipeByID(?, ?, ?, ?, ?, ?)", [recipe.ID, recipe.recipeName, recipe.image, recipe.preparationTime, recipe.preparationDescription, recipe.state?.stateName]);
+            const [rows]: any = await conn.query("CALL UpdateRecipeByID(?, ?, ?, ?, ?)", [recipe.ID, recipe.recipeName, recipe.preparationTime, recipe.preparationDescription, recipe.state?.stateName]);
             for(const ingredient of recipe.ingredients!){
                 if(!ingredient.measure && !ingredient.quantity){
                     await conn.query("CALL DeleteIngredientByRecipeIDAndCommodityName(?, ?)", [recipe.ID, ingredient.commodity?.commodityName]);
@@ -280,10 +281,20 @@ export default class RecipeService{
         const conn = await mysql.createConnection(dbConfig);
         
         try{
+            const image: string = await ImageService.GetImageByRecipeID(recipeID);
+            await conn.beginTransaction();
+
             const [rows]: any = await conn.query("CALL DeleteRecipeByID(?)", [recipeID]);
+
+            if(image){
+                await ImageService.DeleteImageByName(image);
+            }
+
+            await conn.commit();
             return rows;
         }
         catch(error){
+            await conn.rollback();
             throw error;
         }
         finally{

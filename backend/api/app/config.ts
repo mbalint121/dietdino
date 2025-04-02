@@ -1,17 +1,19 @@
 import dotenv from "dotenv";
 
-dotenv.config()
-const {DB_HOST,DATABASE,DB_PASS,DB_USER} = process.env
+dotenv.config();
+
+const {DB_HOST, DATABASE, DB_PASS, DB_USER} = process.env;
 class mysqlConfig {
-    user = DB_USER
-    password = DB_PASS
-    database = DATABASE
-    host = DB_HOST
-    constructor () {
-        return {host:this.host, user:this.user, password:this.password, database:this.database}
+    host = DB_HOST;
+    user = DB_USER;
+    password = DB_PASS;
+    database = DATABASE;
+
+    constructor(){
+        return {host: this.host, user: this.user, password: this.password, database: this.database};
     }
 }
 
-const dbConfig = new mysqlConfig()
+const dbConfig = new mysqlConfig();
 
-export default dbConfig
+export default dbConfig;

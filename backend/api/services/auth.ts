@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { Response } from "express";
 import { User } from "../models/user";
@@ -10,6 +11,8 @@ import { Like } from "../models/like";
 import LikeService from "./like";
 import { Favorite } from "../models/favorite";
 import FavoriteService from "./favorite";
+
+dotenv.config();
 
 export default class AuthService{
     static DecodeToken(req: any, res: Response, next: any){

@@ -25,7 +25,7 @@ CREATE TABLE recipes(
     ID INT PRIMARY KEY AUTO_INCREMENT,
     uploaderID INT NOT NULL,
     recipeName VARCHAR(64) NOT NULL,
-    image VARCHAR(256) NOT NULL,
+    image VARCHAR(256),
     preparationTime TIME NOT NULL,
     preparationDescription TEXT NOT NULL,
     uploadDateTime DATETIME NOT NULL,
@@ -103,17 +103,17 @@ END$$
 
 CREATE PROCEDURE AddUserRole(IN roleName VARCHAR(16))
 BEGIN
-    INSERT INTO roles VALUES(null, roleName);
+    INSERT INTO roles VALUES(NULL, roleName);
 END$$
 
 CREATE PROCEDURE AddUser(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256), IN role VARCHAR(16))
 BEGIN
-    INSERT INTO users VALUES(null, username, email, password, (SELECT roles.ID FROM roles WHERE roles.roleName = role));
+    INSERT INTO users VALUES(NULL, username, email, password, (SELECT roles.ID FROM roles WHERE roles.roleName = role));
 END$$
 
 CREATE PROCEDURE RegisterUser(IN username VARCHAR(16), IN email VARCHAR(256), IN password VARCHAR(256))
 BEGIN
-    INSERT INTO users VALUES(null, username, email, password, (SELECT roles.ID FROM roles WHERE roles.roleName = "User"));
+    INSERT INTO users VALUES(NULL, username, email, password, (SELECT roles.ID FROM roles WHERE roles.roleName = "User"));
 END$$
 
 CREATE PROCEDURE ResetPassword(IN userID INT, IN newPassword VARCHAR(256))
@@ -158,7 +158,7 @@ END$$
 
 CREATE PROCEDURE AddRecipeState(IN stateName VARCHAR(16))
 BEGIN
-    INSERT INTO recipeStates VALUES(null, stateName);
+    INSERT INTO recipeStates VALUES(NULL, stateName);
 END$$
 
 CREATE PROCEDURE GetRecipeByID(IN recipeID INT)
@@ -196,14 +196,14 @@ BEGIN
     SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID JOIN favorites ON recipes.ID = favorites.recipeID WHERE recipestates.stateName = "Accepted" AND favorites.userID = userID;
 END$$
 
-CREATE PROCEDURE AddRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN uploadDateTime DATETIME, IN state VARCHAR(16))
+CREATE PROCEDURE AddRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN uploadDateTime DATETIME, IN state VARCHAR(16))
 BEGIN
-    INSERT INTO recipes VALUES(null, uploaderID, recipeName, image, preparationTime, preparationDescription, uploadDateTime, (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
+    INSERT INTO recipes VALUES(NULL, uploaderID, recipeName, NULL, preparationTime, preparationDescription, uploadDateTime, (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
 END$$
 
-CREATE PROCEDURE NewRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN state VARCHAR(16))
+CREATE PROCEDURE NewRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN state VARCHAR(16))
 BEGIN
-    INSERT INTO recipes VALUES(null, uploaderID, recipeName, image, preparationTime, preparationDescription, NOW(), (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
+    INSERT INTO recipes VALUES(NULL, uploaderID, recipeName, NULL, preparationTime, preparationDescription, NOW(), (SELECT recipestates.ID FROM recipeStates WHERE recipeStates.stateName = state));
     SELECT LAST_INSERT_ID() AS insertID;
 END$$
 
@@ -222,6 +222,11 @@ BEGIN
     UPDATE recipes SET recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = "Draft") WHERE recipes.ID = recipeID;
 END$$
 
+CREATE PROCEDURE NewImageByRecipeID(IN recipeID INT, IN image VARCHAR(256))
+BEGIN
+    UPDATE recipes SET recipes.image = image WHERE recipes.ID = recipeID;
+END$$
+
 CREATE PROCEDURE DeleteRecipeByID(IN recipeID INT)
 BEGIN
     DELETE FROM recipes WHERE recipes.ID = recipeID;
@@ -229,7 +234,7 @@ END$$
 
 CREATE PROCEDURE AddCommodityType(IN commodityTypeName VARCHAR(64))
 BEGIN
-    INSERT INTO commodityTypes VALUES(null, commodityTypeName);
+    INSERT INTO commodityTypes VALUES(NULL, commodityTypeName);
 END$$
 
 CREATE PROCEDURE GetCommodities()
@@ -239,12 +244,12 @@ END$$
 
 CREATE PROCEDURE AddCommodity(IN commodityName VARCHAR(64), IN commodityTypeName VARCHAR(64), IN calorieValue FLOAT)
 BEGIN
-    INSERT INTO commodities VALUES(null, commodityName, (SELECT commodityTypes.ID FROM commodityTypes WHERE commodityTypes.commodityTypeName = commodityTypeName),calorieValue);
+    INSERT INTO commodities VALUES(NULL, commodityName, (SELECT commodityTypes.ID FROM commodityTypes WHERE commodityTypes.commodityTypeName = commodityTypeName),calorieValue);
 END$$
 
 CREATE PROCEDURE AddMeasure(IN measureName VARCHAR(64), IN grams FLOAT)
 BEGIN
-    INSERT INTO measures VALUES(null, measureName, grams);
+    INSERT INTO measures VALUES(NULL, measureName, grams);
 END$$
 
 CREATE PROCEDURE AddUseableMeasure(IN commodityTypeName VARCHAR(64), IN measureName VARCHAR(64))
@@ -298,7 +303,7 @@ END$$
 
 CREATE PROCEDURE NewCommentByRecipeID(IN authorID INT, IN recipeID INT, IN text TEXT)
 BEGIN
-    INSERT INTO comments VALUES(null, authorID, recipeID, text, NOW());
+    INSERT INTO comments VALUES(NULL, authorID, recipeID, text, NOW());
 END$$
 
 CREATE PROCEDURE UpdateCommentByID(IN commentID INT, IN text TEXT)
@@ -399,6 +404,12 @@ BEGIN
     RETURN(SELECT COUNT(*) FROM comments WHERE comments.recipeID = recipeID);
 END$$
 
+CREATE FUNCTION GetImageByRecipeID(recipeID INT)
+RETURNS VARCHAR(256)
+BEGIN
+    RETURN(SELECT recipes.image FROM recipes WHERE recipes.ID = recipeID);
+END$$
+
 CREATE FUNCTION GetAuthorIDByCommentID(commentID INT)
 RETURNS INT
 BEGIN
@@ -432,9 +443,9 @@ CALL AddRecipeState("Draft");
 CALL AddRecipeState("Waiting");
 CALL AddRecipeState("Accepted");
 
-CALL AddRecipe(1, "Piszkozat Recept", "PiszkozatReceptKep.wepb", "00:30:00", "Teszt recept leírás", "2024-01-01 17:00:00", "Draft");
-CALL AddRecipe(2, "Várakozó Recept", "VarakozoReceptKep.webp", "00:10:00", "Teszt recept leírás", "2024-01-02 18:00:00", "Waiting");
-CALL AddRecipe(3, "Elfogadott Recept", "ElfogadottReceptKep.webp", "01:30:00", "Teszt recept leírás", "2024-01-03 19:00:00", "Accepted");
+CALL AddRecipe(1, "Piszkozat Recept", "00:30:00", "Teszt recept leírás", "2024-01-01 17:00:00", "Draft");
+CALL AddRecipe(2, "Várakozó Recept", "00:10:00", "Teszt recept leírás", "2024-01-02 18:00:00", "Waiting");
+CALL AddRecipe(3, "Elfogadott Recept", "01:30:00", "Teszt recept leírás", "2024-01-03 19:00:00", "Accepted");
 
 CALL AddCommodityType("Solid");
 CALL AddCommodityType("Liquid");
