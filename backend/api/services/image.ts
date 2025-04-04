@@ -3,6 +3,8 @@ import dbConfig from "../app/config";
 import dotenv from "dotenv";
 import path from "path";
 import fs from "fs";
+import RecipeService from "./recipe";
+import { Recipe } from "../models/recipe";
 
 dotenv.config();
 
@@ -52,16 +54,25 @@ export default class ImageService{
             imageToDelete = imagePath;
 
             const oldImage: string = await ImageService.GetImageByRecipeID(recipeID);
-            
-            const [rows]: any = await conn.query("CALL NewImageByRecipeID(?, ?)", [recipeID, image]);
-            
-            imageToDelete = undefined;
 
+            const state: string = await RecipeService.GetRecipeStateByRecipeID(recipeID);
+
+            conn.beginTransaction();
+
+            const [rows]: any = await conn.query("CALL NewImageByRecipeID(?, ?)", [recipeID, image]);
+            if(state == "Accepted"){
+                await conn.query("CALL UpdateRecipeStateByID(?, ?)", [recipeID, "Waiting"]);
+            }
+
+            conn.commit();
+
+            imageToDelete = undefined;
+            
             if(oldImage){
                 const oldImagePath = path.join(__dirname, IMAGES_DIR, oldImage);
                 imageToDelete = oldImagePath;
             }
-
+            
             if(imageToDelete && fs.existsSync(imageToDelete)){
                 fs.unlinkSync(imageToDelete);
             }
@@ -69,6 +80,7 @@ export default class ImageService{
             return rows;
         }
         catch(error){
+            conn.rollback();
             throw error;
         }
         finally{

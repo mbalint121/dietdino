@@ -207,9 +207,14 @@ BEGIN
     SELECT LAST_INSERT_ID() AS insertID;
 END$$
 
-CREATE PROCEDURE UpdateRecipeByID(IN recipeID INT, IN recipeName VARCHAR(64), IN image VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN state VARCHAR(16))
+CREATE PROCEDURE UpdateRecipeByID(IN recipeID INT, IN recipeName VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT)
 BEGIN
-    UPDATE recipes SET recipes.recipeName = recipeName, recipes.image = image, recipes.preparationTime = preparationTime, recipes.preparationDescription = preparationDescription, recipes.uploadDateTime = NOW(), recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = state) WHERE recipes.ID = recipeID;
+    UPDATE recipes SET recipes.recipeName = recipeName, recipes.preparationTime = preparationTime, recipes.preparationDescription = preparationDescription, recipes.uploadDateTime = NOW() WHERE recipes.ID = recipeID;
+END$$
+
+CREATE PROCEDURE UpdateRecipeStateByID(IN recipeID INT, IN state VARCHAR(16))
+BEGIN
+    UPDATE recipes SET recipes.stateID = (SELECT recipeStates.ID FROM recipeStates WHERE recipeStates.stateName = state) WHERE recipes.ID = recipeID;
 END$$
 
 CREATE PROCEDURE AcceptRecipeByID(IN recipeID INT)
@@ -408,6 +413,12 @@ CREATE FUNCTION GetImageByRecipeID(recipeID INT)
 RETURNS VARCHAR(256)
 BEGIN
     RETURN(SELECT recipes.image FROM recipes WHERE recipes.ID = recipeID);
+END$$
+
+CREATE FUNCTION GetRecipeStateByRecipeID(recipeID INT)
+RETURNS VARCHAR(16)
+BEGIN
+    RETURN(SELECT recipeStates.stateName FROM recipeStates JOIN recipes ON recipes.stateID = recipeStates.ID WHERE recipes.ID = recipeID);
 END$$
 
 CREATE FUNCTION GetAuthorIDByCommentID(commentID INT)

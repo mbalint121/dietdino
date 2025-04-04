@@ -199,6 +199,21 @@ export default class RecipeService{
         }
     }
 
+    static async GetRecipeStateByRecipeID(recipeID: number){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("SELECT GetRecipeStateByRecipeID(?) AS state", [recipeID]);
+            return rows[0].state;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
     static async NewRecipe(recipe: Recipe){
         const conn = await mysql.createConnection(dbConfig);
         
@@ -226,13 +241,16 @@ export default class RecipeService{
         
         conn.beginTransaction();
         try{
-            const [rows]: any = await conn.query("CALL UpdateRecipeByID(?, ?, ?, ?, ?)", [recipe.ID, recipe.recipeName, recipe.preparationTime, recipe.preparationDescription, recipe.state?.stateName]);
-            for(const ingredient of recipe.ingredients!){
-                if(!ingredient.measure && !ingredient.quantity){
-                    await conn.query("CALL DeleteIngredientByRecipeIDAndCommodityName(?, ?)", [recipe.ID, ingredient.commodity?.commodityName]);
-                }
-                else{
-                    await conn.query("CALL AddOrUpdateIngredientByRecipeIDAndCommodityName(?, ?, ?, ?)", [recipe.ID, ingredient.commodity?.commodityName, ingredient.measure?.measureName, ingredient.quantity]);
+            const [rows]: any = await conn.query("CALL UpdateRecipeByID(?, ?, ?, ?)", [recipe.ID, recipe.recipeName, recipe.preparationTime, recipe.preparationDescription]);
+            await conn.query("CALL UpdateRecipeStateByID(?, ?)", [recipe.ID, recipe.state?.stateName]);
+            if(recipe.ingredients){
+                for(const ingredient of recipe.ingredients){
+                    if(!ingredient.measure && !ingredient.quantity){
+                        await conn.query("CALL DeleteIngredientByRecipeIDAndCommodityName(?, ?)", [recipe.ID, ingredient.commodity?.commodityName]);
+                    }
+                    else{
+                        await conn.query("CALL AddOrUpdateIngredientByRecipeIDAndCommodityName(?, ?, ?, ?)", [recipe.ID, ingredient.commodity?.commodityName, ingredient.measure?.measureName, ingredient.quantity]);
+                    }
                 }
             }
             conn.commit();

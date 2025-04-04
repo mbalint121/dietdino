@@ -555,7 +555,7 @@ export async function UpdateRecipeByID(req: any, res: Response){
             res.status(400).send({error: "Nem történt módosítás"});
             return;
         }
-    
+
         if(req.body.ingredients){
             const ingredients: Array<Ingredient> = new Array<Ingredient>();
             for(const ingredient of req.body.ingredients){
@@ -618,9 +618,12 @@ export async function UpdateRecipeByID(req: any, res: Response){
                 }
             }
         }
+        else{
+            recipe.ingredients = undefined;
+        }
     
         const state: RecipeState = new RecipeState();
-        if(!req.body.state){
+        if(!req.body.state && (recipe.state as string) == "Accepted"){
             state.stateName = "Waiting";
         }
         else{

@@ -1,6 +1,5 @@
 import { Response } from "express";
 import dotenv from "dotenv";
-import path from "path";
 import { Recipe } from "../models/recipe";
 import RecipeService from "../services/recipe";
 import UserService from "../services/user";
@@ -30,25 +29,6 @@ export async function GetImageByName(req: any, res: Response){
 export async function NewImageByRecipeID(req: any, res: any){
     try{
         const recipeID: number = req.params.ID;
-
-        const recipe: Recipe = await RecipeService.GetRecipeByID(recipeID);
-        if(!recipe){
-            return res.status(404).send({error: "Nem létezik ilyen recept"});
-        }
-
-        if(req.decodedToken.userID != recipe.uploaderID){
-            const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
-                
-            if((recipe.state as string) == "Draft" && userRole != "Admin"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-                return;
-            }
-        
-            if((recipe.state as string) == "Waiting" && userRole != "Admin" && userRole != "Moderator"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
-                return;
-            }
-        }
 
         await uploadMiddleware(req, res);
 
