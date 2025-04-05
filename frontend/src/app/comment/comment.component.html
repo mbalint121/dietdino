@@ -34,7 +34,9 @@
     </div>
     <div class="text-lg font-normal text-justify">
         @if(!this.edited){
-            {{comment.text}}
+            <p class="whitespace-pre-line">
+                {{comment.text}}
+            </p>
         } @else {
             <textarea class="w-full border border-[#7F7F7F] rounded-lg p-2" rows="3" [(ngModel)]="commentText"></textarea>
         }

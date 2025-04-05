@@ -6,24 +6,24 @@
             @if(this.adminService.UserIsAdmin()){
                 <li>
                     <a class="flex items-center" href="/admin#users">
-                        <img src="../../assets/user_icon.svg" alt="Recipes icon">
-                        <p class="ms-1.5 font-bold">Felhasználók</p>
+                        <img class="h-6" src="../../assets/user_icon.svg" alt="Recipes icon">
+                        <p class="ms-1.5 font-semibold">Felhasználók</p>
                     </a>
                 </li>
             }
     
             <li>
                 <a class="flex items-center" href="/admin#recipes-waiting-for-approval">
-                <img src="../../assets/waiting_recipes_icon.svg" alt="My recipes icon">
-                <p class="ms-1.5 font-bold whitespace-nowrap">Várakozó receptek</p>
+                <img class="h-6" src="../../assets/waiting_recipes_icon.svg" alt="My recipes icon">
+                <p class="ms-1.5 font-semibold whitespace-nowrap">Várakozó receptek</p>
                 </a>
             </li>
     
             @if(this.adminService.UserIsAdmin()){
                 <li>
                     <a class="flex items-center" href="/admin#draft-recipes">
-                        <img class="h-8" src="../../assets/draft_recipe_icon.svg" alt="My recipes icon" style="filter: invert(0) sepia(0) saturate(0) hue-rotate(0deg) brightness(0) contrast(1);">
-                        <p class="ms-1.5 font-bold whitespace-nowrap">Piszkozat receptek</p>
+                        <img class="h-6" src="../../assets/draft_recipe_icon.svg" alt="My recipes icon" style="filter: invert(0) sepia(0) saturate(0) hue-rotate(0deg) brightness(0) contrast(1);">
+                        <p class="ms-1.5 font-semibold whitespace-nowrap">Piszkozat receptek</p>
                     </a>
                 </li>
             }

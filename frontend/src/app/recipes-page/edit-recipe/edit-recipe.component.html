@@ -27,9 +27,9 @@
                 <app-recipe-commodity-row [rowId]="ingredient.id!"></app-recipe-commodity-row>
             }
     
-            <button class="flex p-2 text-white bg-[#378722] rounded-lg mt-3" (click)="this.AddIngredient()">
-                <img src="../../../assets/add_new_ingredient_icon.svg" alt="Add ingredient" class="w-5 md:w-6 my-auto me-1.5">
-                <p class="text-white font-medium text-base md:text-[20px]">Új Hozzávaló Felvétele</p>
+            <button class="flex py-1 px-2 text-white bg-[#378722] rounded-lg mt-3" (click)="this.AddIngredient()">
+                <img src="../../../assets/add_new_ingredient_icon.svg" alt="Add ingredient" class="w-5 my-auto me-1.5">
+                <p class="text-white font-medium">Új Hozzávaló Felvétele</p>
             </button>
         </div>
     
@@ -41,11 +41,15 @@
         <div class="w-[80%] md:w-[500px] mx-auto mt-8">
             <label class="text-[#378722] font-medium text-base md:text-[20px]" for="recipeImage">Kép feltöltése</label>
             <div class="mt-2 text-center">
-                <label class="p-20 mx-auto bg-white border border-[#378722] rounded-md flex justify-center items-center cursor-pointer" for="recipeImage">
-                    <img class="cursor-pointer mx-auto w-14 h-14" src="../../../assets/image_upload_icon.svg" alt="">
+                <label class="h-[218px] 2s:h-[340px] mx-auto bg-white border border-[#378722] rounded-md flex justify-center items-center cursor-pointer" for="recipeImage">
+                    @if(this.recipe()?.image) {
+                        <img class="cursor-pointer w-full h-full object-cover rounded-md" [src]="'http://localhost:3000/api/images/' + this.recipe()?.image" (error)="this.imageService.OnImageLoadFailure($event)" alt="Recept képe">
+                    } @else {
+                        <img [ngClass]="{'cursor-pointer': true, 'mx-auto w-14 h-14' : fileCount <= 0, 'w-full h-full rounded-md object-cover' : fileCount > 0}" [src]="fileCount > 0 ? image : '../../../assets/image_upload_icon.svg'" alt="Recept képe">
+                    }
                 </label>
-                <input type="file" id="recipeImage" name="recipeImage" multiple class="hidden" (change)="onFileSelected($event)"/>
-                <p class="text-sm mt-2 text-gray-600">{{ fileCount > 0 ? fileCount + ' kép kiválasztva' : 'Nincs kép kiválasztva' }}</p>
+                <input type="file" id="recipeImage" name="recipeImage" multiple class="hidden" (change)="onFileSelected($event)" accept="image/*"/>
+                <p class="text-sm mt-2 text-gray-600">{{ fileCount > 0 || this.recipe()?.image ? '' : 'Nincs kép kiválasztva' }}</p>
               </div>
         </div>
     

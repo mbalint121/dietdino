@@ -8,7 +8,7 @@ import { PageNavbarComponent } from "../../page-navbar/page-navbar.component";
 @Component({
   selector: 'app-admin-navbar',
   standalone: true,
-  imports: [RouterLink, CommonModule, PageNavbarComponent],
+  imports: [CommonModule, PageNavbarComponent],
   templateUrl: './admin-navbar.component.html',
   styleUrl: './admin-navbar.component.css'
 })

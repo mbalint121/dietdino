@@ -98,7 +98,6 @@ export class CommentService {
     EditComment(comment : Comment){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        console.log(comment);
         return this.httpClient.put(`http://localhost:3000/api/comments/${comment.ID}`, comment, {headers: headers})
         .pipe(
             tap(response => {

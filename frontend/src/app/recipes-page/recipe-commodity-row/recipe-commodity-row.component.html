@@ -1,7 +1,7 @@
 <div class="grid sm:grid-cols-10 gap-2 mt-4">
     <div class="grid grid-cols-12 2s:grid-cols-10 sm:grid-cols-6 sm:col-span-5">
         <button class="group flex justify-center items-center w-8 h-8 col-span-2 2s:col-span-1 transition duration-300 hover:bg-[#DC2626] rounded-lg" (click)="this.DeleteIngredient()">
-            <img class="invert transition duration-300 group-hover:invert-0 h-7" src="../../../assets/delete_icon.svg" alt="">
+            <img class="invert transition duration-300 group-hover:invert-0 h-6" src="../../../assets/delete_icon.svg" alt="">
         </button>
         <select class="max-sm:w-full col-span-10 2s:col-span-9 sm:col-span-5 text-sm text-black border border-[#378722] px-2.5 h-8 md:text-base rounded-md" [id]="'recipeIngredient' + rowId" [(ngModel)]="selectedCommmodity" (ngModelChange)="OnCommodityChange()">
             @for(commodity of this.commodityService.GetCommodities(); track commodity.commodityName){

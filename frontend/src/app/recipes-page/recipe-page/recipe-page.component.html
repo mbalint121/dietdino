@@ -1,6 +1,6 @@
 <app-page-navbar></app-page-navbar>
 @if(!this.loading){
-    <div class="mt-24 mb-10 w-[90%] mx-auto">
+    <div class="mt-24 mb-4 w-[90%] mx-auto">
         <div class="flex items-center mb-4 gap-6">
             @if(route.snapshot.url[0].path == "waiting-recipe"){
                 <button class="bg-[#22C55E] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="AcceptRecipe()">
@@ -28,16 +28,17 @@
     
         <div class="grid lg:grid-cols-5 gap-5">
             <div class="col-span-2">
-                <img [src]="recipe()?.image" alt="Recept képe" class="w-full lg:w-[600px] h-[400px] object-cover rounded-lg border border-[#7F7F7F]">
+                <img [src]="'http://localhost:3000/api/images/' + recipe()?.image" (error)="this.imageService.OnImageLoadFailure($event)" alt="Recept képe" class="w-full lg:w-[600px] h-[400px] object-cover rounded-lg border border-[#7F7F7F]">
             </div>
             
-    
             <div class="lg:col-span-3">
                 <div class="flex items-center text-3xl font-semibold">
                     {{recipe()?.recipeName}}
-                    <button class="ms-4 flex items-center" (click)="this.FavoriteRecipe()">
-                        <img class="h-8" [src]="this.favoriteService.GetFavoriteIcon(this.recipe()!)" alt="Kedvencekhez adás">
-                    </button>
+                    @if(recipe()?.state == "Accepted"){
+                        <button class="ms-4 flex items-center" (click)="this.FavoriteRecipe()">
+                            <img class="h-8" [src]="this.favoriteService.GetFavoriteIcon(this.recipe()!)" alt="Kedvencekhez adás">
+                        </button>
+                    }
                 </div>
                 <div class="text-lg font-normal mt-1 cursor-pointer group w-fit" [routerLink]="['/profile', recipe()?.uploader]">
                     <p class="transition duration-500 group-hover:text-[#378722]">{{recipe()?.uploader}}</p>
@@ -47,10 +48,17 @@
                     {{formatDate(recipe()!.uploadDateTime)}}
                 </div>
                 <div class="mt-2">
-                    <button class="group flex py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722]" (click)="this.LikeRecipe()">
-                        <img [src]="this.likeService.GetLikeIcon(this.recipe()!)" alt="Kedvelések" class="h-6 me-3 cursor-pointer transition duration-300 group-hover:invert">
-                        <p class="text-lg transition duration-300 group-hover:text-white">{{recipe()?.likeCount}}</p>
-                    </button>
+                    @if(this.recipe()?.state == "Accepted"){
+                        <button class="group flex py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722]" (click)="this.LikeRecipe()">
+                            <img [src]="this.likeService.GetLikeIcon(this.recipe()!)" alt="Kedvelések" class="h-6 me-3 cursor-pointer transition duration-300 group-hover:invert">
+                            <p class="text-lg transition duration-300 group-hover:text-white">{{recipe()?.likeCount}}</p>
+                        </button>
+                    } @else{
+                        <div class="flex py-1 px-2 rounded-lg">
+                            <img [src]="this.likeService.GetLikeIcon(this.recipe()!)" alt="Kedvelések" class="h-6 me-3">
+                            <p class="text-lg">{{recipe()?.likeCount}}</p>
+                        </div>
+                    }
                 </div>
                 <hr class="my-3 broder border-black">
     
@@ -87,12 +95,18 @@
         <div class="mt-7">
             <div class="flex justify-between mb-2">
                 <p class="text-2xl font-semibold px-2 text-black border-b-[#378722] border-b-4 w-fit mb-2">Kommentek</p>
-                <button class="me-2 py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722] hover:text-white" (click)="NewComment()">Küldés</button>
+                @if(recipe()?.state == "Accepted"){
+                    <button class="me-2 py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722] hover:text-white" (click)="NewComment()">Küldés</button>
+                }
             </div>
-            <textarea name="" id="" class="w-full border border-[#7F7F7F] rounded-lg p-2" rows="4" [(ngModel)]="text"></textarea>
+            @if(recipe()?.state == "Accepted"){
+                <textarea name="" id="" class="w-full border border-[#7F7F7F] rounded-lg p-2" rows="4" [(ngModel)]="text"></textarea>
+            }
     
             @for(currentComment of this.commentService.GetCurrentComments(); track currentComment.ID){
                 <app-comment [comment]="currentComment" [recipeId]="this.id"></app-comment>
+            } @empty{
+                <p class="text-lg font-normal text-center mt-4">Nincsenek kommentek</p>
             }
         </div>
     </div>

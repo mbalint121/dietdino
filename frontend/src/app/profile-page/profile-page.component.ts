@@ -1,18 +1,19 @@
-import { Component, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, effect, inject } from '@angular/core';
 import { PageNavbarComponent } from '../page-navbar/page-navbar.component';
 import { UserService } from '../services/user.service';
 import { EditUserComponent } from "../edit-user/edit-user.component";
 import { CommonModule } from '@angular/common';
 import { EditUserComponentService } from '../edit-user/edit-user-component.service';
 import { PopupService } from '../popups/popup.service';
-import { User } from '../models/user.model';
 import { UserRole } from '../models/user-role.type';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RecipeService } from '../recipes-page/recipe.service';
+import { RecipeCardComponent } from "../recipes-page/recipe-card/recipe-card.component";
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [PageNavbarComponent, EditUserComponent, CommonModule, RouterLink],
+  imports: [PageNavbarComponent, EditUserComponent, CommonModule, RouterLink, RecipeCardComponent],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })
@@ -20,9 +21,12 @@ export class ProfilePageComponent {
   userService : UserService = inject(UserService);
   editUserComponentService : EditUserComponentService = inject(EditUserComponentService);
   popupService : PopupService = inject(PopupService);
+  recipeService : RecipeService = inject(RecipeService);
+  route : ActivatedRoute = inject(ActivatedRoute);
   destroyRef : DestroyRef = inject(DestroyRef);
   
-  username! : string;
+  loading : boolean = true;
+  username : string = this.route.snapshot.url[1]?.path || this.userService.GetUsername() ;
   role! : UserRole | undefined;
 
   constructor(){  
@@ -32,6 +36,14 @@ export class ProfilePageComponent {
         this.username = user.username!;
         this.role = user.role;
       }
+    });
+  }
+
+  ngOnInit(){
+    const subscription = this.recipeService.GetAcceptedRecipesByUsername(this.username).subscribe(() => { this.loading = false; });
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
     });
   }
 
@@ -50,5 +62,9 @@ export class ProfilePageComponent {
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
     });
+  }
+
+  GetRecipes(){
+    return this.recipeService.GetRecipes();
   }
 }

@@ -9,12 +9,13 @@ import { Ingredient } from '../../models/ingredient';
 import { Recipe } from '../../models/recipe';
 import { PopupService } from '../../popups/popup.service';
 import { IngredientService } from '../../services/ingredient.service';
-import { timeInterval } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { ImageService } from '../../services/image.service';
 
 @Component({
   selector: 'app-edit-recipe',
   standalone: true,
-  imports: [PageNavbarComponent, RecipeCommodityRowComponent, FormsModule, RouterLink],
+  imports: [PageNavbarComponent, RecipeCommodityRowComponent, FormsModule, RouterLink, CommonModule],
   templateUrl: './edit-recipe.component.html',
   styleUrl: './edit-recipe.component.css'
 })
@@ -24,6 +25,7 @@ export class EditRecipeComponent {
   commodityService : CommodityService = inject(CommodityService);
   popupService : PopupService = inject(PopupService);
   ingredientService : IngredientService = inject(IngredientService);
+  imageService : ImageService = inject(ImageService);
   destroyRef : DestroyRef = inject(DestroyRef);
   recipe = signal<Recipe | null>(null);
   
@@ -35,8 +37,10 @@ export class EditRecipeComponent {
   timeOfPreparationHours : number | null = null;
   timeOfPreparationMinutes : number | null = null;
   preparationDescription : string = "";
-  image : string = "asd5.png";
+  image : string = "";
   state : string = "";
+
+  imageFile : File | null = null;
   
   ngOnInit(){
     const subcription = this.commodityService.GetAllCommodities().subscribe()
@@ -68,7 +72,8 @@ export class EditRecipeComponent {
         preparationDescription: this.preparationDescription,
         image: this.image,
         ingredients: this.ingredientService.selectedIngredients(),
-        state: this.state
+        state: this.state,
+        fileCount: this.fileCount
       };
       localStorage.setItem("recipeData", JSON.stringify(recipeData));
     }
@@ -82,6 +87,7 @@ export class EditRecipeComponent {
       this.timeOfPreparationMinutes = storedRecipeData.timeOfPreparationMinutes;
       this.preparationDescription = storedRecipeData.preparationDescription;
       this.image = storedRecipeData.image;
+      this.fileCount = storedRecipeData.fileCount;
       this.ingredientService.SetSelectedIngredients(storedRecipeData.ingredients as Ingredient[]);
       localStorage.removeItem("recipeData");
       this.loading = false;
@@ -109,7 +115,7 @@ export class EditRecipeComponent {
     this.timeOfPreparationHours = null;
     this.timeOfPreparationMinutes = null;
     this.preparationDescription = "";
-    this.image = "ElfogadottReceptKep.webp";
+    this.image = "";
     this.ingredientService.SetSelectedIngredients([]);
     this.state = "";
     this.loading = false;
@@ -131,9 +137,26 @@ export class EditRecipeComponent {
   }
 
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.fileCount = input.files ? input.files.length : 0;
+  onFileSelected(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      this.fileCount = files.length;
+
+      if(this.fileCount > 1){
+        this.fileCount = 0;
+        this.popupService.ShowPopup("Egy recepthez csak egy kép tölthető fel.", "error");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.image = reader.result as string;
+        console.log(this.image);
+      };
+      reader.readAsDataURL(files[0]);
+
+      this.imageFile = files[0];
+    }
   }
 
   AddIngredient(){
@@ -206,7 +229,6 @@ export class EditRecipeComponent {
 
     const recipe: Recipe = new Recipe();
     recipe.recipeName = this.recipeName;
-    recipe.image = this.image.substring(this.image.lastIndexOf("/") + 1);
     recipe.preparationTime = this.timeOfPreparationHours!.toString().padStart(2, "0") + ":" + this.timeOfPreparationMinutes!.toString().padStart(2, "0") + ":00";
     recipe.preparationDescription = this.preparationDescription;
     recipe.state = this.state;
@@ -214,13 +236,25 @@ export class EditRecipeComponent {
 
     if(this.route.snapshot.url[0].path === "edit-recipe"){
       recipe.ID = this.recipeID!;
-      const subcription = this.recipeService.UpdateRecipeByID(recipe).subscribe();
+      const updateSubscription = this.recipeService.UpdateRecipeByID(recipe).subscribe(() => {
+        const imageUploadSubscription = this.imageService.UploadImage(this.recipeID!, this.imageFile!)?.subscribe();
+          
+        this.destroyRef.onDestroy(() => {
+          imageUploadSubscription?.unsubscribe();
+        });
+      });
 
       this.destroyRef.onDestroy(() => {
-        subcription.unsubscribe();
+        updateSubscription.unsubscribe();
       });
     } else{
-      const subcription = this.recipeService.NewRecipe(recipe).subscribe();
+      const subcription = this.recipeService.NewRecipe(recipe).subscribe(response => {
+        const imageUploadSubcription = this.imageService.UploadImage(response.recipeID, this.imageFile!)?.subscribe(); 
+
+        this.destroyRef.onDestroy(() => {
+          imageUploadSubcription?.unsubscribe();
+        });
+      });
 
       this.destroyRef.onDestroy(() => {
         subcription.unsubscribe();

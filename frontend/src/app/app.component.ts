@@ -16,8 +16,6 @@ export class AppComponent {
   router : Router = inject(Router);
 
   ngOnInit(){
-    
-
     this.router.events.subscribe(event => {
       if(event instanceof NavigationStart){
         this.popupService.isVisible = false;

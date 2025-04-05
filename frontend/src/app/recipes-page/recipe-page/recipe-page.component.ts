@@ -13,6 +13,7 @@ import { Comment } from '../../models/comment';
 import { FavoriteService } from '../../services/favorite.service';
 import { LikeService } from '../../services/like.service';
 import { CommentService } from '../../comment/comment.service';
+import { ImageService } from '../../services/image.service';
 
 @Component({
   selector: 'app-recipe-page',
@@ -30,6 +31,7 @@ export class RecipePageComponent {
   likeService : LikeService = inject(LikeService);
   commentService : CommentService = inject(CommentService);
   popupService : PopupService = inject(PopupService);
+  imageService : ImageService = inject(ImageService);
   router : Router = inject(Router);
   route : ActivatedRoute = inject(ActivatedRoute);
   destroyRef : DestroyRef = inject(DestroyRef);
@@ -167,5 +169,5 @@ export class RecipePageComponent {
     if (minutes > 0) result.push(`${minutes} perc`);
 
     return result.join(" ") || "Nincs ilyen adat";
-}
+  }
 }

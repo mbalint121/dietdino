@@ -51,10 +51,7 @@ export class AdminRecipeService{
         .pipe(
             tap((response: any) => {
                 if(response){
-                    console.log(response.recipes);
-                    this.SetWaitingRecipes(response.recipes.map((recipe: Recipe) => {
-                        return this.recipeService.formatImage(recipe);
-                    }));
+                    this.SetWaitingRecipes(response.recipes);
                 }
             }),
             catchError(response => {
@@ -75,9 +72,7 @@ export class AdminRecipeService{
         .pipe(
             tap((response: any) => {
                 if(response){
-                    this.SetDraftRecipes(response.recipes.map((recipe: Recipe) => {
-                        return this.recipeService.formatImage(recipe);
-                    }));
+                    this.SetDraftRecipes(response.recipes);
                 }
             }),
             catchError(response => {

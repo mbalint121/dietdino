@@ -3,7 +3,7 @@
 }
 
 ::ng-deep label{
-    @apply text-[#378722] font-medium text-base md:text-[20px];
+    @apply text-[#378722] font-medium text-base md:text-lg;
 }
 
 ::ng-deep input{

@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RecipeService } from '../recipe.service';
 import { FavoriteService } from '../../services/favorite.service';
 import { LikeService } from '../../services/like.service';
+import { ImageService } from '../../services/image.service';
 
 @Component({
   selector: 'app-recipe-card',
@@ -17,6 +18,7 @@ export class RecipeCardComponent {
   recipeService : RecipeService = inject(RecipeService);
   favoriteService : FavoriteService = inject(FavoriteService);
   likeService : LikeService = inject(LikeService);
+  imageService: ImageService = inject(ImageService);
   destroyRef : DestroyRef = inject(DestroyRef);
   route : ActivatedRoute = inject(ActivatedRoute);
 

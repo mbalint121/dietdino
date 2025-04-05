@@ -28,15 +28,7 @@ export class RecipeSearchBarComponent {
     });
   }
 
-  SearchRecipesOnEnter(event: KeyboardEvent){
-    if(event.key == "Enter"){
-      this.SearchRecipes();
-    }
-  }
-
   ChangeFilterVisibility(){
     this.isFilterVisible = !this.isFilterVisible;
   }
-
-  
 }

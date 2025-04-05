@@ -1,13 +1,10 @@
 import { DestroyRef, effect, inject, Injectable, signal } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Recipe } from "../models/recipe";
-import { tap, catchError, map } from "rxjs";
+import { tap, catchError } from "rxjs";
 import { PopupService } from "../popups/popup.service";
 import { UserService } from "../services/user.service";
-import { Ingredient } from "../models/ingredient";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Comment } from "../models/comment";
-import { response } from "express";
 
 @Injectable({providedIn: 'root'})
 export class RecipeService{
@@ -56,9 +53,7 @@ export class RecipeService{
         .pipe(
             tap((response : any) => {
                 if(response){
-                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
-                        return this.formatImage(recipe);
-                    }));
+                    this.SetRecipes(response.recipes);
                 }
             }),
             catchError(response => {
@@ -78,7 +73,6 @@ export class RecipeService{
         .pipe(
             tap((response : any) => {
                 if(response){
-                    this.router.navigate(['/my-recipes']);
                     this.popupService.ShowPopup(response.message, "success");
                 }
             }),
@@ -96,13 +90,10 @@ export class RecipeService{
     UpdateRecipeByID(recipe : Recipe){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        console.log(recipe);
-
         return this.httpClient.put(`http://localhost:3000/api/recipes/${recipe.ID}`, recipe, {headers: headers})
         .pipe(
             tap((response : any) => {
                 if(response){
-                    this.router.navigate(['/my-recipes']);
                     this.popupService.ShowPopup(response.message, "success");
                 }
             }),
@@ -124,9 +115,7 @@ export class RecipeService{
         .pipe(
             tap((response : any) => {
                 if(response){
-                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
-                        return this.formatImage(recipe);
-                    }));
+                    this.SetRecipes(response.recipes);
                 }
             }),
             catchError(response => {
@@ -147,7 +136,7 @@ export class RecipeService{
         .pipe(
             tap((response : any) => {
                 if(response){
-                    this.SetRecipe(this.formatImage(response.recipe));
+                    this.SetRecipe(response.recipe);
                 }
             }),
             catchError(response => {
@@ -190,11 +179,6 @@ export class RecipeService{
         return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    formatImage(recipe : Recipe){
-        recipe.image = '../../../assets/' + recipe.image;
-        return recipe;
-    }
-
     GetFavoriteRecipes(){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
@@ -202,9 +186,7 @@ export class RecipeService{
         .pipe(
             tap((response : any) => {
                 if(response){
-                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
-                        return this.formatImage(recipe);
-                    }));
+                    this.SetRecipes(response.recipes);
                 }
             }),
             catchError(response => {
@@ -238,7 +220,7 @@ export class RecipeService{
 
     UpdateRecipesBasedOnSearchString(searchText : string){
         this.recipes.update(recipes => {
-            return recipes.filter(recipe => recipe.recipeName?.toLocaleLowerCase().includes(searchText.toLowerCase()) || recipe.ingredients?.some(ingredient => ingredient.commodity?.toLowerCase().includes(searchText.toLowerCase())));
+            return recipes.filter(recipe => recipe.recipeName?.toLocaleLowerCase().includes(searchText.toLowerCase()) || recipe.ingredients?.some(ingredient => ingredient.commodity?.toLowerCase().includes(searchText.toLowerCase())) || recipe.uploader?.toLowerCase().includes(searchText.toLowerCase()));
         });
     }
 
@@ -248,11 +230,8 @@ export class RecipeService{
         return this.httpClient.get(`http://localhost:3000/api/recipes/user/${username}`, ({headers: headers}))
         .pipe(
             tap((response : any) => {
-                console.log(response);
                 if(response){
-                    this.SetRecipes(response.recipes.map((recipe: Recipe) => {
-                        return this.formatImage(recipe);
-                    }));
+                    this.SetRecipes(response.recipes);
                 }
             }),
             catchError(response => {
@@ -264,6 +243,36 @@ export class RecipeService{
                 }
                 return response.error.error;
             })
+        );
+    }
+
+    UploadImage(recipeID: number, image: File) {
+        // Don't set content-type header - let the browser set it automatically for FormData
+        const headers = new HttpHeaders({ 
+          token: this.userService.GetUserToken() || '' 
+        });
+
+        const formData = new FormData();
+        formData.append('image', image);
+
+        return this.httpClient.post(`http://localhost:3000/api/images/recipe/${recipeID}`, formData, { 
+          headers: headers,
+          reportProgress: true  // Optional: useful for tracking upload progress
+        })
+        .pipe(
+          tap((response: any) => {
+            if (response) {
+              this.popupService.ShowPopup(response.message, "success");
+            }
+          }),
+          catchError((response) => {
+            if (response.error) {
+              this.popupService.ShowPopup(response.error.error, "error");
+            } else {
+              this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+            }
+            return response.error.error;
+          })
         );
     }
 }

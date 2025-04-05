@@ -12,7 +12,6 @@ import { MyRecipesPageComponent } from './recipes-page/my-recipes-page/my-recipe
 import { MyFavoriteRecipesPageComponent } from './recipes-page/my-favorite-recipes-page/my-favorite-recipes-page.component';
 import { RecipePageComponent } from './recipes-page/recipe-page/recipe-page.component';
 import { EditRecipeComponent } from './recipes-page/edit-recipe/edit-recipe.component';
-import { PublicProfileComponent } from './profile-page/public-profile/public-profile.component';
 
 export const routes: Routes = [
     { path: 'login', title: "Bejelentkezés", component: LoginComponent },
@@ -22,7 +21,7 @@ export const routes: Routes = [
     { path: 'password/reset/:token', title: "Jelszó helyreállítása", component: ResetPasswordComponent },
     { path: 'admin', title: "Admin", component: AdminPageComponent },
     { path: 'profile', title: "Profil", component: ProfilePageComponent},
-    { path: 'profile/:username', title: "Nyilvános profil", component: PublicProfileComponent},
+    { path: 'profile/:username', title: "Profil", component: ProfilePageComponent},
     { path: 'verify/:token', title: "Visszaigazolás", component: VerifyComponent },
     { path: 'recipes', title: "Receptek", component: RecipesPageComponent },
     { path: 'my-recipes', title: "Receptjeim", component: MyRecipesPageComponent },
