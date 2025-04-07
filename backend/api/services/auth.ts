@@ -67,7 +67,7 @@ export default class AuthService{
             const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
     
             if(userRole != "Moderator" && userRole != "Admin"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
             next();
@@ -89,7 +89,7 @@ export default class AuthService{
             const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
     
             if(userRole != "Admin"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
             next();
@@ -112,7 +112,7 @@ export default class AuthService{
                 const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
     
                 if(userRole != "Moderator" && userRole != "Admin"){
-                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                     return;
                 }
             }
@@ -136,7 +136,7 @@ export default class AuthService{
                 const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
     
                 if(userRole != "Admin"){
-                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                     return;
                 }
             }
@@ -203,7 +203,7 @@ export default class AuthService{
             const uploaderID: number = await RecipeService.GetUploaderIDByRecipeID(req.params.ID);
     
             if(req.decodedToken.userID != uploaderID){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
             next();
@@ -228,7 +228,7 @@ export default class AuthService{
                 const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
                 
                 if(userRole != "Admin"){
-                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                     return;
                 }
             }
@@ -273,7 +273,7 @@ export default class AuthService{
             const authorID: number = await CommentService.GetAuthorIDByCommentID(req.params.ID);
     
             if(req.decodedToken.userID != authorID){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
             next();
@@ -298,7 +298,7 @@ export default class AuthService{
                 const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
                 
                 if(userRole != "Moderator" && userRole != "Admin"){
-                    res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                    res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                     return;
                 }
             }

@@ -364,12 +364,12 @@ export async function GetRecipeByID(req: any, res: Response){
             const userRole: string = await UserService.GetUserRoleByID(req.decodedToken.userID);
         
             if((recipe.state as string) == "Draft" && userRole != "Admin"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
         
             if((recipe.state as string) == "Waiting" && userRole != "Admin" && userRole != "Moderator"){
-                res.status(401).send({error: "Nincs jogod ehhez a művelethez"});
+                res.status(403).send({error: "Nincs jogod ehhez a művelethez"});
                 return;
             }
         }
