@@ -12,6 +12,7 @@ import { Favorite } from "../models/favorite";
 import FavoriteService from "../services/favorite";
 import { User } from "../models/user";
 import UserService from "../services/user";
+import { IsRecipeNameValid, IsPreparationTimeValid, IsPreparationDescriptionValid } from "../validators/regex";
 
 export async function GetAcceptedRecipes(req: any, res: Response){
     try{
@@ -451,6 +452,21 @@ export async function NewRecipe(req: any, res: Response){
             return;
         }
     
+        if(!IsRecipeNameValid(recipe.recipeName)){
+            res.status(400).send({error: "Nem megfelelő a recept nevének formátuma"});
+            return;
+        }
+
+        if(!IsPreparationTimeValid(recipe.preparationTime)){
+            res.status(400).send({error: "Nem megfelelő az elkészítési idő formátuma"});
+            return;
+        }
+    
+        if(!IsPreparationDescriptionValid(recipe.preparationDescription)){
+            res.status(400).send({error: "Nem megfelelő a elkészítés leírásának formátuma"});
+            return;
+        }
+    
         if(recipe.ingredients.length == 0){
             res.status(400).send({error: "Legalább 1 hozzávaló szükséges"});
             return;
@@ -487,12 +503,6 @@ export async function NewRecipe(req: any, res: Response){
             }
         }
         
-        const regex = /^\d\d:\d\d:\d\d$/;
-        if(!regex.test(recipe.preparationTime)){
-            res.status(400).send({error: "Nem megfelelő az elkészítési idő formátuma"});
-            return;
-        }
-    
         const state: RecipeState = new RecipeState();
         state.stateName = recipe.state as string;
         recipe.state = state;
@@ -545,14 +555,23 @@ export async function UpdateRecipeByID(req: any, res: Response){
         Object.assign(recipe, oldRecipe);
         Object.assign(recipe, req.body);
     
-        const regex = /^\d\d:\d\d:\d\d$/;
-        if(!regex.test(recipe.preparationTime!)){
+        if(oldRecipe.recipeName == recipe.recipeName && JSON.stringify(oldRecipe.ingredients) == JSON.stringify(recipe.ingredients) && oldRecipe.preparationTime == recipe.preparationTime && oldRecipe.preparationDescription == recipe.preparationDescription && oldRecipe.state == recipe.state){
+            res.status(400).send({error: "Nem történt módosítás"});
+            return;
+        }
+    
+        if(!IsRecipeNameValid(recipe.recipeName!)){
+            res.status(400).send({error: "Nem megfelelő a recept nevének formátuma"});
+            return;
+        }
+    
+        if(!IsPreparationTimeValid(recipe.preparationTime!)){
             res.status(400).send({error: "Nem megfelelő az elkészítési idő formátuma"});
             return;
         }
     
-        if(oldRecipe.recipeName == recipe.recipeName && JSON.stringify(oldRecipe.ingredients) == JSON.stringify(recipe.ingredients) && oldRecipe.preparationTime == recipe.preparationTime && oldRecipe.preparationDescription == recipe.preparationDescription && oldRecipe.state == recipe.state){
-            res.status(400).send({error: "Nem történt módosítás"});
+        if(!IsPreparationDescriptionValid(recipe.preparationDescription!)){
+            res.status(400).send({error: "Nem megfelelő a elkészítés leírásának formátuma"});
             return;
         }
 

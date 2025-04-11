@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/user";
 import UserService from "../services/user";
 import { UserRole } from "../models/userrole";
+import { IsUsernameValid } from "../validators/regex";
 
 export async function GetUsers(req: Request, res: Response){
     try{
@@ -55,6 +56,11 @@ export async function UpdateUserSelf(req: any, res: Response){
             return;
         }
         
+        if(!IsUsernameValid(user.username)){
+            res.status(400).send({error: "Nem megfelelő az felhasználónév formátuma"});
+            return;
+        }
+        
         const currentUser: User = await UserService.GetUserByID(user.ID!);
         
         if(!currentUser){
@@ -100,9 +106,14 @@ export async function UpdateUserByID(req: any, res: Response){
         const user: User = new User();
         Object.assign(user, req.body);
         user.ID = req.params.ID;
-    
+        
         if(!user.username){
             res.status(400).send({error: "Hiányzó adatok"});
+            return;
+        }
+        
+        if(!IsUsernameValid(user.username)){
+            res.status(400).send({error: "Nem megfelelő az felhasználónév formátuma"});
             return;
         }
     

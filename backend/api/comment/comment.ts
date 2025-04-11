@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { Comment } from "../models/comment";
 import CommentService from "../services/comment";
+import { IsCommentValid } from "../validators/regex";
 
 export async function GetCommentsByRecipeID(req: any, res: Response){
     try{
@@ -29,6 +30,11 @@ export async function NewComment(req: any, res: Response){
 
         if(!comment.text){
             res.status(400).send({error: "Hiányzó adatok"});
+            return;
+        }
+
+        if(!IsCommentValid(comment.text)){
+            res.status(400).send({error: "Nem megfelelő a komment formátuma"});
             return;
         }
 
@@ -63,7 +69,12 @@ export async function UpdateCommentByID(req: any, res: Response){
             res.status(400).send({error: "Hiányzó adatok"});
             return;
         }
-            
+    
+        if(!IsCommentValid(comment.text)){
+            res.status(400).send({error: "Nem megfelelő a komment formátuma"});
+            return;
+        }
+    
         const currentComment: Comment = await CommentService.GetCommentByID(comment.ID!);
         
         if(!currentComment){

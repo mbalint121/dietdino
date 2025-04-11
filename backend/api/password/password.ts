@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import PasswordService from "../services/password";
 import { User } from "../models/user";
 import UserService from "../services/user";
+import { IsEmailValid, IsPasswordValid } from "../validators/regex";
 
 dotenv.config();
 
@@ -14,6 +15,11 @@ export async function SendPasswordResetEmail(req: Request, res: Response){
     
         if(!user.email){
             res.status(400).send({error: "Hiányzó adatok"});
+            return;
+        }
+    
+        if(!IsEmailValid(user.email)){
+            res.status(400).send({error: "Nem megfelelő az email cím formátuma"});
             return;
         }
     
@@ -59,8 +65,14 @@ export async function ResetPassword(req: any, res: Response){
         const user: User = new User();
         user.ID = req.decodedToken.userID;
         user.password = req.body.password;
+
         if(!user.ID || !user.password){
             res.status(400).send({error: "Hiányzó adatok"});
+            return;
+        }
+        
+        if(!IsPasswordValid(user.password)){
+            res.status(400).send({error: "Nem megfelelő a jelszó formátuma"});
             return;
         }
     

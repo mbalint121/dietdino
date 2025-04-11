@@ -3,31 +3,29 @@ import { Request, Response } from "express";
 import VerificationService from "../services/verification";
 import { User } from "../models/user";
 import UserService from "../services/user";
+import { IsUsernameValid, IsEmailValid, IsPasswordValid } from "../validators/regex";
 
 export async function Register(req: Request, res: Response){
     try{
         const user: User = new User();
         Object.assign(user, req.body);
-    
+        
         if(!user.username || !user.email || !user.password){
             res.status(400).send({error: "Hiányzó adatok"});
             return;
         }
-    
-        let regex = /^[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ]{4,16}$/;
-        if(!regex.test(user.username)){
+        
+        if(!IsUsernameValid(user.username)){
             res.status(400).send({error: "Nem megfelelő az felhasználónév formátuma"});
             return;
         }
         
-        regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-        if(!regex.test(user.email)){
+        if(!IsEmailValid(user.email)){
             res.status(400).send({error: "Nem megfelelő az email cím formátuma"});
             return;
         }
-    
-        regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if(!regex.test(user.password)){
+        
+        if(!IsPasswordValid(user.password)){
             res.status(400).send({error: "Nem megfelelő a jelszó formátuma"});
             return;
         }
