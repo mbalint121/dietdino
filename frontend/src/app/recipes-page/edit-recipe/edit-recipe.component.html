@@ -42,13 +42,15 @@
             <label class="text-[#378722] font-medium text-base md:text-[20px]" for="recipeImage">Kép feltöltése</label>
             <div class="mt-2 text-center">
                 <label class="h-[218px] 2s:h-[340px] mx-auto bg-white border border-[#378722] rounded-md flex justify-center items-center cursor-pointer" for="recipeImage">
-                    @if(this.recipe()?.image) {
-                        <img class="cursor-pointer w-full h-full object-cover rounded-md" [src]="'http://localhost:3000/api/images/' + this.recipe()?.image" (error)="this.imageService.OnImageLoadFailure($event)" alt="Recept képe">
+                    @if(fileCount > 0 && this.selectedImageIsLoaded){
+                        <img class="cursor-pointer w-full h-full object-cover" [src]="image" (error)="this.imageService.OnImageLoadFailure($event)" alt="Recept képe">
+                    } @else if(recipe()?.image){
+                        <img class="cursor-pointer w-full h-full object-cover" [src]="'http://localhost:3000/api/images/' + recipe()?.image" (error)="this.imageService.OnImageLoadFailure($event)" alt="Recept képe">
                     } @else {
-                        <img [ngClass]="{'cursor-pointer': true, 'mx-auto w-14 h-14' : fileCount <= 0, 'w-full h-full rounded-md object-cover' : fileCount > 0}" [src]="fileCount > 0 ? image : '../../../assets/image_upload_icon.svg'" alt="Recept képe">
+                        <img class="cursor-pointer w-14 h-14" src="../../../assets/image_upload_icon.svg" (error)="this.imageService.OnImageLoadFailure($event)" alt="Recept képe">
                     }
                 </label>
-                <input type="file" id="recipeImage" name="recipeImage" multiple class="hidden" (change)="onFileSelected($event)" accept="image/*"/>
+                <input type="file" id="recipeImage" name="recipeImage" multiple class="hidden" (change)="onFileSelected($event)" accept="image/*"/> 
                 <p class="text-sm mt-2 text-gray-600">{{ fileCount > 0 || this.recipe()?.image ? '' : 'Nincs kép kiválasztva' }}</p>
               </div>
         </div>
@@ -65,7 +67,7 @@
         </div>
     
         <div class="w-[80%] md:w-[500px] mx-auto flex justify-center mb-5">
-            <button class="flex w-full sm:w-1/2 p-3 bg-[#DC2626] rounded-lg mt-3 sm:me-2.5 md:me-5 justify-center" routerLink="/my-recipes">
+            <button class="flex w-full sm:w-1/2 p-3 bg-[#DC2626] rounded-lg mt-3 sm:me-2.5 md:me-5 justify-center" (click)="Cancel()">
                 <img src="../../../assets/close-icon.svg" alt="Cancel" class="w-6 h-6 my-auto me-1.5 invert">
                 <p class="text-white font-medium text-base">Mégse</p>
             </button>

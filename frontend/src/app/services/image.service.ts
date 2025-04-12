@@ -13,7 +13,7 @@ export class ImageService {
   router : Router = inject(Router);
   
 
-  UploadImage(recipeID: number, image: File) {
+  UploadImage(recipeID: number, image: File, response : any) {
     if(image){
       const headers = new HttpHeaders({ token: this.userService.GetUserToken() || '' });
   
@@ -24,6 +24,7 @@ export class ImageService {
       .pipe(
         tap(() => {
           this.router.navigate(['/my-recipes']);
+          this.popupService.ShowPopup(response.message, response.type);
         }),
         catchError((response) => {
           if (response.error) {
@@ -36,6 +37,7 @@ export class ImageService {
       );
     }
     this.router.navigate(['/my-recipes']);
+    this.popupService.ShowPopup(response.message, response.type);
     return null;
   }
 

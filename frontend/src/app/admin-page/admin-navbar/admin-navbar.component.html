@@ -1,7 +1,6 @@
 <app-page-navbar></app-page-navbar>
 <div class="w-[90%] hidden xl:block xl:justify-center mt-3 fixed left-1/2 top-16 -translate-x-1/2">
-    <div class="w-fit flex items-center mx-auto rounded-xl h-12 bg-[#EAEAEA] border border-[#7F7F7F] font-semibold text-base" id="navbar">
-
+    <div class="w-fit flex items-center mx-auto rounded-xl h-12 bg-[#EAEAEA] border border-[#7F7F7F] font-semibold text-base z-10 relative" id="navbar">
         <ul class="flex items-center px-5 space-x-4">
             @if(this.adminService.UserIsAdmin()){
                 <li>
@@ -29,6 +28,4 @@
             }
         </ul>
     </div> 
-    
-    
 </div>

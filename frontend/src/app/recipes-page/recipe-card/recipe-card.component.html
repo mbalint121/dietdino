@@ -2,7 +2,7 @@
     <div class="group relative border border-[#7F7F7F] rounded-t-lg bg-white h-60 cursor-pointer">
         <img class="object-cover h-full w-full rounded-t-lg" [src]="'http://localhost:3000/api/images/' + recipe.image" (error)="this.imageService.OnImageLoadFailure($event)" alt="Recept képe"  [routerLink]="['/recipe', recipe.ID]">
         @if(recipe.state == 'Accepted'){
-            <img class="absolute h-6 top-2 left-2 z-50 duration-300 opacity-0 group-hover:opacity-100" [src]="this.favoriteService.GetFavoriteIcon(recipe)" alt="Favorite" (click)="this.FavoriteRecipe()">
+            <img class="absolute h-6 top-2 left-2 z-40 duration-300 opacity-0 group-hover:opacity-100" [src]="this.favoriteService.GetFavoriteIcon(recipe)" alt="Favorite" (click)="this.FavoriteRecipe()">
         }
     </div>
     <div class="border border-[#7F7F7F] p-3 rounded-b-lg bg-gray-100">

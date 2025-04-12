@@ -14,6 +14,7 @@ import { FavoriteService } from '../../services/favorite.service';
 import { LikeService } from '../../services/like.service';
 import { CommentService } from '../../comment/comment.service';
 import { ImageService } from '../../services/image.service';
+import ConfirmationDialogService from '../../confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-recipe-page',
@@ -32,9 +33,11 @@ export class RecipePageComponent {
   commentService : CommentService = inject(CommentService);
   popupService : PopupService = inject(PopupService);
   imageService : ImageService = inject(ImageService);
+  confirmationDialogService : ConfirmationDialogService = inject(ConfirmationDialogService);
   router : Router = inject(Router);
   route : ActivatedRoute = inject(ActivatedRoute);
   destroyRef : DestroyRef = inject(DestroyRef);
+
   id : number = Number(this.route.snapshot.paramMap.get('id'));
   recipe = signal<Recipe | undefined>(undefined);
   text : string = "";
@@ -97,10 +100,14 @@ export class RecipePageComponent {
   }
 
   DeleteRecipe(){
-    const subscription = this.recipeService.DeleteRecipeByID(this.recipe()?.ID!).subscribe();
-
-    this.destroyRef.onDestroy(() => {
-      subscription.unsubscribe();
+    this.confirmationDialogService.OpenDialog("Biztosan törölni szeretnéd ezt a receptet?").subscribe(result => {
+      if(result == "ok"){
+        const subscription = this.recipeService.DeleteRecipeByID(this.recipe()?.ID!).subscribe();
+    
+        this.destroyRef.onDestroy(() => {
+          subscription.unsubscribe();
+        });
+      }
     });
   }
 
@@ -115,18 +122,34 @@ export class RecipePageComponent {
   }
 
   AcceptRecipe(){
-    const subscription = this.adminRecipeService.AcceptRecipe(this.recipe()?.ID!).subscribe();
+    const confirmationDialogServiceSubscription = this.confirmationDialogService.OpenDialog("Biztosan elfogadod ezt a receptet?").subscribe(result => {
+      if(result == "ok"){
+        const subscription = this.adminRecipeService.AcceptRecipe(this.recipe()?.ID!).subscribe();
+
+        this.destroyRef.onDestroy(() => {
+          subscription.unsubscribe();
+        });
+      }
+    });
 
     this.destroyRef.onDestroy(() => {
-      subscription.unsubscribe();
+      confirmationDialogServiceSubscription.unsubscribe();
     });
   }
 
   RejectRecipe(){
-    const subscription = this.adminRecipeService.RejectRecipe(this.recipe()?.ID!).subscribe();
+    const confirmationDialogServiceSubscription = this.confirmationDialogService.OpenDialog("Biztosan elutasítod ezt a receptet?").subscribe(result => {
+      if(result == "ok"){
+        const subscription = this.adminRecipeService.RejectRecipe(this.recipe()?.ID!).subscribe();
+
+        this.destroyRef.onDestroy(() => {
+          subscription.unsubscribe();
+        });
+      }
+    });
 
     this.destroyRef.onDestroy(() => {
-      subscription.unsubscribe();
+      confirmationDialogServiceSubscription.unsubscribe();
     });
   }
 

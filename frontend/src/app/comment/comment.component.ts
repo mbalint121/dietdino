@@ -8,6 +8,8 @@ import { RouterLink } from '@angular/router';
 import { AdminService } from '../admin-page/admin.service';
 import { PopupService } from '../popups/popup.service';
 import { CommentService } from './comment.service';
+import { MatDialog } from '@angular/material/dialog';
+import ConfirmationDialogService from '../confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-comment',
@@ -27,6 +29,7 @@ export class CommentComponent {
   adminService : AdminService = inject(AdminService);
   commentService : CommentService = inject(CommentService);
   popupService : PopupService = inject(PopupService);
+  confirmationDialogService : ConfirmationDialogService = inject(ConfirmationDialogService);
   destroyRef : DestroyRef = inject(DestroyRef);
 
   ngOnInit(){
@@ -34,10 +37,18 @@ export class CommentComponent {
   }
   
   DeleteComment(){
-    const subscription = this.commentService.DeleteCommentByID(this.comment, this.recipeId).subscribe();
+    const confirmationDialogServiceSubscription = this.confirmationDialogService.OpenDialog("Biztosan törölni szeretnéd ezt a hozzászólást?").subscribe(result => {
+      if(result == "ok"){
+        const subscription = this.commentService.DeleteCommentByID(this.comment, this.recipeId).subscribe();
+    
+        this.destroyRef.onDestroy(() => {
+          subscription.unsubscribe();
+        });
+      }
+    });
 
     this.destroyRef.onDestroy(() => {
-      subscription.unsubscribe();
+      confirmationDialogServiceSubscription.unsubscribe();
     });
   }
 

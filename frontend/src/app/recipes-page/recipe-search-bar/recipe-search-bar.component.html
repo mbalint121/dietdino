@@ -5,19 +5,56 @@
                 <div class="text-lg font-semibold text-center">
                     Keresési Szűrők
                 </div>
-                <div class="flex whitespace-nowrap space-x-2">
-                    <input type="radio" id="acceptedRecipes" name="recipeFilter" value="accepted" [(ngModel)]="selectedFilter"/>
-                    <label for="acceptedRecipes">Elfogadott receptek</label>
-                </div>
-                <div class="flex whitespace-nowrap space-x-2">
-                    <input type="radio" id="waitingRecipes" name="recipeFilter" value="waiting" [(ngModel)]="selectedFilter"/>
-                    <label for="waitingRecipes">Elfogadásra váró receptek</label>
-                </div>
-                <div class="flex whitespace-nowrap space-x-2">
-                    <input type="radio" id="draftRecipes" name="recipeFilter" value="draft" [(ngModel)]="selectedFilter"/>
-                    <label for="draftRecipes">Piszkozatok</label>
+                @if(this.route.snapshot.url[0].path == 'my-recipes') {
+                    <div class="pt-4">
+                        <div class="pb-2">Recept státusza alapján:</div>
+                        <div class="flex flex-col max-[1100px]:space-y-2 min-[1100px]:flex-row min-[1100px]:space-x-4">
+                            <div class="flex whitespace-nowrap space-x-2">
+                                <input type="checkbox" id="acceptedRecipes" value="Accepted" (change)="ChangeSelectedFilter($event)"/>
+                                <label for="acceptedRecipes">Elfogadott</label>
+                            </div>
+                            <div class="flex whitespace-nowrap space-x-2">
+                                <input type="checkbox" id="waitingRecipes" value="Waiting" (change)="ChangeSelectedFilter($event)"/>
+                                <label for="waitingRecipes">Elfogadásra váró</label>
+                            </div>
+                            <div class="flex whitespace-nowrap space-x-2">
+                                <input type="checkbox" id="draftRecipes" value="Draft" (change)="ChangeSelectedFilter($event)"/>
+                                <label for="draftRecipes">Piszkozat</label>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="pt-4">
+                    <div class="pb-2">Feltöltés ideje alapján:</div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="col-start-1 flex space-x-2">
+                            <input type="text" maxlength="4" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="startYear" name="startYear" placeholder="Év" [(ngModel)]="startYear" (change)="forceNumeric($event)"/>
+                            <div>.</div>
+                            <input type="text" maxlength="2" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="startMonth" name="startMonth" placeholder="Hó" [(ngModel)]="startMonth" (change)="forceNumeric($event)"/>
+                            <div>.</div>
+                            <input type="text" maxlength="2" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="startDay" name="startDay" placeholder="Nap" [(ngModel)]="startDay" (change)="forceNumeric($event)"/>
+                            <label for="startYear">- től</label>
+                        </div>
+                        <div class="col-start-1 flex space-x-2">
+                            <input type="text" maxlength="4" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="endYear" name="endYear" placeholder="Év" [(ngModel)]="endYear" (change)="forceNumeric($event)"/>
+                            <div>.</div>
+                            <input type="text" maxlength="2" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="endMonth" name="endMonth" placeholder="Hó" [(ngModel)]="endMonth" (change)="forceNumeric($event)"/>
+                            <div>.</div>
+                            <input type="text" maxlength="2" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="endDay" name="endDay" placeholder="Nap" [(ngModel)]="endDay" (change)="forceNumeric($event)"/>
+                            <label for="endYear">- ig</label>
+                        </div>
+                        <button class="col-start-2 row-start-1 font-medium border rounded-md text-white bg-[#378722] border-[#378722]" (click)="AddDateFilterToFilters()">
+                            Szűrés dátumok alapján
+                        </button>
+                        <button class="col-start-2 font-medium border rounded-md text-white bg-[#378722] border-[#378722]" (click)="RemoveDateFilterFromFilters()">
+                            Dátumok törlése
+                        </button>
+                    </div>
                 </div>
             </div>
+
+
             <input type="search" class="border border-[#5E5E5E] rounded-l-lg w-full p-2 h-12" placeholder="Recept keresése" [(ngModel)]="searchString" (search)="SearchRecipes()">
             <button class="border-r border-t border-b border-[#5E5E5E] bg-[#378722] rounded-r-lg p-2 h-12 2xs:max-xs:w-[22%] text-center" (click)="SearchRecipes()">
                 <img src="../../../assets/recipe_search_icon.svg" alt="Search icon">

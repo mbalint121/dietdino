@@ -9,6 +9,7 @@ import { UserRole } from '../models/user-role.type';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RecipeService } from '../recipes-page/recipe.service';
 import { RecipeCardComponent } from "../recipes-page/recipe-card/recipe-card.component";
+import ConfirmationDialogService from '../confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -22,6 +23,7 @@ export class ProfilePageComponent {
   editUserComponentService : EditUserComponentService = inject(EditUserComponentService);
   popupService : PopupService = inject(PopupService);
   recipeService : RecipeService = inject(RecipeService);
+  confrimtaionDialogService : ConfirmationDialogService = inject(ConfirmationDialogService);
   route : ActivatedRoute = inject(ActivatedRoute);
   destroyRef : DestroyRef = inject(DestroyRef);
   
@@ -53,14 +55,22 @@ export class ProfilePageComponent {
   }
 
   DeleteUser(){
-    if(this.userService.GetUserRole() == "Admin"){
-      this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát!", "warning");
-      return;
-    }
-    const subscription = this.userService.UserDeleteSelf().subscribe();
+    const confirmationDialogServiceSubscription = this.confrimtaionDialogService.OpenDialog("Biztosan törölni szeretnéd a felhasználói fiókodat?").subscribe(result => {
+      if (result == "ok") {
+        if(this.userService.GetUserRole() == "Admin"){
+          this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát!", "warning");
+          return;
+        }
+        const subscription = this.userService.UserDeleteSelf().subscribe();
+    
+        this.destroyRef.onDestroy(() => {
+          subscription.unsubscribe();
+        });
+      }
+    });
 
     this.destroyRef.onDestroy(() => {
-      subscription.unsubscribe();
+      confirmationDialogServiceSubscription.unsubscribe();
     });
   }
 

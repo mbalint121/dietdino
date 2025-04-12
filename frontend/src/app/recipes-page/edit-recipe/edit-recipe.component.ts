@@ -1,6 +1,6 @@
-import { Component, DestroyRef, effect, HostListener, inject, Input, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
 import { PageNavbarComponent } from "../../page-navbar/page-navbar.component";
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { CommodityService } from '../../services/commodity.service';
 import { FormsModule } from '@angular/forms';
 import { RecipeCommodityRowComponent } from "../recipe-commodity-row/recipe-commodity-row.component";
@@ -11,6 +11,7 @@ import { PopupService } from '../../popups/popup.service';
 import { IngredientService } from '../../services/ingredient.service';
 import { CommonModule } from '@angular/common';
 import { ImageService } from '../../services/image.service';
+import ConfirmationDialogService from '../../confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-edit-recipe',
@@ -22,14 +23,19 @@ import { ImageService } from '../../services/image.service';
 export class EditRecipeComponent {
   recipeService : RecipeService = inject(RecipeService);
   route : ActivatedRoute = inject(ActivatedRoute);
+  router : Router = inject(Router);
   commodityService : CommodityService = inject(CommodityService);
   popupService : PopupService = inject(PopupService);
   ingredientService : IngredientService = inject(IngredientService);
   imageService : ImageService = inject(ImageService);
+  confirmationDialogService : ConfirmationDialogService = inject(ConfirmationDialogService);
+
   destroyRef : DestroyRef = inject(DestroyRef);
+
   recipe = signal<Recipe | null>(null);
   
   loading : boolean = true;
+  selectedImageIsLoaded : boolean = false;
   fileCount: number = 0;
 
   recipeID : number | null= this.route.snapshot.url[0].path === "edit-recipe" ? Number.parseInt(this.route.snapshot.url[1].path) : null;
@@ -141,7 +147,7 @@ export class EditRecipeComponent {
     const files = event.target.files;
     if (files && files.length > 0) {
       this.fileCount = files.length;
-
+      
       if(this.fileCount > 1){
         this.fileCount = 0;
         this.popupService.ShowPopup("Egy recepthez csak egy kép tölthető fel.", "error");
@@ -151,10 +157,10 @@ export class EditRecipeComponent {
       const reader = new FileReader();
       reader.onload = () => {
         this.image = reader.result as string;
-        console.log(this.image);
+        this.selectedImageIsLoaded = true;
       };
       reader.readAsDataURL(files[0]);
-
+      
       this.imageFile = files[0];
     }
   }
@@ -173,7 +179,7 @@ export class EditRecipeComponent {
       this.popupService.ShowPopup("Recept nevének megadása kötelező.", "error");
       return false;
     }
-    else if((this.timeOfPreparationHours === null || this.timeOfPreparationHours <= 0) && (this.timeOfPreparationMinutes === null || this.timeOfPreparationMinutes <= 0)){
+    else if((this.timeOfPreparationHours === null || this.timeOfPreparationHours < 0 || this.timeOfPreparationHours > 23) && (this.timeOfPreparationMinutes === null || this.timeOfPreparationMinutes < 0 || this.timeOfPreparationMinutes > 59)){
       this.popupService.ShowPopup("Elkészítési idő megadása kötelező.", "error");
       return false;
     }
@@ -236,8 +242,8 @@ export class EditRecipeComponent {
 
     if(this.route.snapshot.url[0].path === "edit-recipe"){
       recipe.ID = this.recipeID!;
-      const updateSubscription = this.recipeService.UpdateRecipeByID(recipe).subscribe(() => {
-        const imageUploadSubscription = this.imageService.UploadImage(this.recipeID!, this.imageFile!)?.subscribe();
+      const updateSubscription = this.recipeService.UpdateRecipeByID(recipe).subscribe(response => {
+        const imageUploadSubscription = this.imageService.UploadImage(this.recipeID!, this.imageFile!, response)?.subscribe();
           
         this.destroyRef.onDestroy(() => {
           imageUploadSubscription?.unsubscribe();
@@ -249,7 +255,7 @@ export class EditRecipeComponent {
       });
     } else{
       const subcription = this.recipeService.NewRecipe(recipe).subscribe(response => {
-        const imageUploadSubcription = this.imageService.UploadImage(response.recipeID, this.imageFile!)?.subscribe(); 
+        const imageUploadSubcription = this.imageService.UploadImage(response.recipeID, this.imageFile!, response)?.subscribe(); 
 
         this.destroyRef.onDestroy(() => {
           imageUploadSubcription?.unsubscribe();
@@ -262,4 +268,28 @@ export class EditRecipeComponent {
     }
   }
 
+  Cancel(){
+    let confirmationDialogServiceSubscription : any;
+    if(this.route.snapshot.url[0].path === "edit-recipe"){
+      confirmationDialogServiceSubscription = this.confirmationDialogService.OpenDialog("Biztosan félbe szeretnéd hagyni a recept szerkesztését?").subscribe(result => {
+        if(result == "ok"){
+          this.router.navigate(["/recipe", this.recipeID]);
+        }
+      });
+
+      this.destroyRef.onDestroy(() => {
+        confirmationDialogServiceSubscription.unsubscribe();
+      });
+    } else if(this.route.snapshot.url[0].path === "upload-recipe"){
+      confirmationDialogServiceSubscription = this.confirmationDialogService.OpenDialog("Biztosan félbe szeretnéd hagyni az új recept feltöltését?").subscribe(result => {
+        if(result == "ok"){
+          this.router.navigate(["/my-recipes"]);
+        }
+      });
+
+      this.destroyRef.onDestroy(() => {
+        confirmationDialogServiceSubscription.unsubscribe();
+      });
+    }
+  }
 }

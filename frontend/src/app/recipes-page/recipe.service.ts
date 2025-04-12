@@ -1,10 +1,11 @@
 import { DestroyRef, effect, inject, Injectable, signal } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Recipe } from "../models/recipe";
-import { tap, catchError } from "rxjs";
+import { tap, catchError, map } from "rxjs";
 import { PopupService } from "../popups/popup.service";
 import { UserService } from "../services/user.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { DateFilter } from "../models/date-filter";
 
 @Injectable({providedIn: 'root'})
 export class RecipeService{
@@ -75,6 +76,8 @@ export class RecipeService{
                 if(response){
                     this.popupService.ShowPopup(response.message, "success");
                 }
+                response.type = "success";
+                return response;
             }),
             catchError(response => {
                 if (response.error) {
@@ -82,7 +85,8 @@ export class RecipeService{
                 } else {
                     this.popupService.ShowPopup("Váratlan hiba történt.", "error");
                 }
-                return response.error.error;
+                response.type = "error";
+                return response;
             })
         );
     }
@@ -96,6 +100,8 @@ export class RecipeService{
                 if(response){
                     this.popupService.ShowPopup(response.message, "success");
                 }
+                response.type = "success";
+                return response;
             }),
             catchError(response => {
                 if (response.error) {
@@ -103,7 +109,8 @@ export class RecipeService{
                 } else {
                     this.popupService.ShowPopup("Váratlan hiba történt.", "error");
                 }
-                return response.error.error;
+                response.type = "error";
+                return response;
             })
         );
     }
@@ -200,27 +207,27 @@ export class RecipeService{
         );
     }
 
-    SearchInRecipes(searchText : string){
+    SearchInRecipes(searchText : string, filters : string[], dateFilter : DateFilter){
         if(this.router.url == '/my-recipes'){
             return this.GetRecipesByUser().subscribe(() => {
-                this.UpdateRecipesBasedOnSearchString(searchText);
+                this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, filters, dateFilter);
             });
         }
         else if(this.router.url == '/favorite-recipes'){
             return this.GetFavoriteRecipes().subscribe(() => {
-                this.UpdateRecipesBasedOnSearchString(searchText);
+                this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, [], dateFilter);
             });
         }
         else{
             return this.GetAcceptedRecipes().subscribe(() => {
-                this.UpdateRecipesBasedOnSearchString(searchText);
+                this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, [], dateFilter);
             });
         }
     }
 
-    UpdateRecipesBasedOnSearchString(searchText : string){
+    UpdateRecipesBasedOnSearchStringAndFilters(searchText : string, filters : string[], dateFilter : DateFilter){
         this.recipes.update(recipes => {
-            return recipes.filter(recipe => recipe.recipeName?.toLocaleLowerCase().includes(searchText.toLowerCase()) || recipe.ingredients?.some(ingredient => ingredient.commodity?.toLowerCase().includes(searchText.toLowerCase())) || recipe.uploader?.toLowerCase().includes(searchText.toLowerCase()));
+            return recipes.filter(recipe => (recipe.recipeName?.toLocaleLowerCase().includes(searchText.toLowerCase()) || recipe.ingredients?.some(ingredient => ingredient.commodity?.toLowerCase().includes(searchText.toLowerCase())) || recipe.uploader?.toLowerCase().includes(searchText.toLowerCase())) && (filters!.length > 0 ? filters?.some(filter => recipe.state == filter) : true) && (dateFilter?.startDate ? this.NewDateInCorrectFormat(recipe.uploadDateTime) >= this.NewDateInCorrectFormat(dateFilter.startDate) : true) && (dateFilter?.endDate ? this.NewDateInCorrectFormat(recipe.uploadDateTime) <= this.NewDateInCorrectFormat(dateFilter.endDate) : true));
         });
     }
 
@@ -246,33 +253,8 @@ export class RecipeService{
         );
     }
 
-    UploadImage(recipeID: number, image: File) {
-        // Don't set content-type header - let the browser set it automatically for FormData
-        const headers = new HttpHeaders({ 
-          token: this.userService.GetUserToken() || '' 
-        });
-
-        const formData = new FormData();
-        formData.append('image', image);
-
-        return this.httpClient.post(`http://localhost:3000/api/images/recipe/${recipeID}`, formData, { 
-          headers: headers,
-          reportProgress: true  // Optional: useful for tracking upload progress
-        })
-        .pipe(
-          tap((response: any) => {
-            if (response) {
-              this.popupService.ShowPopup(response.message, "success");
-            }
-          }),
-          catchError((response) => {
-            if (response.error) {
-              this.popupService.ShowPopup(response.error.error, "error");
-            } else {
-              this.popupService.ShowPopup("Váratlan hiba történt.", "error");
-            }
-            return response.error.error;
-          })
-        );
+    NewDateInCorrectFormat(date: Date | string): Date {
+        const d = new Date(date);
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
     }
 }

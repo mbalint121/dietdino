@@ -11,6 +11,9 @@ module.exports = {
         'xs': '375px',
         '2xs': '314px',
       },
+      gridTemplateColumns: {
+        '13': 'repeat(13, minmax(0, 1fr))',
+      },
     },
   },
   plugins: [],
