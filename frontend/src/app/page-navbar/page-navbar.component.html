@@ -95,19 +95,19 @@
     <div class="hidden col-span-7 xl:block">
         <ul class="xl:flex xl:space-x-1 justify-center">
             <li>
-                <a class="flex items-center py-1 px-1.5" routerLink="/recipes" routerLinkActive="invert bg-[#C878DD] rounded-lg">
+                <a id="recipesMenuOption" class="flex items-center py-1 px-1.5" routerLink="/recipes" routerLinkActive="invert bg-[#C878DD] rounded-lg">
                     <img class="h-6" src="../../assets/recipes_icon.svg" alt="Recipes icon">
                     <p class="ms-1.5 font-semibold">Receptek</p>
                 </a>
             </li>
             <li>
-                <a class="flex items-center py-1 px-1.5" routerLink="/my-recipes" routerLinkActive="invert bg-[#C878DD] rounded-lg">
+                <a id="myRecipesMenuOption" class="flex items-center py-1 px-1.5" routerLink="/my-recipes" routerLinkActive="invert bg-[#C878DD] rounded-lg">
                     <img class="h-6" src="../../assets/my_recipes_icon.svg" alt="My recipes icon">
                     <p class="ms-1.5 font-semibold">Receptjeim</p>
                 </a>
             </li>
             <li>
-                <a class="flex items-center py-1 px-1.5" routerLink="/my-favorite-recipes" routerLinkActive="invert bg-[#C878DD] rounded-lg">
+                <a id="favoriteRecipesMenuOption" class="flex items-center py-1 px-1.5" routerLink="/my-favorite-recipes" routerLinkActive="invert bg-[#C878DD] rounded-lg">
                     <img class="h-6" src="../../assets/star_icon.svg" alt="Favorites icon">
                     <p class="ms-1.5 font-semibold">Kedvenceim</p>
                 </a>
@@ -127,7 +127,7 @@
         <ul class="flex xl:space-x-1 justify-end pe-2">
             @if(this.userService.GetUserToken() !== null){
                 <li>
-                    <a class="flex items-center py-1 px-1.5" [ngClass]="{'invert bg-[#C878DD] rounded-lg' : route.snapshot.url[0] && route.snapshot.url[0].path == 'profile' && (!route.snapshot.url[1] || route.snapshot.url[1].path == this.userService.GetUsername())}" routerLink="/profile">
+                    <a id="profileMenuOption" class="flex items-center py-1 px-1.5" [ngClass]="{'invert bg-[#C878DD] rounded-lg' : route.snapshot.url[0] && route.snapshot.url[0].path == 'profile' && (!route.snapshot.url[1] || route.snapshot.url[1].path == this.userService.GetUsername())}" routerLink="/profile">
                         <img class="h-6" src="../../assets/profile_icon.svg" alt="Profile icon">
                         <p class="ms-1.5 hidden xl:block font-semibold">Profil</p>
                     </a>
@@ -135,12 +135,12 @@
             }
             <li>
                 @if(this.userService.GetUserToken()){
-                    <a class="flex items-center cursor-pointer py-1 px-1.5" (click)="LogOut()">
+                    <a class="flex items-center cursor-pointer py-1 px-1.5" (click)="LogOut()" id="logoutMenuOption">
                         <img class="h-6" src="../../assets/log_out_icon.svg" alt="Log out icon">
                         <p class="ms-1.5 hidden xl:block font-semibold">Kijelentkezés</p>
                     </a>
                 } @else {
-                    <a class="flex items-center py-1 px-1.5" routerLink="/login">
+                    <a class="flex items-center py-1 px-1.5" routerLink="/login" id="loginMenuOption">
                         <img class="h-6" src="../../assets/log_in_icon.svg" alt="Log in icon">
                         <p class="ms-1.5 hidden xl:block font-semibold">Bejelentkezés</p>
                     </a>

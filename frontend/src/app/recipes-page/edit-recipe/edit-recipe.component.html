@@ -17,7 +17,7 @@
             <div class="flex">
                 <input type="text" class="w-1/4 xs:w-1/6 h-6 text-sm text-black border border-[#378722] px-2.5 md:h-8 md:text-base rounded-md" name="recipePrepTimeHour" id="recipePrepTimeHour" placeholder="Óra" [(ngModel)]="timeOfPreparationHours">
                 <p class="text-[#378722] font-medium text-base md:text-[20px] mx-2">:</p>
-                <input type="text" class="w-1/4 xs:w-1/6 h-6 text-sm text-black border border-[#378722] px-2.5 md:h-8 md:text-base rounded-md" name="recipePrepTimeMin" id="recipePrepTimeMin" placeholder="Perc" [(ngModel)]="timeOfPreparationMinutes">
+                <input type="text" class="w-1/4 xs:w-1/6 h-6 text-sm text-black border border-[#378722] px-2.5 md:h-8 md:text-base rounded-md" name="recipePrepTimeMinute" id="recipePrepTimeMinute" placeholder="Perc" [(ngModel)]="timeOfPreparationMinutes">
             </div>
         </div>
     
@@ -27,7 +27,7 @@
                 <app-recipe-commodity-row [rowId]="ingredient.id!"></app-recipe-commodity-row>
             }
     
-            <button class="flex py-1 px-2 text-white bg-[#378722] rounded-lg mt-3" (click)="this.AddIngredient()">
+            <button id="AddIngredientButton" class="flex py-1 px-2 text-white bg-[#378722] rounded-lg mt-3" (click)="this.AddIngredient()">
                 <img src="../../../assets/add_new_ingredient_icon.svg" alt="Add ingredient" class="w-5 my-auto me-1.5">
                 <p class="text-white font-medium">Új Hozzávaló Felvétele</p>
             </button>
@@ -56,18 +56,18 @@
         </div>
     
         <div class="w-[80%] md:w-[500px] mx-auto mt-8 sm:flex">
-            <button class="flex w-full sm:w-1/2 p-3 bg-white rounded-lg mt-3 border border-[#378722] sm:me-2.5 md:me-5 justify-center" (click)="this.NewDraftRecipe()">
+            <button id="newDraftRecipeButton" class="flex w-full sm:w-1/2 p-3 bg-white rounded-lg mt-3 border border-[#378722] sm:me-2.5 md:me-5 justify-center" (click)="this.NewDraftRecipe()">
                 <img src="../../../assets/save_recipe_draft_icon.svg" alt="Cancel" class="w-6 h-6 my-auto me-1.5">
                 <p class="text-[#378722] font-medium text-base">Mentés Piszkozatként</p>
             </button>
-            <button class="flex w-full sm:w-1/2 p-3 bg-[#378722] rounded-lg mt-3 border border-[#378722] justify-center" (click)="NewWaitingRecipe()">
+            <button id="newWaitingRecipeButton" class="flex w-full sm:w-1/2 p-3 bg-[#378722] rounded-lg mt-3 border border-[#378722] justify-center" (click)="NewWaitingRecipe()">
                 <img src="../../../assets/upload_recipe_icon.svg" alt="Cancel" class="w-6 h-6 my-auto me-1.5">
                 <p class="text-white font-medium text-base">Recept Feltöltése</p>
             </button>
         </div>
     
         <div class="w-[80%] md:w-[500px] mx-auto flex justify-center mb-5">
-            <button class="flex w-full sm:w-1/2 p-3 bg-[#DC2626] rounded-lg mt-3 sm:me-2.5 md:me-5 justify-center" (click)="Cancel()">
+            <button id="cancelEditOrUploadButton" class="flex w-full sm:w-1/2 p-3 bg-[#DC2626] rounded-lg mt-3 sm:me-2.5 md:me-5 justify-center" (click)="Cancel()">
                 <img src="../../../assets/close-icon.svg" alt="Cancel" class="w-6 h-6 my-auto me-1.5 invert">
                 <p class="text-white font-medium text-base">Mégse</p>
             </button>

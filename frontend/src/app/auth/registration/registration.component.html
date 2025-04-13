@@ -21,7 +21,7 @@
             <p><input [type]="this.authService.passwordInputType" class="rounded-md" name="registrationConfirmPassword" id="registrationConfirmPassword" [(ngModel)]="registrationConfirmPassword" required/></p>
         </div>
         <div class="text-center">
-            <button class="rounded-xl" (click)="Registration()">Regisztráció</button>
+            <button class="rounded-xl" (click)="Registration()" id="registrationButton">Regisztráció</button>
             <p><a routerLink="/login">Van már fiókod? Jelentkezz be!</a></p>
         </div>
     </div>

@@ -16,7 +16,7 @@ import ConfirmationDialogService from '../../confirmation-dialog/confirmation-di
 @Component({
   selector: 'app-edit-recipe',
   standalone: true,
-  imports: [PageNavbarComponent, RecipeCommodityRowComponent, FormsModule, RouterLink, CommonModule],
+  imports: [PageNavbarComponent, RecipeCommodityRowComponent, FormsModule, CommonModule],
   templateUrl: './edit-recipe.component.html',
   styleUrl: './edit-recipe.component.css'
 })
@@ -179,7 +179,7 @@ export class EditRecipeComponent {
       this.popupService.ShowPopup("Recept nevének megadása kötelező.", "error");
       return false;
     }
-    else if((this.timeOfPreparationHours === null || this.timeOfPreparationHours < 0 || this.timeOfPreparationHours > 23) && (this.timeOfPreparationMinutes === null || this.timeOfPreparationMinutes < 0 || this.timeOfPreparationMinutes > 59)){
+    else if((this.timeOfPreparationHours == null || this.timeOfPreparationHours < 0 || this.timeOfPreparationHours > 23) || (this.timeOfPreparationMinutes == null || this.timeOfPreparationMinutes < 0 || this.timeOfPreparationMinutes > 59)){
       this.popupService.ShowPopup("Elkészítési idő megadása kötelező.", "error");
       return false;
     }

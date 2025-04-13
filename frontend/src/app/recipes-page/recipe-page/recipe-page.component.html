@@ -3,23 +3,23 @@
     <div class="mt-24 mb-4 w-[90%] mx-auto">
         <div class="flex items-center mb-4 gap-6">
             @if(route.snapshot.url[0].path == "waiting-recipe"){
-                <button class="bg-[#22C55E] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="AcceptRecipe()">
+                <button id="acceptRecipeButton" class="bg-[#22C55E] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="AcceptRecipe()">
                     <img class="h-6 xl:h-8" src="../../../assets/accept_recipe_icon.svg" alt="Jóváhagyás">
                     <p class="font-semibold text-white text-base md:text-lg">Jóváhagyás</p>
                 </button>
-                <button class="bg-[#DC2626] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="RejectRecipe()">
+                <button id="rejectRecipeButton" class="bg-[#DC2626] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="RejectRecipe()">
                     <img class="h-6 xl:h-8" src="../../../assets/decline_recipe_icon.svg" alt="Törlés">
                     <p class="font-semibold text-white text-base md:text-lg">Elutasítás</p>
                 </button>
             }
             @else if(this.adminService.UserIsAdmin() || this.userService.GetUsername() == recipe()?.uploader){
                 @if(this.userService.GetUsername() == recipe()?.uploader){
-                    <button class="bg-[#0EA5E9] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="EditRecipe()">
+                    <button id="editRecipeButton" class="bg-[#0EA5E9] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="EditRecipe()">
                         <img class="h-6 xl:h-8" src="../../../assets/edit_icon.svg" alt="Szerkesztés">
                         <p class="font-semibold text-white text-base md:text-lg">Szerkesztés</p>
                     </button>
                 }
-                <button class="bg-[#DC2626] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="DeleteRecipe()">
+                <button id="deleteRecipeButton" class="bg-[#DC2626] p-2 rounded-lg md:rounded-xl flex items-center gap-1" (click)="DeleteRecipe()">
                     <img class="h-6 xl:h-8" src="../../../assets/delete_icon.svg" alt="Törlés">
                     <p class="font-semibold text-white text-base md:text-lg">Törlés</p>
                 </button>
@@ -35,7 +35,7 @@
                 <div class="flex items-center text-3xl font-semibold">
                     {{recipe()?.recipeName}}
                     @if(recipe()?.state == "Accepted"){
-                        <button class="ms-4 flex items-center" (click)="this.FavoriteRecipe()">
+                        <button id="favoriteButton" class="ms-4 flex items-center" (click)="this.FavoriteRecipe()">
                             <img class="h-8" [src]="this.favoriteService.GetFavoriteIcon(this.recipe()!)" alt="Kedvencekhez adás">
                         </button>
                     }
@@ -49,7 +49,7 @@
                 </div>
                 <div class="mt-2">
                     @if(this.recipe()?.state == "Accepted"){
-                        <button class="group flex py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722]" (click)="this.LikeRecipe()">
+                        <button id="likeButton" class="group flex py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722]" (click)="this.LikeRecipe()">
                             <img [src]="this.likeService.GetLikeIcon(this.recipe()!)" alt="Kedvelések" class="h-6 me-3 cursor-pointer transition duration-300 group-hover:invert">
                             <p class="text-lg transition duration-300 group-hover:text-white">{{recipe()?.likeCount}}</p>
                         </button>
@@ -96,11 +96,11 @@
             <div class="flex justify-between mb-2">
                 <p class="text-2xl font-semibold px-2 text-black border-b-[#378722] border-b-4 w-fit mb-2">Kommentek</p>
                 @if(recipe()?.state == "Accepted"){
-                    <button class="me-2 py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722] hover:text-white" (click)="NewComment()">Küldés</button>
+                    <button id="addCommentButton" class="me-2 py-1 px-2 rounded-lg transition duration-300 hover:bg-[#378722] hover:text-white" (click)="NewComment()">Küldés</button>
                 }
             </div>
             @if(recipe()?.state == "Accepted"){
-                <textarea name="" id="" class="w-full border border-[#7F7F7F] rounded-lg p-2" rows="4" [(ngModel)]="text"></textarea>
+                <textarea name="commentText" id="commentText" class="w-full border border-[#7F7F7F] rounded-lg p-2" rows="4" [(ngModel)]="text"></textarea>
             }
     
             @for(currentComment of this.commentService.GetCurrentComments(); track currentComment.ID){
