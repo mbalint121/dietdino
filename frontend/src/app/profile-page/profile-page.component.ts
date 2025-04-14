@@ -58,7 +58,7 @@ export class ProfilePageComponent {
     const confirmationDialogServiceSubscription = this.confrimtaionDialogService.OpenDialog("Biztosan törölni szeretnéd a felhasználói fiókodat?").subscribe(result => {
       if (result == "ok") {
         if(this.userService.GetUserRole() == "Admin"){
-          this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát!", "warning");
+          this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát", "warning");
           return;
         }
         const subscription = this.userService.UserDeleteSelf().subscribe();

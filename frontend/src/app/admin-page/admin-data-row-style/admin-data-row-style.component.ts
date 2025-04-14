@@ -29,7 +29,7 @@ export class AdminDataRowStyleComponent {
     const confirmationDialogServiceSubscription = this.confirmationDialogService.OpenDialog("Biztosan törölni szeretnéd ezt a felhasználót?").subscribe(result => {
       if(result == "ok"){
         if(this.adminService.UserIsAdmin() && this.userService.GetUsername() == this.data.username){
-          this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát!", "warning");
+          this.popupService.ShowPopup("Admin felhasználó nem törölheti önmagát", "warning");
           return;
         }
         const subscription = this.adminService.DeleteUser(this.data.ID!).subscribe();

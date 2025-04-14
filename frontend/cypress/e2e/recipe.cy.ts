@@ -1,16 +1,16 @@
 describe("Recipe tests", () => {
     beforeEach(() => {
         cy.visit("http://localhost:4200/login");
-        cy.get('input[id="loginNameOrEmail"]').type('cypresuser@testuser.com');
-        cy.get('input[id="loginPassword"]').type('user');
+                cy.get('input[id="loginNameOrEmail"]').type('admin@testuser.com');
+        cy.get('input[id="loginPassword"]').type('admin');
         cy.get('button[id="loginButton"]').click();
         cy.location('pathname').should('eq', '/');
-    });
 
-    it('Upload draft recipe - passed', () => {
         cy.get('a[id="myRecipesMenuOption"]').click({force: true});
         cy.location('pathname').should('eq', '/my-recipes');
+    });
 
+    it('Upload draft recipe', () => {
         cy.get('button[id="uploadRecipeButton"]').click();
         cy.location('pathname').should('eq', '/upload-recipe');
 
@@ -44,9 +44,6 @@ describe("Recipe tests", () => {
     });
 
     it('Upload waiting recipe', () => {
-        cy.get('a[id="myRecipesMenuOption"]').click({force: true});
-        cy.location('pathname').should('eq', '/my-recipes');
-
         cy.get('button[id="uploadRecipeButton"]').click();
         cy.location('pathname').should('eq', '/upload-recipe');
 
@@ -57,7 +54,7 @@ describe("Recipe tests", () => {
         cy.get('button[id="AddIngredientButton"]').click();
 
         cy.get('select[id="recipeIngredient0"]').select(0);
-        cy.get('input[id="recipeMeasureAmount0').type('1');
+        cy.get('input[id="recipeMeasureAmount0').clear().type('1');
         cy.get('select[id="recipeMeasure0"]').select(2);
 
         cy.get('textarea[id="recipeDescription"]').type('This is a test recipe.');
@@ -74,9 +71,6 @@ describe("Recipe tests", () => {
     });
 
     it('Cancel recipe upload', () => {
-        cy.get('a[id="myRecipesMenuOption"]').click({force: true});
-        cy.location('pathname').should('eq', '/my-recipes');
-
         cy.get('button[id="uploadRecipeButton"]').click();
         cy.location('pathname').should('eq', '/upload-recipe');
 
@@ -86,9 +80,6 @@ describe("Recipe tests", () => {
     });
 
     it('Edit recipe', () => {
-        cy.get('a[id="myRecipesMenuOption"]').click({force: true});
-        cy.location('pathname').should('eq', '/my-recipes');
-
         cy.contains('Test Draft Recipe').should('be.visible').click();
         cy.location('pathname').should('satisfy', (pathname : any) => pathname.startsWith('/recipe'));
 
@@ -111,9 +102,6 @@ describe("Recipe tests", () => {
     });
 
     it('Cancel recipe edit', () => {
-        cy.get('a[id="myRecipesMenuOption"]').click({force: true});
-        cy.location('pathname').should('eq', '/my-recipes');
-
         cy.contains('Test Draft Recipe').should('be.visible').click();
         cy.location('pathname').should('satisfy', (pathname : any) => pathname.startsWith('/recipe'));
 
@@ -128,9 +116,6 @@ describe("Recipe tests", () => {
     });
 
     it('Delete recipe', () => {
-        cy.get('a[id="myRecipesMenuOption"]').click({force: true});
-        cy.location('pathname').should('eq', '/my-recipes');
-
         cy.contains('Test Waiting Recipe').should('be.visible').click();
         cy.location('pathname').should('satisfy', (pathname : any) => pathname.startsWith('/recipe'));
 
@@ -138,14 +123,14 @@ describe("Recipe tests", () => {
 
         cy.get('button[id="confirmButton"]').click();
 
+        cy.get('p[id="popupMessage"]').should('contain', 'Recept sikeresen törölve');
+        cy.get('p[id="popupMessage"]').parent().should('have.class', 'border-green-600').and('have.class', 'bg-green-100').and('have.class', 'text-green-600');
+
         cy.location('pathname').should('eq', '/my-recipes');
     });
 
     
     it('Cancel recipe deletion', () => {
-        cy.get('a[id="myRecipesMenuOption"]').click({force: true});
-        cy.location('pathname').should('eq', '/my-recipes');
-
         cy.contains('Edited Test Draft Recipe').should('be.visible').click();
         cy.location('pathname').should('satisfy', (pathname : any) => pathname.startsWith('/recipe'));
 

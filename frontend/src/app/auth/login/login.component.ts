@@ -39,6 +39,4 @@ export class LoginComponent {
   ChangePasswordVisibility(){
     this.authService.ChangePasswordVisibility();
   }
-
-
 }

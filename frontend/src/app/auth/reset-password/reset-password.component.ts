@@ -1,8 +1,8 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
 import { AuthSharedStyleComponent } from "../auth-shared-style/auth-shared-style.component";
 import { AuthService } from '../auth.service';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterEvent } from '@angular/router';
 import { PopupService } from '../../popups/popup.service';
 import { UserService } from '../../services/user.service';
 
@@ -25,10 +25,18 @@ export class ResetPasswordComponent {
   confirmNewPassword! : string;
   token! : string;
   
-  ngOnInit(){
+  ngOnInit() {
     localStorage.clear();
-    const token = this.route.snapshot.paramMap.get('token') || '';
-    this.userService.SetUserToken(token);
+    this.token = this.route.snapshot.paramMap.get('token') || '';
+    this.userService.SetUserToken(this.token);
+
+    this.route.params.subscribe(() => {
+      this.CleanUp();
+    });
+  }
+
+  CleanUp(){
+    localStorage.clear();
   }
 
   ResetPassword(){
@@ -56,5 +64,4 @@ export class ResetPasswordComponent {
   ChangePasswordVisibility(){
     this.authService.ChangePasswordVisibility();
   }
-  
 }

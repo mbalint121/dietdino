@@ -1,6 +1,6 @@
 <app-auth-shared-style>
     <h1>Bejelentkezés</h1>
-    <div class="mx-auto" id="form">
+    <form class="mx-auto" id="form">
         <div>
             <p><label for="loginNameOrEmail">Felhasználónév vagy Email</label></p>
             <p><input class="rounded-md" type="text" name="loginNameOrEmail" id="loginNameOrEmail" [(ngModel)]="loginNameOrEmail" required/></p>
@@ -19,5 +19,5 @@
             <button class="rounded-xl" (click)="LogIn()" id="loginButton">Bejelentkezés</button>
             <p><a routerLink="/registration">Nincs még fiókod? Regisztrálj!</a></p>
         </div>
-    </div>
+    </form>
 </app-auth-shared-style>

@@ -1,15 +1,15 @@
 describe("Comment tests", () => {
     beforeEach(() => {
         cy.visit("http://localhost:4200/login");
-        cy.get('input[id="loginNameOrEmail"]').type('cypresuser@testuser.com');
-        cy.get('input[id="loginPassword"]').type('user');
+        cy.get('input[id="loginNameOrEmail"]').type('admin@testuser.com');
+        cy.get('input[id="loginPassword"]').type('admin');
         cy.get('button[id="loginButton"]').click();
         cy.location('pathname').should('eq', '/');
 
         cy.get('a[id="recipesMenuOption"]').click({force: true});
         cy.location('pathname').should('eq', '/recipes');
 
-        cy.contains('Elfogadott Recept').should('be.visible').click();
+        cy.contains('Tejbegríz').should('be.visible').click();
         cy.location('pathname').should('satisfy', (pathname : any) => pathname.startsWith('/recipe'));
     });
 

@@ -31,4 +31,5 @@ export const routes: Routes = [
     { path: 'recipe/:id', title: "Recept", component: RecipePageComponent },
     { path: 'waiting-recipe/:id', title: "Elfogadásra váró recept", component: RecipePageComponent },
     { path: 'draft-recipe/:id', title: "Piszkozat recept", component: RecipePageComponent },
+    { path: '**', redirectTo: '' },
 ];

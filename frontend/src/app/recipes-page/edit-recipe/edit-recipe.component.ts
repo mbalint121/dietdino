@@ -176,39 +176,43 @@ export class EditRecipeComponent {
 
   CheckIfRecipeDataIsOkay(){
     if(this.recipeName === ""){
-      this.popupService.ShowPopup("Recept nevének megadása kötelező.", "error");
+      this.popupService.ShowPopup("Recept nevének megadása kötelező", "error");
       return false;
     }
-    else if((this.timeOfPreparationHours == null || this.timeOfPreparationHours < 0 || this.timeOfPreparationHours > 23) || (this.timeOfPreparationMinutes == null || this.timeOfPreparationMinutes < 0 || this.timeOfPreparationMinutes > 59)){
-      this.popupService.ShowPopup("Elkészítési idő megadása kötelező.", "error");
+    else if((this.timeOfPreparationHours == null || this.timeOfPreparationHours < 0 || this.timeOfPreparationHours > 23 || this.timeOfPreparationHours.toString() == "") || (this.timeOfPreparationMinutes == null || this.timeOfPreparationMinutes < 0 || this.timeOfPreparationMinutes > 59 || this.timeOfPreparationMinutes.toString() == "")){
+      this.popupService.ShowPopup("Elkészítési idő megadása kötelező", "error");
+      return false;
+    }
+    else if(this.timeOfPreparationHours == 0 && this.timeOfPreparationMinutes == 0){
+      this.popupService.ShowPopup("Elkészítési idő nem lehet 0 óra 0 perc", "error");
       return false;
     }
     else if(isNaN(this.timeOfPreparationHours!) || isNaN(this.timeOfPreparationMinutes!)){
-      this.popupService.ShowPopup("Elkészítési idő csak szám lehet.", "error");
+      this.popupService.ShowPopup("Elkészítési idő csak szám lehet", "error");
       return false;
     }
     else if(this.ingredientService.selectedIngredients()?.length === 0){
-      this.popupService.ShowPopup("Hozzávalók megadása kötelező.", "error");
+      this.popupService.ShowPopup("Hozzávalók megadása kötelező", "error");
       return false;
     }
     else if(this.hasDuplicateCommodity(this.ingredientService.selectedIngredients()!)){
-      this.popupService.ShowPopup("Hozzávalók között nem lehet két ugyanolyan.", "error");
+      this.popupService.ShowPopup("Hozzávalók között nem lehet két ugyanolyan", "error");
       return false;
     }
     else if(this.ingredientService.selectedIngredients()?.some(ingredient => ingredient.quantity === 0)){
-      this.popupService.ShowPopup("Hozzávalók mennyiségének megadása kötelező.", "error");
+      this.popupService.ShowPopup("Hozzávalók mennyiségének megadása kötelező", "error");
       return false;
     }
     else if(this.ingredientService.selectedIngredients()?.some(ingredient => isNaN(ingredient.quantity!))){
-      this.popupService.ShowPopup("Hozzávalók mennyisége csak szám lehet.", "error");
+      this.popupService.ShowPopup("Hozzávalók mennyisége csak szám lehet", "error");
       return false;
     }
     if(this.preparationDescription === ""){
-      this.popupService.ShowPopup("Elkészítési leírás megadása kötelező.", "error");
+      this.popupService.ShowPopup("Elkészítési leírás megadása kötelező", "error");
       return false;
     }
     else if(this.image === ""){
-      this.popupService.ShowPopup("Kép feltöltése kötelező.", "error");
+      this.popupService.ShowPopup("Kép feltöltése kötelező", "error");
       return false;
     }
     else{
@@ -229,6 +233,7 @@ export class EditRecipeComponent {
   }
 
   NewRecipe(){
+    console.log(this.timeOfPreparationHours, this.timeOfPreparationMinutes);
     if(!this.CheckIfRecipeDataIsOkay()){
       return;
     }

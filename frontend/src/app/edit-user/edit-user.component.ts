@@ -82,6 +82,7 @@ export class EditUserComponent {
           }
       });      
     }
+
     this.editUserComponentService.ChangeEditUserComponentVisibility();
   }
 

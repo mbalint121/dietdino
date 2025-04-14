@@ -3,7 +3,7 @@ describe('Registration tests', () => {
     cy.visit('http://localhost:4200/registration')
   });
 
-  it('Registration with correct values - passed', () => {
+  it('Registration with correct values', () => {
     cy.get('input[id="registrationName"]').type('RegistrationTest');
     cy.get('input[id="registrationEmail"]').type('madai.balint@gmail.com');
     cy.get('input[id="registrationPassword"]').type('registrationTestPassword123!');

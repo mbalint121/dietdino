@@ -91,13 +91,13 @@ export class UserService{
                     this.popupService.ShowPopup(response.message , "success");
                 }
             }),
-            catchError(error => {
-                if (error.error) {
-                    this.popupService.ShowPopup(error.error.error, "error");
+            catchError(response => {
+                if (response.error) {
+                    this.popupService.ShowPopup(response.error.error, "error");
                 } else {
                     this.popupService.ShowPopup("Ismeretlen hiba történt.", "error");
                 }
-                return error.error.error;
+                return response.error.error;
             })
         );
     }
