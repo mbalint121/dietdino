@@ -233,7 +233,6 @@ export class EditRecipeComponent {
   }
 
   NewRecipe(){
-    console.log(this.timeOfPreparationHours, this.timeOfPreparationMinutes);
     if(!this.CheckIfRecipeDataIsOkay()){
       return;
     }
