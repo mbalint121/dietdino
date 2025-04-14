@@ -41,7 +41,7 @@ export async function LogIn(req: Request, res: Response){
         const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
 
         user.ID = undefined;
-        res.status(200).send({token: token, user: user});
+        res.status(200).send({message: "Sikeres bejelentkezés", token: token, user: user});
     }
     catch(err: any){
         console.log(err);

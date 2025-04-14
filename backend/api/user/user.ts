@@ -86,7 +86,7 @@ export async function UpdateUserSelf(req: any, res: Response){
                 res.status(500).send({error: "Hiba a felhasználó frissítése során"});
                 return;
             }
-            res.status(200).send({message: "Felhasználó sikeresen frissítve"});
+            res.status(200).send({message: "Felhasználó sikeresen módosítva"});
         });
     }
     catch(err: any){
@@ -142,7 +142,7 @@ export async function UpdateUserByID(req: any, res: Response){
                 res.status(500).send({error: "Hiba a felhasználó frissítése során"});
                 return;
             }
-            res.status(200).send({message: "Felhasználó sikeresen frissítve"});
+            res.status(200).send({message: "Felhasználó sikeresen módosítva"});
         });
     }
     catch(err: any){
@@ -202,7 +202,7 @@ export async function UpdateUserRoleByID(req: any, res: Response){
                 res.status(500).send({error: "Hiba a felhasználó szerepkörének frissítése során"});
                 return;
             }
-            res.status(200).send({message: "Felhasználó szerepköre sikeresen frissítve"});
+            res.status(200).send({message: "Felhasználó szerepköre sikeresen módosítva"});
         })
     }
     catch(err: any){
@@ -226,6 +226,11 @@ export async function DeleteUserSelf(req: any, res: Response){
     
         if(!currentUser){
             res.status(404).send({error: "Nem létezik ilyen felhasználó"});
+            return;
+        }
+
+        if((currentUser.role as string) == "Admin"){
+            res.status(400).send({error: "Admin felhasználó nem törölheti magát"});
             return;
         }
     
@@ -259,6 +264,11 @@ export async function DeleteUserByID(req: any, res: Response){
     
         if(!currentUser){
             res.status(404).send({error: "Nem létezik ilyen felhasználó"});
+            return;
+        }
+
+        if(user.ID ==req.decodedToken.userID && (currentUser.role as string) == "Admin"){
+            res.status(400).send({error: "Admin felhasználó nem törölheti magát"});
             return;
         }
     

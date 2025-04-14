@@ -33,7 +33,7 @@ export async function NewImageByRecipeID(req: any, res: any){
         await uploadMiddleware(req, res);
 
         if(!req.file){
-            res.status(400).send({message:"Kép feltöltése kötelező"});
+            res.status(400).send({error: "Kép feltöltése kötelező"});
             return;
         }
 
@@ -49,7 +49,16 @@ export async function NewImageByRecipeID(req: any, res: any){
     catch(err: any){
         console.log(err);
 
-        if(err.hasOwnProperty("sqlState")){
+        if(err.errType == "fileTypeError"){
+            res.status(400).send({error: "Nem megfelelő a fájl formátuma"});
+        }
+        else if(err.code == "LIMIT_FILE_SIZE"){
+            res.status(400).send({error: "A fájl mérete túl nagy"});
+        }
+        else if(err.code == "LIMIT_UNEXPECTED_FILE"){
+            res.status(400).send({error: "Sikertelen fájl feltöltés: túl sok fájl, vagy rossz mező név"});
+        }
+        else if(err.hasOwnProperty("sqlState")){
             res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
         }
         else{

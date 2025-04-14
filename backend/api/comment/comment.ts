@@ -93,7 +93,7 @@ export async function UpdateCommentByID(req: any, res: Response){
                 res.status(500).send({error: "Hiba a komment frissítése során"});
                 return;
             }
-            res.status(200).send({message: "Komment sikeresen frissítve"});
+            res.status(200).send({message: "Komment sikeresen módosítva"});
         });
     }
     catch(err: any){

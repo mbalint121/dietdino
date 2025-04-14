@@ -14,6 +14,12 @@ const storage = multer.diskStorage(
             cb(null, __dirname + IMAGES_DIR);
         },
         filename: (req: any, file, cb) => {
+            if(file.mimetype.substring(0, 5) != "image"){
+                const error: any = new Error("Not an image type file");
+                error.errType = "fileTypeError";
+                cb(error, "");
+                return;
+            }
             const hashFileName = uuidv4() + file.originalname.substring(file.originalname.lastIndexOf("."));
             req.hashFileName = hashFileName;
             cb(null, hashFileName);
