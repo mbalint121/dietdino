@@ -30,14 +30,16 @@ export async function Register(req: Request, res: Response){
             return;
         }
     
-        const existingUsers: Array<User> = await UserService.GetUsers();
-    
-        if(existingUsers.some(existingUser => existingUser.username?.toLowerCase() == user.username?.toLowerCase())){
+        const userExistsWithUsername: number = await UserService.UserExistsWithUsername(user.username);
+
+        if(userExistsWithUsername){
             res.status(409).send({error: "Már létezik felhasználó ezzel a felhasználónévvel"});
             return;
         }
-    
-        if(existingUsers.some(existingUser => existingUser.email == user.email)){
+
+        const userExistsWithEmail: number = await UserService.UserExistsWithEmail(user.email);
+
+        if(userExistsWithEmail){
             res.status(409).send({error: "Már létezik felhasználó ezzel az email címmel"});
             return;
         }

@@ -32,3 +32,18 @@ export function IsPreparationDescriptionValid(preparationDescription: string){
     const regex = /^(?=.*\S)[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ\s.,!?;:'"()-]{1,}$/;
     return regex.test(preparationDescription);
 }
+
+export function IsSearchTermValid(searchTerm: string){
+    const regex = /^(?=.*\S)[a-zA-Z0-9áéíóöőúüűÁÉÍÓÖŐÚÜŰ\s.,!?;:'"()-]{1,}$/;
+    return regex.test(searchTerm);
+}
+
+export function IsDateValid(date: string){
+    const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    return regex.test(date);
+}
+
+export function IsStateValid(state: string){
+    const regex = /^[a-zA-Z]{1,16}$/
+    return regex.test(state);
+}

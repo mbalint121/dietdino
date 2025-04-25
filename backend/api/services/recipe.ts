@@ -2,13 +2,30 @@ import { Recipe } from "../models/recipe";
 import mysql from "mysql2/promise";
 import dbConfig from "../app/config";
 import ImageService from "./image";
+import { PaginationParameters } from "../models/paginationParameters";
+import { QueryParameters } from "../models/queryParameters";
 
 export default class RecipeService{
-    static async GetAcceptedRecipes(){
+    static async GetAcceptedRecipeCount(queryParameters: QueryParameters){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetAcceptedRecipes()");
+            const [rows]: any = await conn.query("SELECT GetAcceptedRecipeCount(?, ?, ?) AS count", [queryParameters.search, queryParameters.startDate, queryParameters.endDate]);
+            return rows[0].count;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetAcceptedRecipesPaginated(paginationParameters: PaginationParameters, queryParameters: QueryParameters){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetAcceptedRecipesPaginated(?, ?, ?, ?, ?)", [paginationParameters.page, paginationParameters.limit, queryParameters.search, queryParameters.startDate, queryParameters.endDate]);
             return rows[0];
         }
         catch(error){
@@ -19,11 +36,26 @@ export default class RecipeService{
         }
     }
 
-    static async GetWaitingRecipes(){
+    static async GetWaitingRecipeCount(){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetWaitingRecipes()");
+            const [rows]: any = await conn.query("SELECT GetWaitingRecipeCount() as count");
+            return rows[0].count;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetWaitingRecipesPaginated(paginationParameters: PaginationParameters){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetWaitingRecipesPaginated(?, ?)", [paginationParameters.page, paginationParameters.limit]);
             return rows[0];
         }
         catch(error){
@@ -34,11 +66,26 @@ export default class RecipeService{
         }
     }
 
-    static async GetDraftRecipes(){
+    static async GetDraftRecipeCount(){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetDraftRecipes()");
+            const [rows]: any = await conn.query("SELECT GetDraftRecipeCount() as count");
+            return rows[0].count;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetDraftRecipesPaginated(paginationParameters: PaginationParameters){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetDraftRecipesPaginated(?, ?)", [paginationParameters.page, paginationParameters.limit]);
             return rows[0];
         }
         catch(error){
@@ -49,11 +96,26 @@ export default class RecipeService{
         }
     }
 
-    static async GetRecipesByUserID(userID: number){
+    static async GetRecipeCountByUserID(userID: number, queryParameters: QueryParameters){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetRecipesByUserID(?)", [userID]);
+            const [rows]: any = await conn.query("SELECT GetRecipeCountByUserID(?, ?, ?, ?, ?)AS count", [userID, queryParameters.search, queryParameters.startDate, queryParameters.endDate, queryParameters.states]);
+            return rows[0].count;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetRecipesByUserIDPaginated(userID: number, paginationParameters: PaginationParameters, queryParameters: QueryParameters){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetRecipesByUserIDPaginated(?, ?, ?, ?, ?, ?, ?)", [userID, paginationParameters.page, paginationParameters.limit, queryParameters.search, queryParameters.startDate, queryParameters.endDate, queryParameters.states]);
             return rows[0];
         }
         catch(error){
@@ -64,11 +126,26 @@ export default class RecipeService{
         }
     }
 
-    static async GetAcceptedFavoriteRecipesByUserID(userID: number){
+    static async GetAcceptedFavoriteRecipeCountByUserID(userID: number, queryParameters: QueryParameters){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetAcceptedFavoriteRecipesByUserID(?)", [userID]);
+            const [rows]: any = await conn.query("SELECT GetAcceptedFavoriteRecipeCountByUserID(?, ?, ?, ?) as count", [userID, queryParameters.search, queryParameters.startDate, queryParameters.endDate]);
+            return rows[0].count;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetAcceptedFavoriteRecipesByUserIDPaginated(userID: number, paginationParameters: PaginationParameters, queryParameters: QueryParameters){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetAcceptedFavoriteRecipesByUserIDPaginated(?, ?, ?, ?, ?, ?)", [userID, paginationParameters.page, paginationParameters.limit, queryParameters.search, queryParameters.startDate, queryParameters.endDate]);
             return rows[0];
         }
         catch(error){
@@ -79,11 +156,26 @@ export default class RecipeService{
         }
     }
 
-    static async GetAcceptedRecipesByUsername(username: string){
+    static async GetAcceptedRecipeCountByUsername(username: string,queryParameters: QueryParameters){
         const conn = await mysql.createConnection(dbConfig);
         
         try{
-            const [rows]: any = await conn.query("CALL GetAcceptedRecipesByUsername(?)", [username]);
+            const [rows]: any = await conn.query("SELECT GetAcceptedRecipeCountByUsername(?, ?, ?, ?) as count", [username, queryParameters.search, queryParameters.startDate, queryParameters.endDate]);
+            return rows[0].count;
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetAcceptedRecipesByUsernamePaginated(username: string, paginationParameters: PaginationParameters, queryParameters: QueryParameters){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetAcceptedRecipesByUsernamePaginated(?, ?, ?, ?, ?, ?)", [username, paginationParameters.page, paginationParameters.limit, queryParameters.search, queryParameters.startDate, queryParameters.endDate]);
             return rows[0];
         }
         catch(error){

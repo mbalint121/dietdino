@@ -10,13 +10,21 @@ import { Like } from "../models/like";
 import LikeService from "../services/like";
 import { Favorite } from "../models/favorite";
 import FavoriteService from "../services/favorite";
-import { User } from "../models/user";
 import UserService from "../services/user";
-import { IsRecipeNameValid, IsPreparationTimeValid, IsPreparationDescriptionValid } from "../validators/regex";
+import { IsRecipeNameValid, IsPreparationTimeValid, IsPreparationDescriptionValid, IsSearchTermValid, IsDateValid } from "../validators/regex";
+import { PaginationParameters } from "../models/paginationParameters";
+import { QueryParameters } from "../models/queryParameters";
 
 export async function GetAcceptedRecipes(req: any, res: Response){
     try{
-        const recipes: Array<Recipe> = await RecipeService.GetAcceptedRecipes();
+        const paginationParameters: PaginationParameters = req.paginationParameters;
+
+        const queryParameters: QueryParameters = req.queryParameters;
+
+        const recipeCount: number = await RecipeService.GetAcceptedRecipeCount(queryParameters);
+        const totalPageCount: number = Math.ceil(recipeCount / paginationParameters.limit!);
+
+        const recipes: Array<Recipe> = await RecipeService.GetAcceptedRecipesPaginated(paginationParameters, queryParameters);
     
         for(const recipe of recipes){
             recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
@@ -54,7 +62,7 @@ export async function GetAcceptedRecipes(req: any, res: Response){
             }
         }
     
-        res.status(200).send({recipes: recipes});
+        res.status(200).send({recipes: recipes, totalPageCount: totalPageCount});
     }
     catch(err: any){
         console.log(err);
@@ -70,7 +78,12 @@ export async function GetAcceptedRecipes(req: any, res: Response){
 
 export async function GetWaitingRecipes(req: any, res: Response){
     try{
-        const recipes: Array<Recipe> = await RecipeService.GetWaitingRecipes();
+        const paginationParameters: PaginationParameters = req.paginationParameters;
+
+        const recipeCount: number = await RecipeService.GetWaitingRecipeCount();
+        const totalPageCount: number = Math.ceil(recipeCount / paginationParameters.limit!);
+
+        const recipes: Array<Recipe> = await RecipeService.GetWaitingRecipesPaginated(paginationParameters);
     
         for(const recipe of recipes){
             recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
@@ -108,7 +121,7 @@ export async function GetWaitingRecipes(req: any, res: Response){
             }
         }
     
-        res.status(200).send({recipes: recipes});
+        res.status(200).send({recipes: recipes, totalPageCount: totalPageCount});
     }
     catch(err: any){
         console.log(err);
@@ -124,7 +137,12 @@ export async function GetWaitingRecipes(req: any, res: Response){
 
 export async function GetDraftRecipes(req: any, res: Response){
     try{
-        const recipes: Array<Recipe> = await RecipeService.GetDraftRecipes();
+        const paginationParameters: PaginationParameters = req.paginationParameters;
+
+        const recipeCount: number = await RecipeService.GetDraftRecipeCount();
+        const totalPageCount: number = Math.ceil(recipeCount / paginationParameters.limit!);
+
+        const recipes: Array<Recipe> = await RecipeService.GetDraftRecipesPaginated(paginationParameters);
     
         for(const recipe of recipes){
             recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
@@ -162,7 +180,7 @@ export async function GetDraftRecipes(req: any, res: Response){
             }
         }
     
-        res.status(200).send({recipes: recipes});
+        res.status(200).send({recipes: recipes, totalPageCount: totalPageCount});
     }
     catch(err: any){
         console.log(err);
@@ -178,7 +196,13 @@ export async function GetDraftRecipes(req: any, res: Response){
 
 export async function GetRecipesByUserSelf(req: any, res: Response){
     try{
-        const recipes: Array<Recipe> = await RecipeService.GetRecipesByUserID(req.decodedToken.userID);
+        const paginationParameters: PaginationParameters = req.paginationParameters;
+        const queryParameters: QueryParameters = req.queryParameters;
+
+        const recipeCount: number = await RecipeService.GetRecipeCountByUserID(req.decodedToken.userID, queryParameters);
+        const totalPageCount: number = Math.ceil(recipeCount / paginationParameters.limit!);
+
+        const recipes: Array<Recipe> = await RecipeService.GetRecipesByUserIDPaginated(req.decodedToken.userID, paginationParameters, queryParameters);
     
         for(const recipe of recipes){
             recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
@@ -216,7 +240,7 @@ export async function GetRecipesByUserSelf(req: any, res: Response){
             }
         }
     
-        res.status(200).send({recipes: recipes});
+        res.status(200).send({recipes: recipes, totalPageCount: totalPageCount});
     }
     catch(err: any){
         console.log(err);
@@ -232,7 +256,13 @@ export async function GetRecipesByUserSelf(req: any, res: Response){
 
 export async function GetFavoriteRecipesByUser(req: any, res: Response){
     try{
-        const recipes: Array<Recipe> = await RecipeService.GetAcceptedFavoriteRecipesByUserID(req.decodedToken.userID);
+        const paginationParameters: PaginationParameters = req.paginationParameters;
+        const queryParameters: QueryParameters = req.queryParameters;
+
+        const recipeCount: number = await RecipeService.GetAcceptedFavoriteRecipeCountByUserID(req.decodedToken.userID, queryParameters);
+        const totalPageCount: number = Math.ceil(recipeCount / paginationParameters.limit!);
+
+        const recipes: Array<Recipe> = await RecipeService.GetAcceptedFavoriteRecipesByUserIDPaginated(req.decodedToken.userID, paginationParameters, queryParameters);
     
         for(const recipe of recipes){
             recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
@@ -270,7 +300,7 @@ export async function GetFavoriteRecipesByUser(req: any, res: Response){
             }
         }
     
-        res.status(200).send({recipes: recipes});
+        res.status(200).send({recipes: recipes, totalPageCount: totalPageCount});
     }
     catch(err: any){
         console.log(err);
@@ -286,19 +316,13 @@ export async function GetFavoriteRecipesByUser(req: any, res: Response){
 
 export async function GetRecipesByUser(req: any, res: Response){
     try{
-        if(!req.params.username){
-            res.status(400).send({error: "Hiányzó adatok"});
-            return;
-        }
+        const paginationParameters: PaginationParameters = req.paginationParameters;
+        const queryParameters: QueryParameters = req.queryParameters;
+
+        const recipeCount: number = await RecipeService.GetAcceptedRecipeCountByUsername(req.params.username, queryParameters);
+        const totalPageCount: number = Math.ceil(recipeCount / paginationParameters.limit!);
     
-        const users: Array<User> = await UserService.GetUsers();
-    
-        if(!users.some(user => user.username?.toLowerCase() == req.params.username.toLowerCase())){
-            res.status(404).send({error: "Nem létezik ilyen felhasználó"});
-            return;
-        }
-    
-        const recipes: Array<Recipe> = await RecipeService.GetAcceptedRecipesByUsername(req.params.username);
+        const recipes: Array<Recipe> = await RecipeService.GetAcceptedRecipesByUsernamePaginated(req.params.username, paginationParameters, queryParameters);
     
         for(const recipe of recipes){
             recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
@@ -336,7 +360,7 @@ export async function GetRecipesByUser(req: any, res: Response){
             }
         }
     
-        res.status(200).send({recipes: recipes});
+        res.status(200).send({recipes: recipes, totalPageCount: totalPageCount});
     }
     catch(err: any){
         console.log(err);

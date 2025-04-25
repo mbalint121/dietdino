@@ -3,12 +3,18 @@ import { User } from "../models/user";
 import UserService from "../services/user";
 import { UserRole } from "../models/userrole";
 import { IsUsernameValid } from "../validators/regex";
+import { PaginationParameters } from "../models/paginationParameters";
 
-export async function GetUsers(req: Request, res: Response){
+export async function GetUsers(req: any, res: Response){
     try{
-        const users: Array<User> = await UserService.GetUsers();
+        const paginationParameters: PaginationParameters = req.paginationParameters;
 
-        res.status(200).send({users: users});
+        const userCount: number = await UserService.GetUserCount();
+        const totalPageCount: number = Math.ceil(userCount / paginationParameters.limit!);
+
+        const users: Array<User> = await UserService.GetUsersPaginated(paginationParameters);
+
+        res.status(200).send({users: users, totalPageCount: totalPageCount});
     }
     catch(err: any){
         console.log(err);
@@ -73,11 +79,11 @@ export async function UpdateUserSelf(req: any, res: Response){
             return;
         }
     
-        const users: Array<User> = await UserService.GetUsers();
+        const userExists: number = await UserService.UserExistsWithUsername(user.username);
     
-        if(users.some((currentUser) => currentUser.username?.toLowerCase() == user.username?.toLowerCase())){
+        if(userExists){
             res.status(400).send({error: "Ez a felhasználónév már használatban van"});
-            return
+            return;
         }
         
         await UserService.UpdateUser(user)
@@ -128,10 +134,10 @@ export async function UpdateUserByID(req: any, res: Response){
             res.status(400).send({error: "Nem történt módosítás"});
             return;
         }
-    
-        const users: Array<User> = await UserService.GetUsers();
-    
-        if(users.some((currentUser) => currentUser.username?.toLowerCase() == user.username?.toLowerCase())){
+
+        const userExists: number = await UserService.UserExistsWithUsername(user.username);
+
+        if(userExists){
             res.status(400).send({error: "Ez a felhasználónév már használatban van"});
             return;
         }

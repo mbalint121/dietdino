@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { GetUsers, GetUserByID, UpdateUserSelf, UpdateUserByID, UpdateUserRoleByID, DeleteUserSelf, DeleteUserByID } from "./user";
 import AuthService from "../services/auth";
+import PaginationService from "../services/pagination";
 
 const router: Router = Router();
 
-router.get("", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, GetUsers);
+router.get("", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, PaginationService.GetPaginationParameters, GetUsers);
 router.get("/:ID", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserItselfOrAdmin, GetUserByID);
 router.put("", AuthService.DecodeToken, AuthService.UserExists, UpdateUserSelf);
 router.put("/:ID", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, UpdateUserByID);

@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { Response } from "express";
-import { User } from "../models/user";
 import UserService from "./user";
 import { Recipe } from "../models/recipe";
 import RecipeService from "./recipe";
@@ -42,9 +41,9 @@ export default class AuthService{
 
     static async UserExists(req: any, res: Response, next: any){
         try{
-            const user: User = await UserService.GetUserByID(req.decodedToken.userID);
+            const userExists: number = await UserService.UserExistsWithID(req.decodedToken.userID);
     
-            if(!user){
+            if(!userExists){
                 res.status(401).send({error: "Nem létezik felhasználó ezzel az azonosítóval"});
                 return;
             }
