@@ -130,7 +130,7 @@ CREATE PROCEDURE GetUsersPaginated(IN pageNumber INT, IN pageSize INT)
 BEGIN
     DECLARE offsetNumber INT;
     SET offsetNumber = (pageNumber - 1) * pageSize;
-    SELECT users.ID AS ID, users.username AS username, users.email AS email, roles.roleName AS role FROM users, roles WHERE users.roleID = roles.ID LIMIT pageSize OFFSET offsetNumber;
+    SELECT users.ID AS ID, users.username AS username, users.email AS email, roles.roleName AS role FROM users, roles WHERE users.roleID = roles.ID ORDER BY users.ID LIMIT pageSize OFFSET offsetNumber;
 END$$
 
 CREATE PROCEDURE GetUserByID(IN userID INT)
@@ -172,42 +172,42 @@ CREATE PROCEDURE GetAcceptedRecipesPaginated(IN pageNumber INT, IN pageSize INT,
 BEGIN
     DECLARE offsetNumber INT;
     SET offsetNumber = (pageNumber - 1) * pageSize;
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) LIMIT pageSize OFFSET offsetNumber;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) ORDER BY recipes.ID LIMIT pageSize OFFSET offsetNumber;
 END$$
 
 CREATE PROCEDURE GetWaitingRecipesPaginated(IN pageNumber INT, IN pageSize INT)
 BEGIN
     DECLARE offsetNumber INT;
     SET offsetNumber = (pageNumber - 1) * pageSize;
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Waiting" LIMIT pageSize OFFSET offsetNumber;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Waiting" ORDER BY recipes.ID LIMIT pageSize OFFSET offsetNumber;
 END$$
 
 CREATE PROCEDURE GetDraftRecipesPaginated(IN pageNumber INT, IN pageSize INT)
 BEGIN
     DECLARE offsetNumber INT;
     SET offsetNumber = (pageNumber - 1) * pageSize;
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Draft" LIMIT pageSize OFFSET offsetNumber;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Draft" ORDER BY recipes.ID LIMIT pageSize OFFSET offsetNumber;
 END$$
 
 CREATE PROCEDURE GetRecipesByUserIDPaginated(IN userID INT, IN pageNumber INT, IN pageSize INT, IN searchTerm TEXT, IN startDate DATETIME, IN endDate DATETIME, IN states TEXT)
 BEGIN
     DECLARE offsetNumber INT;
     SET offsetNumber = (pageNumber - 1) * pageSize;
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.uploaderID = userID AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) AND (states IS NULL OR FIND_IN_SET(recipeStates.stateName, states)) LIMIT pageSize OFFSET offsetNumber;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.uploaderID = userID AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) AND (states IS NULL OR FIND_IN_SET(recipeStates.stateName, states)) ORDER BY recipes.ID LIMIT pageSize OFFSET offsetNumber;
 END$$
 
 CREATE PROCEDURE GetAcceptedFavoriteRecipesByUserIDPaginated(IN userID INT, IN pageNumber INT, IN pageSize INT, IN searchTerm TEXT, IN startDate DATETIME, IN endDate DATETIME)
 BEGIN
     DECLARE offsetNumber INT;
     SET offsetNumber = (pageNumber - 1) * pageSize;
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID JOIN favorites ON recipes.ID = favorites.recipeID WHERE recipestates.stateName = "Accepted" AND favorites.userID = userID AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) LIMIT pageSize OFFSET offsetNumber;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID JOIN favorites ON recipes.ID = favorites.recipeID WHERE recipestates.stateName = "Accepted" AND favorites.userID = userID AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) ORDER BY recipes.ID LIMIT pageSize OFFSET offsetNumber;
 END$$
 
 CREATE PROCEDURE GetAcceptedRecipesByUsernamePaginated(IN username VARCHAR(16), IN pageNumber INT, IN pageSize INT, IN searchTerm TEXT, IN startDate DATETIME, IN endDate DATETIME)
 BEGIN
     DECLARE offsetNumber INT;
     SET offsetNumber = (pageNumber - 1) * pageSize;
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE users.username = username AND recipeStates.stateName = "Accepted" AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) LIMIT pageSize OFFSET offsetNumber;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE users.username = username AND recipeStates.stateName = "Accepted" AND (searchTerm IS NULL OR recipes.recipeName LIKE CONCAT("%", searchTerm, "%") OR recipes.preparationDescription LIKE CONCAT("%", searchTerm, "%") OR users.username LIKE CONCAT("%", searchTerm, "%")) AND (recipes.uploadDateTime BETWEEN startDate AND endDate) ORDER BY recipes.ID LIMIT pageSize OFFSET offsetNumber;
 END$$
 
 CREATE PROCEDURE AddRecipe(IN uploaderID INT, IN recipeName VARCHAR(64), IN preparationTime TIME, IN preparationDescription TEXT, IN uploadDateTime DATETIME, IN state VARCHAR(16))

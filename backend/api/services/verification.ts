@@ -19,7 +19,7 @@ export default class VerificationService{
         const mailOptions = {
             from: MAIL_USER,
             to: user.email,
-            subject: "Diet Dino Reisztráció",
+            subject: "Diet Dino Regisztráció",
             text: `Tisztelt Felhasználó!\n\nEzt emailt azért kapja, mert regisztrált oldalunkra.\nFiókja aktiváláshoz és a regisztráció befejezéséhez kérjük látogasson el az alábbi linkre: http://localhost:4200/verify/${token}\n\nAmennyiben nem Ön regisztrált az oldalra, hagyja figyelmen kívül ezt az emailt.\n\nÜdvölettel,\nA Diet Dino Csapata`
         };
 

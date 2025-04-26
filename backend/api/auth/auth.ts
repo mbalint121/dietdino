@@ -27,8 +27,14 @@ export async function LogIn(req: Request, res: Response){
         user.password = undefined;
         
         if(!user.ID){
-            res.status(401).send({error: "Hibás email vagy jelszó"});
-            return;
+            if(user.username){
+                res.status(401).send({error: "Hibás felhasználónév vagy jelszó"});
+                return;
+            }
+            if(user.email){
+                res.status(401).send({error: "Hibás email cím vagy jelszó"});
+                return;
+            }
         }
         
         const { JWT_SECRET } = process.env;
