@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { User } from "../models/user";
 import UserService from "../services/user";
+import AuthService from "../services/auth";
 
 dotenv.config();
 
@@ -37,14 +37,7 @@ export async function LogIn(req: Request, res: Response){
             }
         }
         
-        const { JWT_SECRET } = process.env;
-        if(!JWT_SECRET){
-            res.status(500).send({error: "Hiba a token létrehozásakor"});
-            return;
-        }
-        
-        const payload = {userID: user.ID};
-        const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
+        const token = AuthService.GenerateToken(user.ID!);
 
         user.ID = undefined;
         res.status(200).send({message: "Sikeres bejelentkezés", token: token, user: user});
@@ -54,6 +47,9 @@ export async function LogIn(req: Request, res: Response){
         
         if(err.hasOwnProperty("sqlState")){
             res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+        }
+        else if(err.errType = "tokenError"){
+            res.status(500).send({error: "Hiba a token létrehozásakor"});
         }
         else{
             res.status(500).send({error: "Ismeretlen hiba"});

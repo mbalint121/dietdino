@@ -27,6 +27,34 @@ export async function GetHotRecipes(req: any, res: Response){
             recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!);
     
             recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!);
+
+            if(req.decodedToken && req.decodedToken.userID){
+                const like: Like = new Like();
+                like.userID = req.decodedToken.userID;
+                like.recipeID = recipe.ID;
+        
+                const likeExists: Like = await LikeService.GetLike(like);
+        
+                if(likeExists){
+                    recipe.userHasLiked = true;
+                }
+                else{
+                    recipe.userHasLiked = false;
+                }
+        
+                const favorite: Favorite = new Favorite();
+                favorite.userID = req.decodedToken.userID;
+                favorite.recipeID = recipe.ID;
+        
+                const favoriteExists: Favorite = await FavoriteService.GetFavorite(favorite);
+        
+                if(favoriteExists){
+                    recipe.userHasFavorited = true;
+                }
+                else{
+                    recipe.userHasFavorited = false;
+                }
+            }
         }
     
         res.status(200).send({recipes: recipes});
@@ -55,6 +83,34 @@ export async function GetFreshRecipes(req: any, res: Response){
             recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!);
     
             recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!);
+
+            if(req.decodedToken && req.decodedToken.userID){
+                const like: Like = new Like();
+                like.userID = req.decodedToken.userID;
+                like.recipeID = recipe.ID;
+        
+                const likeExists: Like = await LikeService.GetLike(like);
+        
+                if(likeExists){
+                    recipe.userHasLiked = true;
+                }
+                else{
+                    recipe.userHasLiked = false;
+                }
+        
+                const favorite: Favorite = new Favorite();
+                favorite.userID = req.decodedToken.userID;
+                favorite.recipeID = recipe.ID;
+        
+                const favoriteExists: Favorite = await FavoriteService.GetFavorite(favorite);
+        
+                if(favoriteExists){
+                    recipe.userHasFavorited = true;
+                }
+                else{
+                    recipe.userHasFavorited = false;
+                }
+            }
         }
     
         res.status(200).send({recipes: recipes});

@@ -14,6 +14,39 @@ import FavoriteService from "./favorite";
 dotenv.config();
 
 export default class AuthService{
+    static GenerateToken(userID: number){
+        const { JWT_SECRET } = process.env;
+
+        if(!JWT_SECRET){
+            const error: any = new Error();
+            error.errType = "tokenError";
+            throw error;
+        }
+        
+        const payload = {userID: userID};
+        const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "1h"});
+        return token;
+    }
+
+    static async TryDecodeToken(req: any, res: Response, next: any){
+        const token: string = req.headers?.["token"];
+    
+        const {JWT_SECRET} = process.env;
+        if(!JWT_SECRET){
+            res.status(500).send({error: "Hiba a token ellenőrzésekor"});
+            return;
+        }
+    
+        try{
+            const decodedToken = jwt.verify(token, JWT_SECRET);
+            req.decodedToken = decodedToken;
+        }
+        catch{ }
+        finally{
+            next();
+        }
+    }
+
     static DecodeToken(req: any, res: Response, next: any){
         const token: string = req.headers?.["token"];
 
@@ -24,7 +57,7 @@ export default class AuthService{
     
         const {JWT_SECRET} = process.env;
         if(!JWT_SECRET){
-            res.status(500).send({error: "Nem található jwt secret"});
+            res.status(500).send({error: "Hiba a token ellenőrzésekor"});
             return;
         }
     
@@ -36,6 +69,33 @@ export default class AuthService{
         catch{
             res.status(401).send({error: "Hibás token"});
             return;
+        }
+    }
+
+    static async TryUserExists(req: any, res: Response, next: any){
+        if(!req.decodedToken || !req.decodedToken.userID){
+            next();
+            return;
+        }
+
+        try{
+            const userExists: number = await UserService.UserExistsWithID(req.decodedToken.userID);
+    
+            if(!userExists){
+                res.status(401).send({error: "Nem létezik felhasználó ezzel az azonosítóval"});
+                return;
+            }
+            next();
+        }
+        catch(err: any){
+            console.log(err);
+    
+            if(err.hasOwnProperty("sqlState")){
+                res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+            }
+            else{
+                res.status(500).send({error: "Ismeretlen hiba"});
+            }
         }
     }
 

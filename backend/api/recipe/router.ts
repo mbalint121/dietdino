@@ -6,8 +6,8 @@ import QueryService from "../services/query";
 
 const router: Router = Router();
 
-router.get("/hot", GetHotRecipes);
-router.get("/fresh", GetFreshRecipes);
+router.get("/hot", AuthService.TryDecodeToken, AuthService.TryUserExists, GetHotRecipes);
+router.get("/fresh", AuthService.TryDecodeToken, AuthService.TryUserExists, GetFreshRecipes);
 router.get("/accepted", AuthService.DecodeToken, AuthService.UserExists, PaginationService.GetPaginationParameters, QueryService.GetQueryParameters, GetAcceptedRecipes);
 router.get("/waiting", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserModeratorOrAdmin, PaginationService.GetPaginationParameters, GetWaitingRecipes);
 router.get("/draft", AuthService.DecodeToken, AuthService.UserExists, AuthService.IsUserAdmin, PaginationService.GetPaginationParameters, GetDraftRecipes);
