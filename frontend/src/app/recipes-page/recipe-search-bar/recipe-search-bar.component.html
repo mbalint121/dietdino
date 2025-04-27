@@ -1,8 +1,10 @@
 <div class="w-[80%] xl:w-[60%] mx-auto mt-24">
-        <div class="flex">
-            <img src="../../../assets/recipe_filter_icon.svg" alt="Filter recipes icon" class="h-12 me-1.5 cursor-pointer" (click)="ChangeFilterVisibility()">
-            <div [ngClass]="{'bg-white border border-[#5E5E5E] p-4 rounded-lg absolute top-[150px] transition-all duration-300 space-y-2 z-50' : true, 'opacity-100': this.isFilterVisible, 'opacity-0 hidden': !this.isFilterVisible}">
-                <div class="bg-white opacity-0 w-full h-full fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" (click)="this.isFilterVisible = !this.isFilterVisible"></div>
+    @if(this.isFilterVisible) {
+        <div class="fixed inset-0 bg-black bg-opacity-30 z-40" (click)="this.isFilterVisible = false"></div>
+    }
+    <div class="flex">
+        <img src="../../../assets/recipe_filter_icon.svg" alt="Filter recipes icon" class="h-12 me-1.5 cursor-pointer" (click)="ChangeFilterVisibility()">
+        <div [ngClass]="{'bg-white border border-[#5E5E5E] p-4 rounded-lg absolute top-[150px] transition-all duration-300 space-y-2 z-50' : true, 'opacity-100': this.isFilterVisible, 'opacity-0 hidden': !this.isFilterVisible}">
                 <div class="text-lg font-semibold text-center">
                     Keresési Szűrők
                 </div>
@@ -28,7 +30,7 @@
 
                 <div class="pt-4">
                     <div class="pb-2">Feltöltés ideje alapján:</div>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 s:grid-cols-2 gap-2">
                         <div class="col-start-1 flex space-x-2">
                             <input type="text" maxlength="4" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="startYear" name="startYear" placeholder="Év" [(ngModel)]="startYear" (change)="forceNumeric($event)"/>
                             <div>.</div>
@@ -45,10 +47,10 @@
                             <input type="text" maxlength="2" class="w-12 rounded-lg px-1 border border-gray-400 focus:text-end" id="endDay" name="endDay" placeholder="Nap" [(ngModel)]="endDay" (change)="forceNumeric($event)"/>
                             <label for="endYear">- ig</label>
                         </div>
-                        <button class="col-start-2 row-start-1 font-medium border rounded-md text-white bg-[#378722] border-[#378722]" (click)="AddDateFilterToFilters()">
+                        <button class="s:col-start-2 s:row-start-1 font-medium border rounded-md text-white bg-[#378722] border-[#378722]" (click)="AddDateFilterToFilters()">
                             Szűrés dátumok alapján
                         </button>
-                        <button class="col-start-2 font-medium border rounded-md text-white bg-[#378722] border-[#378722]" (click)="RemoveDateFilterFromFilters()">
+                        <button class="s:col-start-2 font-medium border rounded-md text-white bg-[#378722] border-[#378722]" (click)="RemoveDateFilterFromFilters()">
                             Dátumok törlése
                         </button>
                     </div>

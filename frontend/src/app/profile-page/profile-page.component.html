@@ -37,9 +37,9 @@
             <h1 class="text-center pt-24 -mb-3 text-3xl font-semibold text-[#378722]">{{this.route.snapshot.url[1].path}} Profilja</h1>
         }
     
-        <div class="flex justify-between">
+        <div class="xs:flex xs:justify-between">
             <p [ngClass]="{'text-3xl font-semibold text-[#378722]': true, 'mt-10' : this.route.snapshot.url[1] == undefined , 'pt-10' : this.route.snapshot.url[1] != undefined }" id="public-recipes">Receptek</p>
-            <div class="w-fit mt-10">
+            <div class="w-fit hidden s:mx-0 s:mt-10 s:block">
                 <app-pagination [totalPageCount]="this.recipeService.totalRecipesPageCount()"></app-pagination>
             </div>
         </div>
@@ -48,6 +48,9 @@
                 @for(recipe of this.GetRecipes(); track recipe.ID) {
                     <app-recipe-card [recipe]="recipe"></app-recipe-card>
                 }   
+            </div>
+            <div class="w-fit block mx-auto my-8 s:hidden">
+                <app-pagination [totalPageCount]="this.recipeService.totalRecipesPageCount()"></app-pagination>
             </div>
         } @else {
             <div class="bg-[#ECF6EA] mt-3 rounded-xl border-[#378722] border py-8">
@@ -60,7 +63,7 @@
     <div class="w-[90%] mx-auto">
         @if(this.route.snapshot.url[1] == undefined || this.route.snapshot.url[1].path == this.userService.GetUsername()){
             <div class="bg-gray-300 animate-pulse rounded-xl border h-9 w-72 mt-24"></div>
-            <div class="bg-gray-300 animate-pulse rounded-xl border h-[360px] mt-5"></div>
+            <div class="bg-gray-300 animate-pulse rounded-xl border h-[200px] mt-5"></div>
             <div class="bg-gray-300 animate-pulse rounded-xl border h-9 w-40 mt-10"></div>
             <div class="bg-gray-300 animate-pulse rounded-xl border h-24 mt-3"></div>
         } @else {

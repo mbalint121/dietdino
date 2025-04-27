@@ -6,6 +6,7 @@ import { FavoriteService } from '../../services/favorite.service';
 import { LikeService } from '../../services/like.service';
 import { ImageService } from '../../services/image.service';
 import PaginationService from '../../pagination/pagination.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-recipe-card',
@@ -21,6 +22,7 @@ export class RecipeCardComponent {
   likeService : LikeService = inject(LikeService);
   imageService: ImageService = inject(ImageService);
   paginationService : PaginationService = inject(PaginationService);
+  userService : UserService = inject(UserService);
   destroyRef : DestroyRef = inject(DestroyRef);
   route : ActivatedRoute = inject(ActivatedRoute);
   router : Router = inject(Router);

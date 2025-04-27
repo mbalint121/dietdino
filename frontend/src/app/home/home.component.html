@@ -1,4 +1,47 @@
 <app-page-navbar></app-page-navbar>
-<div class="bg-gradient-to-r from-[#45A92A] via-[#53cb3280] to-[#45A92A] rounded-xl mx-auto mt-24 flex w-[90%] md:h-[300px] h-[180px]" id="logo">
-    <img class="mx-auto my-auto max-h-[80%] max-w-[80%] " src="../../assets/diet_dino_logo.svg" alt="Diet Dino">
+<div class=" w-[90%] mx-auto">
+    <div class="bg-gradient-to-r from-[#45A92A] via-[#53cb3280] to-[#45A92A] rounded-xl mx-auto mt-24 flex md:h-[300px] h-[180px]" id="logo">
+        <img class="mx-auto my-auto max-h-[80%] max-w-[80%] " src="../../assets/diet_dino_logo.svg" alt="Diet Dino">
+    </div>
+
+    <div class="flex items-center space-x-3 xl:space-x-6 mt-14">
+        <img class="w-6 sm:w-8 xl:w-12" src="../../assets/popular_recipes_icon.svg" alt="Jóváhagyásra váró receptek ikon">
+        <p class="text-[#45A92A] text-[18px] sm:text-2xl xl:text-3xl font-semibold">Legnépszerűbb receptjeink</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-y-10 gap-x-8 mt-4">
+        @if(!this.loading){
+            @for(recipe of this.GetPopularRecipes(); track recipe.ID) {
+                <app-recipe-card [recipe]="recipe"></app-recipe-card>
+            } @empty {
+                <div class="s:col-span-2 lg:col-span-3 text-center">
+                    <p class="text-xl s:text-3xl font-semibold text-[#378722]">Nem találtunk recepteket</p>
+                </div>
+            }
+        }  @else {
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[360px]"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[360px]"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[360px]"></div>
+        }
+
+    </div>
+
+    <div class="flex items-center space-x-3 xl:space-x-6 mt-14">
+        <img class="w-6 sm:w-8 xl:w-12" src="../../assets/fresh_recipes_icon.svg" alt="Jóváhagyásra váró receptek ikon">
+        <p class="text-[#45A92A] text-[18px] sm:text-2xl xl:text-3xl font-semibold">Legújabb receptjeink</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-y-10 gap-x-8 my-4">
+        @if(!this.loading){
+            @for(recipe of this.GetNewRecipes(); track recipe.ID) {
+                <app-recipe-card [recipe]="recipe"></app-recipe-card>
+            } @empty {
+                <div class="s:col-span-2 lg:col-span-3 text-center">
+                    <p class="text-xl s:text-3xl font-semibold text-[#378722]">Nem találtunk recepteket</p>
+                </div>
+            }
+        }  @else {
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[360px]"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[360px]"></div>
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[360px]"></div>
+        }   
+    </div>
 </div>

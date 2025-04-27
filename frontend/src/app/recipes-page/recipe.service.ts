@@ -12,6 +12,8 @@ import { AdminService } from "../admin-page/admin.service";
 @Injectable({providedIn: 'root'})
 export class RecipeService{
     recipes = signal<Recipe[]>([]);
+    newRecipes = signal<Recipe[]>([]);
+    popularRecipes = signal<Recipe[]>([]);
     recipe = signal<Recipe | null>(null);
     httpClient : HttpClient = inject(HttpClient);
     popupService : PopupService = inject(PopupService);
@@ -52,11 +54,27 @@ export class RecipeService{
     GetRecipe(){
         return this.recipe() ?? null;
     }
+    
+    SetNewRecipes(newRecipes: Recipe[]){
+        this.newRecipes.set(newRecipes);
+    }
 
-    GetAcceptedRecipes(currentPage: number){
+    GetNewRecipes(){
+        return this.newRecipes() ?? [];
+    }
+
+    SetPopularRecipes(newRecipes: Recipe[]){
+        this.popularRecipes.set(newRecipes);
+    }
+
+    GetPopularRecipes(){
+        return this.popularRecipes() ?? [];
+    }
+
+    GetAcceptedRecipes(currentPage: number, searchText: string = "", dateFilter: DateFilter = {startDate: "", endDate: ""}){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        return this.httpClient.get(`http://localhost:3000/api/recipes/accepted?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, {headers: headers})
+        return this.httpClient.get(`http://localhost:3000/api/recipes/accepted?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}&search=${searchText}&startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`, {headers: headers})
         .pipe(
             tap((response : any) => {
                 if(response){
@@ -122,10 +140,10 @@ export class RecipeService{
         );
     }
 
-    GetRecipesByUser(currentPage: number){
+    GetRecipesByUser(currentPage: number, searchText: string = "", recipeStateFilters : string = "", dateFilter: DateFilter = {startDate: "", endDate: ""}){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        return this.httpClient.get(`http://localhost:3000/api/recipes/mine?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, {headers: headers})
+        return this.httpClient.get(`http://localhost:3000/api/recipes/mine?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}&search=${searchText}&states=${recipeStateFilters}&startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`, {headers: headers})
         .pipe(
             tap((response : any) => {
                 if(response){
@@ -198,10 +216,10 @@ export class RecipeService{
         return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    GetFavoriteRecipes(currentPage: number){
+    GetFavoriteRecipes(currentPage: number, searchText: string = "", dateFilter: DateFilter = {startDate: "", endDate: ""}){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        return this.httpClient.get(`http://localhost:3000/api/recipes/favorite?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, {headers: headers})
+        return this.httpClient.get(`http://localhost:3000/api/recipes/favorite?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}&search=${searchText}&startDate=${dateFilter.startDate}&endDate=${dateFilter.endDate}`, {headers: headers})
         .pipe(
             tap((response : any) => {
                 if(response){
@@ -220,28 +238,16 @@ export class RecipeService{
         );
     }
 
-    /*SearchInRecipes(searchText : string, filters : string[], dateFilter : DateFilter){
+    SearchInRecipes(currentPage : number, searchText : string = "", recipeStateFilters : string = "", dateFilter : DateFilter = {startDate: "", endDate: ""}){
         if(this.router.url == '/my-recipes'){
-            return this.GetRecipesByUser().subscribe(() => {
-                this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, filters, dateFilter);
-            });
+            return this.GetRecipesByUser(currentPage, searchText, recipeStateFilters, dateFilter);
         }
-        else if(this.router.url == '/favorite-recipes'){
-            return this.GetFavoriteRecipes().subscribe(() => {
-                this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, [], dateFilter);
-            });
+        else if(this.router.url == '/my-favorite-recipes'){
+            return this.GetFavoriteRecipes(currentPage, searchText, dateFilter);
         }
         else{
-            return this.GetAcceptedRecipes().subscribe(() => {
-                this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, [], dateFilter);
-            });
+            return this.GetAcceptedRecipes(currentPage, searchText, dateFilter);
         }
-    }*/
-
-    UpdateRecipesBasedOnSearchStringAndFilters(searchText : string, filters : string[], dateFilter : DateFilter){
-        this.recipes.update(recipes => {
-            return recipes.filter(recipe => (recipe.recipeName?.toLocaleLowerCase().includes(searchText.toLowerCase()) || recipe.ingredients?.some(ingredient => ingredient.commodity?.toLowerCase().includes(searchText.toLowerCase())) || recipe.uploader?.toLowerCase().includes(searchText.toLowerCase())) && (filters!.length > 0 ? filters?.some(filter => recipe.state == filter) : true) && (dateFilter?.startDate ? this.NewDateInCorrectFormat(recipe.uploadDateTime) >= this.NewDateInCorrectFormat(dateFilter.startDate) : true) && (dateFilter?.endDate ? this.NewDateInCorrectFormat(recipe.uploadDateTime) <= this.NewDateInCorrectFormat(dateFilter.endDate) : true));
-        });
     }
 
     GetAcceptedRecipesByUsername(username : string, currentPage: number){
@@ -267,8 +273,46 @@ export class RecipeService{
         );
     }
 
-    NewDateInCorrectFormat(date: Date | string): Date {
-        const d = new Date(date);
-        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    GetHotRecipes(){
+        const headers = new HttpHeaders({"Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.get(`http://localhost:3000/api/recipes/hot`, {headers: headers})
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.SetPopularRecipes(response.recipes);
+                }
+            }),
+            catchError(response => {
+                if (response.error) {
+                  this.popupService.ShowPopup(response.error.error, "error");
+                } else {
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
+    }
+
+    GetFreshRecipes(){
+        const headers = new HttpHeaders({"Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
+
+        return this.httpClient.get(`http://localhost:3000/api/recipes/fresh`, ({headers: headers}))
+        .pipe(
+            tap((response : any) => {
+                if(response){
+                    this.SetNewRecipes(response.recipes);
+                }
+            }),
+            catchError(response => {
+                if(response.error){
+                    this.popupService.ShowPopup(response.error.error, "error");
+                }
+                else{
+                    this.popupService.ShowPopup("Váratlan hiba történt.", "error");
+                }
+                return response.error.error;
+            })
+        );
     }
 }

@@ -10,19 +10,13 @@
             </div>
         } 
     } @else {
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
-        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
+        @for(i of this.paginationService.GetNumberOfSkeletons(); track i){
+            <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[360px]"></div>
+        }
     }
 </div>
 @if(!this.loading){
-    <div class="my-10 w-fit mx-auto">
+    <div class="my-8 w-fit mx-auto">
         <app-pagination [totalPageCount]="this.recipeService.totalRecipesPageCount()"></app-pagination>
     </div>
 }

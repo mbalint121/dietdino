@@ -1,4 +1,4 @@
 export class DateFilter{
-    startDate? : Date;
-    endDate? : Date;
+    startDate! : string;
+    endDate! : string;
 } 

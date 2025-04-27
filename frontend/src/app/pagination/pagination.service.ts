@@ -2,7 +2,7 @@ import { Injectable, signal } from "@angular/core";
 
 @Injectable({providedIn: "root"})
 export default class PaginationService {
-    pageLimit : number = 1;
+    pageLimit : number = 3;
     totalPageCount = signal<number | null>(null);
     currentRecipePage = signal<number>(1);
 
@@ -59,11 +59,16 @@ export default class PaginationService {
     }
     
     ResetValues(){
-        this.SetPageLimit(1);
+        this.SetPageLimit(3);
         this.SetTotalPageCount(1);
         this.SetCurrentRecipePage(1);
         this.SetCurrentUserPage(1);
         this.SetCurrentWaitingRecipePage(1);
         this.SetCurrentDraftRecipePage(1);
+    }
+
+    GetNumberOfSkeletons(){
+        const numberOfSkeletons : number[] = Array.from({length: this.GetPageLimit()}, (_, i) => i + 1);
+        return numberOfSkeletons;
     }
 }
