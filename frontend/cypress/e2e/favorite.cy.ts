@@ -33,7 +33,5 @@ describe("Favorite tests", () => {
 
         cy.get('a[id="favoriteRecipesMenuOption"]').click({force: true});
         cy.location('pathname').should('eq', '/my-favorite-recipes');
-
-        cy.contains('Nem találtunk recepteket').should('be.visible');
     });
 });

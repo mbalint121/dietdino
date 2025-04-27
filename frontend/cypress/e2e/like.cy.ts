@@ -9,7 +9,7 @@ describe("Like tests", () => {
         cy.get('a[id="recipesMenuOption"]').click({force: true});
         cy.location('pathname').should('eq', '/recipes');
 
-        cy.contains('Tejbegríz').should('be.visible').click();
+        cy.contains('Palacsinta').should('be.visible').click();
         cy.location('pathname').should('satisfy', (pathname : any) => pathname.startsWith('/recipe'));
     });
 
