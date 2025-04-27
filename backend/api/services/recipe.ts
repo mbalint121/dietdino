@@ -6,6 +6,36 @@ import { PaginationParameters } from "../models/paginationParameters";
 import { QueryParameters } from "../models/queryParameters";
 
 export default class RecipeService{
+    static async GetHotRecipes(){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetHotRecipes()");
+            return rows[0];
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
+    static async GetFreshRecipes(){
+        const conn = await mysql.createConnection(dbConfig);
+        
+        try{
+            const [rows]: any = await conn.query("CALL GetFreshRecipes()");
+            return rows[0];
+        }
+        catch(error){
+            throw error;
+        }
+        finally{
+            conn.end();
+        }
+    }
+
     static async GetAcceptedRecipeCount(queryParameters: QueryParameters){
         const conn = await mysql.createConnection(dbConfig);
         

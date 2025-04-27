@@ -168,6 +168,16 @@ BEGIN
     SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipes.ID = recipeID;
 END$$
 
+CREATE PROCEDURE GetHotRecipes()
+BEGIN
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" ORDER BY GetLikeCountByRecipeID(recipes.ID) DESC LIMIT 9;
+END$$
+
+CREATE PROCEDURE GetFreshRecipes()
+BEGIN
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" ORDER BY recipes.uploadDateTime DESC LIMIT 9;
+END$$
+
 CREATE PROCEDURE GetAcceptedRecipesPaginated(IN pageNumber INT, IN pageSize INT, IN searchTerm TEXT, IN startDate DATETIME, IN endDate DATETIME)
 BEGIN
     DECLARE offsetNumber INT;

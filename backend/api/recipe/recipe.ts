@@ -11,9 +11,65 @@ import LikeService from "../services/like";
 import { Favorite } from "../models/favorite";
 import FavoriteService from "../services/favorite";
 import UserService from "../services/user";
-import { IsRecipeNameValid, IsPreparationTimeValid, IsPreparationDescriptionValid, IsSearchTermValid, IsDateValid } from "../validators/regex";
+import { IsRecipeNameValid, IsPreparationTimeValid, IsPreparationDescriptionValid } from "../validators/regex";
 import { PaginationParameters } from "../models/paginationParameters";
 import { QueryParameters } from "../models/queryParameters";
+
+export async function GetHotRecipes(req: any, res: Response){
+    try{
+        const recipes: Array<Recipe> = await RecipeService.GetHotRecipes();
+
+        for(const recipe of recipes){
+            recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
+    
+            recipe.calorieValue = await RecipeService.GetCalorieValueByRecipeID(recipe.ID!);
+    
+            recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!);
+    
+            recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!);
+        }
+    
+        res.status(200).send({recipes: recipes});
+    }
+    catch(err: any){
+        console.log(err);
+
+        if(err.hasOwnProperty("sqlState")){
+            res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+        }
+        else{
+            res.status(500).send({error: "Ismeretlen hiba"});
+        }
+    }
+}
+
+export async function GetFreshRecipes(req: any, res: Response){
+    try{
+        const recipes: Array<Recipe> = await RecipeService.GetFreshRecipes();
+
+        for(const recipe of recipes){
+            recipe.ingredients = await RecipeService.GetIngredientsByRecipeID(recipe.ID!);
+    
+            recipe.calorieValue = await RecipeService.GetCalorieValueByRecipeID(recipe.ID!);
+    
+            recipe.likeCount = await RecipeService.GetLikeCountByRecipeID(recipe.ID!);
+    
+            recipe.commentCount = await RecipeService.GetCommentCountByRecipeID(recipe.ID!);
+        }
+    
+        res.status(200).send({recipes: recipes});
+    }
+    catch(err: any){
+        console.log(err);
+
+        if(err.hasOwnProperty("sqlState")){
+            res.status(500).send({error: "Hiba az adatbázis-kapcsolat során"});
+        }
+        else{
+            res.status(500).send({error: "Ismeretlen hiba"});
+        }
+    }
+}
 
 export async function GetAcceptedRecipes(req: any, res: Response){
     try{
