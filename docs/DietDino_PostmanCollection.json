@@ -1,0 +1,1756 @@
+{
+	"info": {
+		"_postman_id": "7f4a214b-1580-4162-821a-f7614c4a9fe7",
+		"name": "DietDino",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44009753",
+		"_collection_link": "https://orange-shadow-3585641.postman.co/workspace/D%C3%A1niel-Szab%C3%B3-Holman's-Workspace~f4bffac8-6ac3-49ae-8629-902b4ab0032f/collection/44009753-7f4a214b-1580-4162-821a-f7614c4a9fe7?action=share&source=collection_link&creator=44009753"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Sikeres bejelentkezés\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has token property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"token\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has user property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"user\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"token\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"TestAdmin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has users property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"users\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has totalPageCount property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"totalPageCount\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users?page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has user property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"user\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit User Self",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Felhasználó sikeresen módosítva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"EzEgyTeszt\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit User By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Felhasználó sikeresen módosítva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"TestAdmin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit User Role By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Felhasználó szerepköre sikeresen módosítva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"Moderator\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/:ID/role",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								":ID",
+								"role"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User Self",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 400\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has error property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"error\", \"Admin felhasználó nem törölheti magát\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 400\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has error property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"error\", \"Admin felhasználó nem törölheti magát\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registration",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Megerősítő email elküldve\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"szhdani\",\r\n    \"email\": \"szhdani@gmail.com\",\r\n    \"password\": \"Bolyai123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/registration",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"registration"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Verification",
+			"item": [
+				{
+					"name": "Verify",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 401\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(401));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has error property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"error\", \"Nem található token\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "token",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/verify",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"verify"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Password",
+			"item": [
+				{
+					"name": "Send Password Reset Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 404\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(404));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has error property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"error\", \"Nem létezik felhasználó ezzel az email címmel\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"szhdani@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/password/sendemail",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"password",
+								"sendemail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Sikeres jelszóváltoztatás\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"Bolyai123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/password/reset",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"password",
+								"reset"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recipes",
+			"item": [
+				{
+					"name": "Get Hot Recipes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/hot",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"hot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Fresh Recipes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/fresh",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"fresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Accepted Recipes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has totalPageCount property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"totalPageCount\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/accepted?page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"accepted"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Waiting Recipes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has totalPageCount property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"totalPageCount\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/waiting?page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"waiting"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Draft Recipes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has totalPageCount property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"totalPageCount\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/draft?page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"draft"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Own Recipes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has totalPageCount property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"totalPageCount\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/mine?page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"mine"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Favorite Recipes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has totalPageCount property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"totalPageCount\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/favorite?page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"favorite"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recipes By Username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipes property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipes\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has totalPageCount property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"totalPageCount\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/user/:username?page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"user",
+								":username"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "username",
+									"value": "TestAdmin"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Recipe",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 201\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(201));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen feltöltve\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipeID property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipeID\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"recipeID\", pm.response.json().recipeID);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"recipeName\": \"Ez egy teszt recept\",\r\n    \"preparationTime\": \"01:30:00\",\r\n    \"preparationDescription\": \"Ez egy teszt lerás\",\r\n    \"state\": \"Waiting\",\r\n    \"ingredients\": [\r\n        {\r\n            \"commodity\": \"Só\",\r\n            \"measure\": \"gramm\",\r\n            \"quantity\": 5\r\n        },\r\n        {\r\n            \"commodity\": \"Feketebors\",\r\n            \"measure\": \"gramm\",\r\n            \"quantity\": 2\r\n        },\r\n        {\r\n            \"commodity\": \"Burgonya\",\r\n            \"measure\": \"kilogramm\",\r\n            \"quantity\": 0.5\r\n        },\r\n        {\r\n            \"commodity\": \"Csirkemell\",\r\n            \"measure\": \"dekagramm\",\r\n            \"quantity\": 30\r\n        }\r\n\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/recipes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Image By Recipe ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 201\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(201));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Kép sikeresen feltöltve\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Dani/Bolyai/Projekt/TesztReceptKep.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/images/recipe/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"images",
+								"recipe",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "{{recipeID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recipe By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has recipe property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"recipe\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"imageName\", pm.response.json().recipe.image);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "{{recipeID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Image By Image Name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/images/:image",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"images",
+								":image"
+							],
+							"variable": [
+								{
+									"key": "image",
+									"value": "{{imageName}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Recipe By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen elfogadva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/:ID/accept",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								":ID",
+								"accept"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "{{recipeID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Recipe By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen módosítva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"recipeName\": \"Ez egy módosított recept\",\r\n    \"state\": \"Waiting\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/recipes/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "{{recipeID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Recipe By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen elutasítva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/:ID/reject",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								":ID",
+								"reject"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "{{recipeID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recipe By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen törölve\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/recipes/{{recipeID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"recipes",
+								"{{recipeID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Get Comments By Recipe ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has comments property\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"comments\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/comments/recipe/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"comments",
+								"recipe",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Comment By Recipe ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 201\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(201));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Komment sikeresen feltöltve\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"Ez egy teszt komment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/comments/recipe/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"comments",
+								"recipe",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Comment By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Komment sikeresen módosítva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"Ez egy módosított komment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/comments/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"comments",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Komment sikeresen törölve\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/comments/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"comments",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Favorite Recipe By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 201\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(201));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen a kedvencekhez adva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/favorites/recipe/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"favorites",
+								"recipe",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Favorite By Recipe ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen eltávolítva a kedvencek közül\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/favorites/recipe/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"favorites",
+								"recipe",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Likes",
+			"item": [
+				{
+					"name": "Like Recipe By ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 201\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(201));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Recept sikeresen kedvelve\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/likes/recipe/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"likes",
+								"recipe",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Like By Recipe ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has status 200\", function(){\r",
+									"    pm.expect(pm.response.to.have.status(200));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has message property with correct value\", function(){\r",
+									"    pm.expect(pm.response.json()).to.have.property(\"message\", \"Kedvelés sikeresen eltávolítva\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/likes/recipe/:ID",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"likes",
+								"recipe",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "token",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
