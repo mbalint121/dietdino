@@ -170,12 +170,12 @@ END$$
 
 CREATE PROCEDURE GetHotRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" ORDER BY GetLikeCountByRecipeID(recipes.ID) DESC LIMIT 9;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" ORDER BY GetLikeCountByRecipeID(recipes.ID) DESC LIMIT 3;
 END$$
 
 CREATE PROCEDURE GetFreshRecipes()
 BEGIN
-    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" ORDER BY recipes.uploadDateTime DESC LIMIT 9;
+    SELECT recipes.ID AS ID, recipes.recipeName AS recipeName, recipes.image AS image, recipes.preparationTime AS preparationTime, recipes.preparationDescription AS preparationDescription, recipes.uploadDateTime AS uploadDateTime, users.username AS uploader, recipeStates.stateName AS state FROM recipes JOIN users ON recipes.uploaderID = users.ID JOIN recipeStates ON recipes.stateID = recipeStates.ID WHERE recipeStates.stateName = "Accepted" ORDER BY recipes.uploadDateTime DESC LIMIT 3;
 END$$
 
 CREATE PROCEDURE GetAcceptedRecipesPaginated(IN pageNumber INT, IN pageSize INT, IN searchTerm TEXT, IN startDate DATETIME, IN endDate DATETIME)
@@ -544,6 +544,14 @@ CALL AddRecipe(3, "Marhahúsos rakottburgonya", "01:30:00", "Rétegezd a burgony
 CALL NewImageByRecipeID(5, "MarhahusosRakottburgonya.png");
 CALL AddRecipe(1, "Rántott csirkemell sültburgonyával", "00:20:00", "Rántsd ki a csirkemellet, főzd meg a burgonyát.", "2024-02-05 14:00:00", "Draft");
 CALL NewImageByRecipeID(6, "RantottCsirkemellSultburgonyaval.png");
+CALL AddRecipe(1, "Palacsinta", "00:15:00", "Készítsd el a palacsintatésztát liszt, tojás, tej, cukor és egy csipet só felhasználásával, majd süsd ki serpenyőben.", "2024-02-06 10:00:00", "Accepted");
+CALL NewImageByRecipeID(7, "Palacsinta.png");
+CALL AddRecipe(2, "Csirke paprikás", "00:45:00", "Fűszerezd a csirkemellet hagymával, paradicsommal, sóval és feketeborssal, majd főzd össze egy lábasban.", "2024-02-07 12:00:00", "Accepted");
+CALL NewImageByRecipeID(8, "CsirkePaprikas.png");
+CALL AddRecipe(3, "Zöldséges tészta", "00:30:00", "Főzd meg a tésztát, majd keverd össze brokkolival, vöröshagymával, paradicsommal, egy kevés olajjal, sóval és feketeborssal.", "2024-02-08 14:00:00", "Accepted");
+CALL NewImageByRecipeID(9, "ZoldsegesTeszta.png");
+CALL AddRecipe(2, "Gulyásleves", "01:00:00", "Forrald fel a vizet, rakd bele a zldségeket és a húst, majd főzd meg.", "2024-02-10 15:00:00", "Accepted");
+CALL NewImageByRecipeID(10, "Gulyasleves.png");
 
 CALL AddCommodityType("Solid");
 CALL AddCommodityType("Liquid");
@@ -650,7 +658,48 @@ CALL NewIngredientByRecipeID(6, "Tojás (egész)", "dekagramm", 2);
 CALL NewIngredientByRecipeID(6, "Zsemlemorzsa", "dekagramm", 7);
 CALL NewIngredientByRecipeID(6, "Olaj", "deciliter", 1);
 CALL NewIngredientByRecipeID(6, "Burgonya", "kilogramm", 0.5);
+CALL NewIngredientByRecipeID(7, "Liszt", "dekagramm", 3);
+CALL NewIngredientByRecipeID(7, "Tojás (egész)", "dekagramm", 2);
+CALL NewIngredientByRecipeID(7, "Tej", "deciliter", 2);
+CALL NewIngredientByRecipeID(7, "Cukor", "dekagramm", 1);
+CALL NewIngredientByRecipeID(7, "Só", "gramm", 1);
+CALL NewIngredientByRecipeID(8, "Tészta", "dekagramm", 30);
+CALL NewIngredientByRecipeID(8, "Csirkemell", "dekagramm", 40);
+CALL NewIngredientByRecipeID(8, "Vöröshagyma", "dekagramm", 3);
+CALL NewIngredientByRecipeID(8, "Paradicsom", "dekagramm", 3);
+CALL NewIngredientByRecipeID(8, "Só", "gramm", 2);
+CALL NewIngredientByRecipeID(8, "Feketebors", "gramm", 1);
+CALL NewIngredientByRecipeID(9, "Tészta", "dekagramm", 40);
+CALL NewIngredientByRecipeID(9, "Brokkoli", "dekagramm", 5);
+CALL NewIngredientByRecipeID(9, "Vöröshagyma", "dekagramm", 2);
+CALL NewIngredientByRecipeID(9, "Paradicsom", "dekagramm", 3);
+CALL NewIngredientByRecipeID(9, "Olaj", "deciliter", 1);
+CALL NewIngredientByRecipeID(9, "Só", "gramm", 1);
+CALL NewIngredientByRecipeID(9, "Feketebors", "gramm", 1);
+CALL NewIngredientByRecipeID(10, "Marhahús", "dekagramm", 60);
+CALL NewIngredientByRecipeID(10, "Víz", "liter", 3);
+CALL NewIngredientByRecipeID(10, "Burgonya", "dekagramm", 50);
+CALL NewIngredientByRecipeID(10, "Vöröshagyma", "dekagramm", 3);
+CALL NewIngredientByRecipeID(10, "Fokhagyma", "gramm", 15);
+CALL NewIngredientByRecipeID(10, "Paradicsom", "dekagramm", 4);
+CALL NewIngredientByRecipeID(10, "Só", "gramm", 2);
+CALL NewIngredientByRecipeID(10, "Feketebors", "gramm", 1);
+CALL NewIngredientByRecipeID(10, "Sárgarépa", "dekagramm", 5);
 
 CALL NewCommentByRecipeID(1, 1, "Teszt komment. Nagyon finom volt.");
 CALL NewCommentByRecipeID(2, 1, "Teszt komment. Nekem nem ízlett.");
 CALL NewCommentByRecipeID(3, 2, "Teszt komment. Az egész családnak ízlett.");
+
+CALL NewFavorite(1, 1);
+CALL NewFavorite(1, 3);
+CALL NewFavorite(2, 1);
+CALL NewFavorite(2, 3);
+CALL NewFavorite(3, 2);
+
+CALL NewLike(1, 1);
+CALL NewLike(1, 2);
+CALL NewLike(1, 3);
+CALL NewLike(2, 1);
+CALL NewLike(2, 2);
+CALL NewLike(3, 1);
+CALL NewLike(3, 3);
