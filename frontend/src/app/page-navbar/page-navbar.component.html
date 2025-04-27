@@ -52,15 +52,15 @@
     
                         @if(this.route.snapshot.url.length > 0 && this.route.snapshot.url[0].path === "admin"){
                             @if(this.adminService.UserIsAdmin()){
-                                <div class="border-2 border-black w-[75%] mx-auto"></div>
+                                <div class="border border-black w-[75%] mx-auto"></div>
                                 <li class="hover:bg-gray-100 rounded-t-xl">
                                     <a class="flex w-full justify-center h-14 items-center" href="/admin#users">
                                         <img class="h-6" src="../../assets/user_icon.svg" alt="Recipes icon">
                                         <p class="ms-1.5 font-semibold">Felhasználók</p>
                                     </a>
                                 </li>
-                                <div class="border border-black w-[75%] mx-auto"></div>
                             }
+                            <div class="border border-black w-[75%] mx-auto"></div>
             
                             <li class="hover:bg-gray-100 rounded-b-xl">
                                 <a class="flex w-full justify-center h-14 items-center" href="/admin#recipes-waiting-for-approval">

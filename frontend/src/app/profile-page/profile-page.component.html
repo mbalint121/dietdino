@@ -37,7 +37,12 @@
             <h1 class="text-center pt-24 -mb-3 text-3xl font-semibold text-[#378722]">{{this.route.snapshot.url[1].path}} Profilja</h1>
         }
     
-        <p [ngClass]="{'text-3xl font-semibold text-[#378722]': true, 'mt-10' : this.route.snapshot.url[1] == undefined , 'pt-10' : this.route.snapshot.url[1] != undefined }" id="public-recipes">Receptek</p>
+        <div class="flex justify-between">
+            <p [ngClass]="{'text-3xl font-semibold text-[#378722]': true, 'mt-10' : this.route.snapshot.url[1] == undefined , 'pt-10' : this.route.snapshot.url[1] != undefined }" id="public-recipes">Receptek</p>
+            <div class="w-fit mt-10">
+                <app-pagination [totalPageCount]="this.recipeService.totalRecipesPageCount()"></app-pagination>
+            </div>
+        </div>
         @if(this.GetRecipes().length > 0) {
             <div class="grid s:grid-cols-2 lg:grid-cols-3 mt-3 mx-auto gap-y-10 gap-x-8">
                 @for(recipe of this.GetRecipes(); track recipe.ID) {

@@ -10,11 +10,13 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RecipeService } from '../recipes-page/recipe.service';
 import { RecipeCardComponent } from "../recipes-page/recipe-card/recipe-card.component";
 import ConfirmationDialogService from '../confirmation-dialog/confirmation-dialog.service';
+import { PaginationComponent } from "../pagination/pagination.component";
+import PaginationService from '../pagination/pagination.service';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [PageNavbarComponent, EditUserComponent, CommonModule, RouterLink, RecipeCardComponent],
+  imports: [PageNavbarComponent, EditUserComponent, CommonModule, RouterLink, RecipeCardComponent, PaginationComponent],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })
@@ -23,30 +25,35 @@ export class ProfilePageComponent {
   editUserComponentService : EditUserComponentService = inject(EditUserComponentService);
   popupService : PopupService = inject(PopupService);
   recipeService : RecipeService = inject(RecipeService);
+  paginationService : PaginationService = inject(PaginationService);
   confrimtaionDialogService : ConfirmationDialogService = inject(ConfirmationDialogService);
   route : ActivatedRoute = inject(ActivatedRoute);
   destroyRef : DestroyRef = inject(DestroyRef);
   
   loading : boolean = true;
-  username : string = this.route.snapshot.url[1]?.path || this.userService.GetUsername() ;
+  username : string = this.route.snapshot.params['username'] || this.userService.GetUsername() ;
   role! : UserRole | undefined;
 
   constructor(){  
     effect(() => {
       const user = this.userService.user();
       if(user){
-        this.username = user.username!;
+        if(this.route.snapshot.params['username']){
+          this.username = this.route.snapshot.params['username'];
+        } else{
+          this.username = user.username!;
+        }
         this.role = user.role;
+      }
+
+      if(this.paginationService.GetCurrentRecipePage()){
+        this.GetAcceptedRecipesByUsername(this.paginationService.GetCurrentRecipePage());
       }
     });
   }
 
   ngOnInit(){
-    const subscription = this.recipeService.GetAcceptedRecipesByUsername(this.username).subscribe(() => { this.loading = false; });
-
-    this.destroyRef.onDestroy(() => {
-      subscription.unsubscribe();
-    });
+    this.GetAcceptedRecipesByUsername(1);
   }
 
   ChangeEditUserComponentVisibility(){
@@ -71,6 +78,14 @@ export class ProfilePageComponent {
 
     this.destroyRef.onDestroy(() => {
       confirmationDialogServiceSubscription.unsubscribe();
+    });
+  }
+
+  GetAcceptedRecipesByUsername(currentPage: number = 1){
+    const subscription = this.recipeService.GetAcceptedRecipesByUsername(this.username, currentPage).subscribe(() => this.loading = false);
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
     });
   }
 

@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { PopupService } from '../popups/popup.service';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -21,6 +21,7 @@ export class EditUserComponent {
   userService: UserService = inject(UserService);
   popupService: PopupService = inject(PopupService);
   router : Router = inject(Router);
+  route : ActivatedRoute = inject(ActivatedRoute);
   destroyRef : DestroyRef = inject(DestroyRef);
 
   username! : string;
@@ -47,7 +48,11 @@ export class EditUserComponent {
       return;
     }
     if(this.router.url.includes("/profile")){
-      const subscription = this.userService.UserEditSelf(this.newUsername).subscribe();
+      const subscription = this.userService.UserEditSelf(this.newUsername).subscribe(() => {
+        if(this.route.snapshot.params['username']) {
+          this.router.navigate(['/profile', this.newUsername])
+        }
+      });
 
       this.destroyRef.onDestroy(() => {
         subscription.unsubscribe();

@@ -5,6 +5,7 @@ import { UserService } from "../services/user.service";
 import { User } from "../models/user.model";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { catchError, tap } from "rxjs";
+import PaginationService from "../pagination/pagination.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -12,6 +13,7 @@ export class AdminService {
     router : Router = inject(Router);
     popupService : PopupService = inject(PopupService);
     userService : UserService = inject(UserService);
+    paginationService : PaginationService = inject(PaginationService);
     httpClient : HttpClient = inject(HttpClient);
 
     users = signal<User[]>([]);
@@ -37,11 +39,11 @@ export class AdminService {
         }
     }
 
-    GetAllUsers() {
+    GetAllUsers(currentPage : number){
         
         const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
 
-        return this.httpClient.get("http://localhost:3000/api/users/", { headers: headers })
+        return this.httpClient.get(`http://localhost:3000/api/users?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, { headers: headers })
         .pipe(
             tap((response : any) => {
                 this.users.set(response.users);
@@ -55,7 +57,6 @@ export class AdminService {
                 return response.error.error;
             })
         );
-
     }
 
     DeleteUser(id : number){

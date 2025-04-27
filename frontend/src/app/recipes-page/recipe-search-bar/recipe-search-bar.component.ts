@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, inject, Input, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RecipeService } from '../recipe.service';
@@ -34,11 +34,11 @@ export class RecipeSearchBarComponent {
   endDay : number | undefined;
 
   SearchRecipes(){
-    const subscription = this.recipeService.SearchInRecipes(this.searchString, this.selectedFilter, this.selectedDateFilter);
+    /*const subscription = this.recipeService.SearchInRecipes(this.searchString, this.selectedFilter, this.selectedDateFilter);
 
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
-    });
+    });*/
   }
 
   ChangeFilterVisibility(){

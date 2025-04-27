@@ -1,6 +1,6 @@
 <app-page-navbar></app-page-navbar>
 <app-recipe-search-bar></app-recipe-search-bar>
-<div class="grid s:grid-cols-2 lg:grid-cols-3 w-[90%] mx-auto gap-y-10 gap-x-8 mt-8">
+<div class="grid grid-cols-1 s:grid-cols-2 lg:grid-cols-3 w-[90%] mx-auto gap-y-10 gap-x-8 mt-8">
     @if(!this.loading){
         @for(recipe of this.GetRecipes(); track recipe.ID) {
             <app-recipe-card [recipe]="recipe"></app-recipe-card>
@@ -18,5 +18,11 @@
         <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
         <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
         <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
+        <div class="bg-gray-300 animate-pulse p-2 rounded-lg w-full h-[310px]"></div>
     }
 </div>
+@if(!this.loading){
+    <div class="my-10 w-fit mx-auto">
+        <app-pagination [totalPageCount]="this.recipeService.totalRecipesPageCount()"></app-pagination>
+    </div>
+}

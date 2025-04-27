@@ -6,6 +6,8 @@ import { PopupService } from "../popups/popup.service";
 import { UserService } from "../services/user.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { DateFilter } from "../models/date-filter";
+import PaginationService from "../pagination/pagination.service";
+import { AdminService } from "../admin-page/admin.service";
 
 @Injectable({providedIn: 'root'})
 export class RecipeService{
@@ -14,9 +16,13 @@ export class RecipeService{
     httpClient : HttpClient = inject(HttpClient);
     popupService : PopupService = inject(PopupService);
     userService : UserService = inject(UserService);
+    paginationService : PaginationService = inject(PaginationService);
+    adminService : AdminService = inject(AdminService);
     router : Router = inject(Router);
     route : ActivatedRoute = inject(ActivatedRoute);
     destroyRef : DestroyRef = inject(DestroyRef);
+
+    totalRecipesPageCount = signal<number>(0);
 
     constructor(){
         const storedRecipes = JSON.parse(localStorage.getItem("recipes") || '[]');
@@ -47,14 +53,15 @@ export class RecipeService{
         return this.recipe() ?? null;
     }
 
-    GetAcceptedRecipes() {
+    GetAcceptedRecipes(currentPage: number){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        return this.httpClient.get('http://localhost:3000/api/recipes/accepted', {headers: headers})
+        return this.httpClient.get(`http://localhost:3000/api/recipes/accepted?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, {headers: headers})
         .pipe(
             tap((response : any) => {
                 if(response){
                     this.SetRecipes(response.recipes);
+                    this.totalRecipesPageCount.set(response.totalPageCount);
                 }
             }),
             catchError(response => {
@@ -115,14 +122,15 @@ export class RecipeService{
         );
     }
 
-    GetRecipesByUser(){
+    GetRecipesByUser(currentPage: number){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        return this.httpClient.get('http://localhost:3000/api/recipes/mine', {headers: headers})
+        return this.httpClient.get(`http://localhost:3000/api/recipes/mine?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, {headers: headers})
         .pipe(
             tap((response : any) => {
                 if(response){
                     this.SetRecipes(response.recipes);
+                    this.totalRecipesPageCount.set(response.totalPageCount);
                 }
             }),
             catchError(response => {
@@ -157,7 +165,7 @@ export class RecipeService{
         );
     }
 
-    DeleteRecipeByID(id: number){
+    DeleteRecipeByID(id: number, uploader: string){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
         return this.httpClient.delete(`http://localhost:3000/api/recipes/${id}`, {headers: headers})
@@ -165,7 +173,11 @@ export class RecipeService{
             tap((response : any) => {
                 if(response){
                     this.recipes()!.splice(this.recipes()!.findIndex(recipe => recipe.ID == id), 1);
-                    this.router.navigate(['/my-recipes']);
+                    if(this.adminService.UserIsAdmin() && this.userService.GetUsername() != uploader){
+                        this.router.navigate(['/recipes']);
+                    } else{
+                        this.router.navigate(['/my-recipes']);
+                    }
                     this.popupService.ShowPopup(response.message, "success");
                 }
             }),
@@ -186,14 +198,15 @@ export class RecipeService{
         return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    GetFavoriteRecipes(){
+    GetFavoriteRecipes(currentPage: number){
         const headers = new HttpHeaders({ "Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        return this.httpClient.get('http://localhost:3000/api/recipes/favorite', {headers: headers})
+        return this.httpClient.get(`http://localhost:3000/api/recipes/favorite?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, {headers: headers})
         .pipe(
             tap((response : any) => {
                 if(response){
                     this.SetRecipes(response.recipes);
+                    this.totalRecipesPageCount.set(response.totalPageCount);
                 }
             }),
             catchError(response => {
@@ -207,7 +220,7 @@ export class RecipeService{
         );
     }
 
-    SearchInRecipes(searchText : string, filters : string[], dateFilter : DateFilter){
+    /*SearchInRecipes(searchText : string, filters : string[], dateFilter : DateFilter){
         if(this.router.url == '/my-recipes'){
             return this.GetRecipesByUser().subscribe(() => {
                 this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, filters, dateFilter);
@@ -223,7 +236,7 @@ export class RecipeService{
                 this.UpdateRecipesBasedOnSearchStringAndFilters(searchText, [], dateFilter);
             });
         }
-    }
+    }*/
 
     UpdateRecipesBasedOnSearchStringAndFilters(searchText : string, filters : string[], dateFilter : DateFilter){
         this.recipes.update(recipes => {
@@ -231,14 +244,15 @@ export class RecipeService{
         });
     }
 
-    GetAcceptedRecipesByUsername(username : string){
+    GetAcceptedRecipesByUsername(username : string, currentPage: number){
         const headers = new HttpHeaders({"Content-Type": "application/json", token: this.userService.GetUserToken() || ''});
 
-        return this.httpClient.get(`http://localhost:3000/api/recipes/user/${username}`, ({headers: headers}))
+        return this.httpClient.get(`http://localhost:3000/api/recipes/user/${username}?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, ({headers: headers}))
         .pipe(
             tap((response : any) => {
                 if(response){
                     this.SetRecipes(response.recipes);
+                    this.totalRecipesPageCount.set(response.totalPageCount);
                 }
             }),
             catchError(response => {

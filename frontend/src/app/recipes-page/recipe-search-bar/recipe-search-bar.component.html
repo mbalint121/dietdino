@@ -1,7 +1,8 @@
 <div class="w-[80%] xl:w-[60%] mx-auto mt-24">
         <div class="flex">
             <img src="../../../assets/recipe_filter_icon.svg" alt="Filter recipes icon" class="h-12 me-1.5 cursor-pointer" (click)="ChangeFilterVisibility()">
-            <div [ngClass]="{'bg-white border border-[#5E5E5E] p-4 rounded-lg z-50 absolute top-[150px] transition-all duration-300 space-y-2' : true, 'opacity-100': this.isFilterVisible, 'opacity-0 hidden': !this.isFilterVisible}">
+            <div [ngClass]="{'bg-white border border-[#5E5E5E] p-4 rounded-lg absolute top-[150px] transition-all duration-300 space-y-2 z-50' : true, 'opacity-100': this.isFilterVisible, 'opacity-0 hidden': !this.isFilterVisible}">
+                <div class="bg-white opacity-0 w-full h-full fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" (click)="this.isFilterVisible = !this.isFilterVisible"></div>
                 <div class="text-lg font-semibold text-center">
                     Keresési Szűrők
                 </div>

@@ -1,0 +1,33 @@
+@if(numberOfPages.length > 1){
+    <div class="flex items-center">
+        <button class="border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722] disabled:bg-gray-300 disabled:text-gray-50 disabled:hover:border-gray-300"  (click)="this.currentPage.set(this.currentPage() - 1)" [disabled]="this.currentPage() === 1">&#60;</button>
+        
+        @if(this.numberOfPages.length <= 3){
+            @for(number of numberOfPages; track $index) {
+                <button [ngClass]="{'border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722]' : true, 'bg-[#378722] text-white hover:bg-white' : this.currentPage() == number}" (click)="this.currentPage.set(number)">{{number}}</button>
+            }
+        }
+        @else {
+            <button [ngClass]="{'border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722]' : true, 'bg-[#378722] text-white hover:bg-white' : this.currentPage() == 1}" (click)="this.currentPage.set(1)">1</button>
+            
+            @if(this.currentPage() > 3) {
+                <button [ngClass]="{'border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722]' : true}" (click)="this.currentPage.set(this.currentPage() - 3)">&hellip;</button>
+            }
+            
+            @for(number of GetVisiblePageNumbers(); track number) {
+                @if(number > 1 && number < numberOfPages.length) {
+                    <button [ngClass]="{'border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722]' : true, 'bg-[#378722] text-white hover:bg-white' : this.currentPage() == number}" (click)="this.currentPage.set(number)">{{number}}</button>
+                }
+            }
+            
+            @if(this.currentPage() < numberOfPages.length - 2) {
+                <button [ngClass]="{'border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722]' : true}" (click)="this.currentPage.set(this.currentPage() + 3)">&hellip;</button>
+            }
+            
+            <button [ngClass]="{'border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722]' : true, 'bg-[#378722] text-white hover:bg-white' : this.currentPage() == numberOfPages.length}" (click)="this.currentPage.set(numberOfPages.length)">{{numberOfPages.length}}</button>
+        }
+    
+        <button class="border rounded-md text-lg mx-1 h-9 w-9 transition duration-300 hover:border-[#378722] hover:text-[#378722] disabled:bg-gray-300 disabled:text-gray-50 disabled:hover:border-gray-300" (click)="this.currentPage.set(this.currentPage() + 1)" [disabled]="this.currentPage() === numberOfPages.length">&#62;</button>
+    </div>
+}
+

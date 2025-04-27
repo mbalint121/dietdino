@@ -6,8 +6,8 @@
         }
     </div>
     <div class="border border-[#7F7F7F] p-3 rounded-b-lg bg-gray-100">
-        <div class="mb-0.5 cursor-pointer group w-fit group" [routerLink]="['/recipe', recipe.ID]">
-            <p class="text-xl font-semibold transition duration-500 group-hover:text-[#378722]">{{recipe.recipeName}}</p>
+        <div class="mb-0.5 cursor-pointer group w-fit max-w-full group" [routerLink]="['/recipe', recipe.ID]">
+            <p class="text-xl font-semibold transition duration-500 group-hover:text-[#378722] truncate">{{recipe.recipeName}}</p>
             <div class="border-b-[3px] border-[#378722] transition-all duration-500 w-0 group-hover:w-full"></div>
         </div>
         <div class="text-sm font-normal flex">Feltöltő: 

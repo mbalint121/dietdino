@@ -6,6 +6,7 @@ import { catchError, tap } from "rxjs";
 import { PopupService } from "../popups/popup.service";
 import { RecipeService } from "../recipes-page/recipe.service";
 import { Router } from "@angular/router";
+import PaginationService from "../pagination/pagination.service";
 
 @Injectable({providedIn: 'root'}) 
 export class AdminRecipeService{
@@ -13,6 +14,7 @@ export class AdminRecipeService{
     httpClient : HttpClient = inject(HttpClient);
     popupService : PopupService = inject(PopupService);
     recipeService : RecipeService = inject(RecipeService);
+    paginationService : PaginationService = inject(PaginationService);
     router : Router = inject(Router);
 
     waitingRecipes = signal<Recipe[]>([]);
@@ -44,10 +46,10 @@ export class AdminRecipeService{
     }
 
 
-    GetWaitingRecipes(){
+    GetWaitingRecipes(currentPage : number){
         const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
 
-        return this.httpClient.get("http://localhost:3000/api/recipes/waiting", { headers: headers })
+        return this.httpClient.get(`http://localhost:3000/api/recipes/waiting?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, { headers: headers })
         .pipe(
             tap((response: any) => {
                 if(response){
@@ -65,10 +67,10 @@ export class AdminRecipeService{
         );
     }
 
-    GetDraftRecipes(){
+    GetDraftRecipes(currentPage : number){
         const headers = new HttpHeaders({ "Content-Type": "application/json", "token": this.userService.GetUserToken() || "" });
 
-        return this.httpClient.get("http://localhost:3000/api/recipes/draft", { headers: headers })
+        return this.httpClient.get(`http://localhost:3000/api/recipes/draft?page=${currentPage}&limit=${this.paginationService.GetPageLimit()}`, { headers: headers })
         .pipe(
             tap((response: any) => {
                 if(response){

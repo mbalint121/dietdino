@@ -1,51 +1,43 @@
 <app-admin-navbar></app-admin-navbar>
-<div class="w-[90%] mx-auto mt-40 mb-10">
-    <h1 class="mx-auto text-2xl xl:text-4xl font-semibold text-center -mb-10">Hello, {{name}}!</h1>
-
-    @if(this.adminService.UserIsAdmin()){
-        <div class="mx-auto -mt-[88px] pt-36 flex items-center space-x-3 xl:space-x-6" id="users">
-            <img class="w-10 xl:w-12" src="../../assets/users_icon.svg" alt="Felhasználók ikon">
-            <p class="text-[#45A92A] text-xl xl:text-3xl font-semibold">Felhasználók</p>
-        </div>
-        <div class="bg-[#45A92A] border-[#7F7F7F] border mx-auto mt-3 grid grid-cols-4 py-4 px-2 sm:px-4 rounded-xl space-x-1.5 font-semibold text-xs sm:text-base xl:text-lg text-white">
-            <p class="text-start truncate">Felhasználónév</p>
-            <p class="text-center">Email</p>
-            <p class="text-center">Szerepkör</p>
-            <p class="text-end">Műveletek</p>
-        </div>
-        <div class="mx-auto" id="recipes">
-            @for (item of this.adminService.users(); track item.username) {
-                <app-admin-data-row-style numberOfCols="4" type="user" [data]="item">
-                    <p class="text-start">{{item.username}}</p>
-                    <p class="text-start xs:text-center truncate" [title]="item.email">{{item.email}}</p>
-                    <p class="text-center">{{item.role}}</p>
-                </app-admin-data-row-style>
-            }
-        </div>
-    }
-
-    <div class="mx-auto -mt-[88px] pt-36 flex items-center space-x-3 xl:space-x-6" id="recipes-waiting-for-approval">
-        <img class="w-10 xl:w-12" src="../../assets/recipes_waiting_for_approval_icon.svg" alt="Jóváhagyásra váró receptek ikon">
-        <p class="text-[#45A92A] text-base sm:text-xl xl:text-3xl font-semibold">Jóváhagyásra váró receptek</p>
-    </div>
-    <div class="bg-[#45A92A] border-[#7F7F7F] border mx-auto mt-3 grid grid-cols-3 py-4 px-2 sm:px-4 rounded-xl space-x-1.5 font-semibold text-xs sm:text-base xl:text-lg text-white">
-        <p class="text-start">Recept Neve</p>
-        <p class="text-center">Feltöltő Neve</p>
-        <p class="text-end">Műveletek</p>
-    </div>
-    <div class="mx-auto">
-        @for(waitingRecipe of this.adminRecipeService.waitingRecipes(); track waitingRecipe.ID){
-            <app-admin-data-row-style numberOfCols="3" type="waiting-recipes" [data]="waitingRecipe">
-                <p class="text-start truncate">{{waitingRecipe.recipeName}}</p>
-                <p class="text-center">{{waitingRecipe.uploader}}</p>
-            </app-admin-data-row-style>
+@if((adminService.UserIsAdmin() && waitingRecipesLoaded && usersLoaded && draftRecipesLoaded) || (!this.adminService.UserIsAdmin() && waitingRecipesLoaded)){
+    <div class="w-[90%] mx-auto mt-40 mb-10">
+        <h1 class="mx-auto text-2xl xl:text-4xl font-semibold text-center -mb-10">Hello, {{name}}!</h1>
+    
+        @if(this.adminService.UserIsAdmin()){
+            <div class="mx-auto -mt-[88px] pt-36 flex justify-between" id="users">
+                <div class="flex items-center space-x-3 xl:space-x-6">
+                    <img class="w-10 xl:w-12" src="../../assets/users_icon.svg" alt="Felhasználók ikon">
+                    <p class="text-[#45A92A] text-xl xl:text-3xl font-semibold">Felhasználók</p>
+                </div>
+                <div class="w-fit">
+                    <app-pagination [type]="'users'" [totalPageCount]="this.usersPageCount"></app-pagination>
+                </div>
+            </div>
+            <div class="bg-[#45A92A] border-[#7F7F7F] border mx-auto mt-3 grid grid-cols-4 py-4 px-2 sm:px-4 rounded-xl space-x-1.5 font-semibold text-xs sm:text-base xl:text-lg text-white">
+                <p class="text-start truncate">Felhasználónév</p>
+                <p class="text-center">Email</p>
+                <p class="text-center">Szerepkör</p>
+                <p class="text-end">Műveletek</p>
+            </div>
+            <div class="mx-auto" id="recipes">
+                @for (item of this.adminService.users(); track item.username) {
+                    <app-admin-data-row-style numberOfCols="4" type="user" [data]="item">
+                        <p class="text-start">{{item.username}}</p>
+                        <p class="text-start xs:text-center truncate" [title]="item.email">{{item.email}}</p>
+                        <p class="text-center">{{item.role}}</p>
+                    </app-admin-data-row-style>
+                }
+            </div>
         }
-    </div>
-
-    @if(this.adminService.UserIsAdmin()){
-        <div class="mx-auto -mt-[88px] pt-36 flex items-center space-x-3 xl:space-x-6" id="draft-recipes">
-            <img class="w-10 xl:w-12" src="../../assets/draft_recipe_icon.svg" alt="Jóváhagyásra váró receptek ikon">
-            <p class="text-[#45A92A] text-base sm:text-xl xl:text-3xl font-semibold">Piszkozat receptek</p>
+    
+        <div class="mx-auto -mt-[88px] pt-36 flex justify-between" id="recipes-waiting-for-approval">
+            <div class="flex items-center space-x-3 xl:space-x-6">
+                <img class="w-10 xl:w-12" src="../../assets/recipes_waiting_for_approval_icon.svg" alt="Jóváhagyásra váró receptek ikon">
+                <p class="text-[#45A92A] text-base sm:text-xl xl:text-3xl font-semibold">Jóváhagyásra váró receptek</p>
+            </div>
+            <div class="w-fit">
+                <app-pagination [type]="'waiting-recipes'" [totalPageCount]="this.waitingRecipesPageCount"></app-pagination>
+            </div>
         </div>
         <div class="bg-[#45A92A] border-[#7F7F7F] border mx-auto mt-3 grid grid-cols-3 py-4 px-2 sm:px-4 rounded-xl space-x-1.5 font-semibold text-xs sm:text-base xl:text-lg text-white">
             <p class="text-start">Recept Neve</p>
@@ -53,15 +45,41 @@
             <p class="text-end">Műveletek</p>
         </div>
         <div class="mx-auto">
-            @for(draftRecipe of this.adminRecipeService.draftRecipes(); track draftRecipe.ID){
-                <app-admin-data-row-style numberOfCols="3" type="draft-recipes" [data]="draftRecipe">
-                    <p class="text-start truncate">{{draftRecipe.recipeName}}</p>
-                    <p class="text-center">{{draftRecipe.uploader}}</p>
+            @for(waitingRecipe of this.adminRecipeService.waitingRecipes(); track waitingRecipe.ID){
+                <app-admin-data-row-style numberOfCols="3" type="waiting-recipes" [data]="waitingRecipe">
+                    <p class="text-start truncate">{{waitingRecipe.recipeName}}</p>
+                    <p class="text-center">{{waitingRecipe.uploader}}</p>
                 </app-admin-data-row-style>
             }
         </div>
-    }
-</div>
+    
+        @if(this.adminService.UserIsAdmin()){
+            <div class="mx-auto -mt-[88px] pt-36 flex justify-between" id="draft-recipes">
+                <div class="flex items-center space-x-3 xl:space-x-6">
+                    <img class="w-10 xl:w-12" src="../../assets/draft_recipe_icon.svg" alt="Jóváhagyásra váró receptek ikon">
+                    <p class="text-[#45A92A] text-base sm:text-xl xl:text-3xl font-semibold">Piszkozat receptek</p>
+                </div>
+                <div class="w-fit">
+                    <app-pagination [type]="'draft-recipes'" [totalPageCount]="this.draftRecipesPageCount"></app-pagination>
+                </div>
+            </div>
+            <div class="bg-[#45A92A] border-[#7F7F7F] border mx-auto mt-3 grid grid-cols-3 py-4 px-2 sm:px-4 rounded-xl space-x-1.5 font-semibold text-xs sm:text-base xl:text-lg text-white">
+                <p class="text-start">Recept Neve</p>
+                <p class="text-center">Feltöltő Neve</p>
+                <p class="text-end">Műveletek</p>
+            </div>
+            <div class="mx-auto">
+                @for(draftRecipe of this.adminRecipeService.draftRecipes(); track draftRecipe.ID){
+                    <app-admin-data-row-style numberOfCols="3" type="draft-recipes" [data]="draftRecipe">
+                        <p class="text-start truncate">{{draftRecipe.recipeName}}</p>
+                        <p class="text-center">{{draftRecipe.uploader}}</p>
+                    </app-admin-data-row-style>
+                }
+            </div>
+        }
+    </div>
+} 
+
 
 <app-edit-user></app-edit-user>
 <app-popup></app-popup>

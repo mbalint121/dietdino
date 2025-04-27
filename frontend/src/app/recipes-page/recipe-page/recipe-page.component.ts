@@ -102,7 +102,7 @@ export class RecipePageComponent {
   DeleteRecipe(){
     this.confirmationDialogService.OpenDialog("Biztosan törölni szeretnéd ezt a receptet?").subscribe(result => {
       if(result == "ok"){
-        const subscription = this.recipeService.DeleteRecipeByID(this.recipe()?.ID!).subscribe();
+        const subscription = this.recipeService.DeleteRecipeByID(this.recipe()?.ID!, this.recipe()?.uploader!).subscribe();
     
         this.destroyRef.onDestroy(() => {
           subscription.unsubscribe();
